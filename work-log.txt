@@ -1,0 +1,550 @@
+#Two weeks prior
+-Got basic framework working.
+-Got first person camera working(still needs forwards vector for movement optimization).
+-Added paged geometry (will be used for grass and plants).
+-Enabled polygon level collision detection with MOC.
+-Added CEGUI functionality.
+-Added DotSceneLoader feature.
+
+#8/2/12
+-Tested out raptor chasing of camera with simple static model.
+-Configured Blender to export .mesh models.
+
+#8/3/12
+-Changed trees to use manual entities and nodes rather than paged geometry.
+-Added rain effect.
+*Fixed camera shakiness/jerkiness(input lag I guess) by removing the time inject on the rotation scale, since it's a relative value anyway.
+	Changed to m_rotateScale = m_rotateSpeed / 100; from m_rotateScale = m_rotateSpeed * evt.timeSinceLastFrame;
+	Also added needUpdate() call to each camera node after translation
+-Changed camera's zfar clipping distance from 50,000 to 600 and set viewport's background to white. This with stops the frame rate drop when 
+	getting farther away from a complex mesh, and fog covers it up. Still needs research, on mesh swapping or similar to do it without fog. 
+
+#8/4/12
+-Added water plane.
+-Fixed DotSceneLoader error when loading multiple scenes by removing "camera" node from the actual .scene file. 
+	I will have to manually remove them after it's been generated, or find an option in Blender.
+
+#8/6/12
+-Got a basic texture shader working.
+-Made the rendering function update the mouse twice, I believe this reduced the mouse lag a little. Still needs testing/research.
+
+#8/16/12
+-Turns out that updating the keyboard/mouse multiple times in the render function caused frame skipping. I now update them only once at the 
+	beginning of the loop.
+
+#8/17/12
+-Added compositor class and tested with motion blur, night vision, and ASCII compositors.
+
+#8/18/12
+-Created camera class for easier, more organized management. Had strange compilation errors at first due to including App.hpp in the camera header,
+	thus inducing a circular infinite include mess. Fixed now.
+
+#9/2/12
+-Still frame skipping issues, don't know what's causing it. 
+-In the update keyboard/mouse functions in App.cpp, I removed the Base class function call and placed the code in the function. This seems to have
+	fixed the frame skipping problem...for now. 
+
+#9/6/12
+-I think I may have fixed the frame skipping issue finally, but not for certain. I rearranged some of the camera code so now it is very smooth (removed time step in acceleration). 
+	The velocity vector may need to be transformed by the timeElapsed at the end before the camera is moved as well, not for sure though. I also implemented the setFrameSmoothingPeriod()
+	function in Base.cpp. 
+*I need to move away from the frameRenderingQueued function and write my own loop instead. 
+
+#9/9/12
+-Added state management system, not functional yet. Will take debugging.
+
+#9/10/12
+-Got the app state system working, switches between menu and game state. Will need to add a pause state, and figure out how to design the campaign system. 
+	There was an error where it would fail to switch after 3 times, due to not unloading the compositor--I found out by checking the log. 
+-Added camera tracking for main menu.
+-Got MyGUI working.
+
+#9/11/12
+-Misc. clean up of MyGUI code, still having crash when app closes due to OgrePlatform::shutdown().
+
+#9/12/12
+-Had to put the bulletdynamics.lib first in the linker for bullet to work properly. 
+-Got Bullet Physics working! This page helped a great deal: http://gamedev.stackexchange.com/questions/19019/ogre-3d-and-bullet-physics-interaction
+-Added mesh collision detection (static objects only), turns out you shouldn't call the calculateLocalInertia() function on the shape, or it crashes. Could be for another reason, however.
+-Moved all bullet objects to base class for better architecture.
+
+#9/14/12
+-Got forces working in Bullet. The use of applyCentralImpulse provides a consistent movement. 
+
+#9/15-16/12
+-Been messing around with collision detection. Created a collision demo which functions just like MOC did at this point. Still need to achieve the "sliding" effect
+	when walking along walls. 
+
+#9/17/12
+-Got nice first person collision detection working, using a btRigidBody and allow the world to do the physics for me. :)
+
+#9/18/12
+-Tested out exporting a Blender level for use with collision detection. Didn't work at first, I had to get a child node iterator for the node loaded by the DotSceneLoader,
+	and translate the child nodes one by one in a for loop. If you translate it directly, it doesn't work. 
+-Integrated SkyX into the game. It looks very nice, only thing is the sunDirection vector seems to be in reverse, I have to use getMoonDirection() instead.
+
+#9/20/12
+-Was having problems exporting .scene files from Blender properly--the origin seems to be reset when each mesh is added one by one. To fix this, I translated an object
+	while in edit mode in blender, rather than object mode. The origin did not move with the object, but I guess that's how it's supposed to be. 
+-It's important to keep the origin of all objects in the same place, otherwise they will be misplaced when loaded into Ogre. It's best to keep the origins at the center,
+	using Object->Snap->Cursor to Center and Object->Transform->Origin to 3D Cursor.
+
+#9/22/12
+-Ray testing now works in Bullet, I just have to figure out how to implement a proper character controller now.
+-I have finally gotten a proper first person camera working with full collision detection. The solution was to call applyCentralImpulse instead of translating it. To limit
+	the velocity, simply check the magnitude of the linear velocity vector before the camera is moved, and stop the movement if it's past the max. 
+The character controller still must be optimized for mass, friction, size of capsule, etc. To figure this out I should really just make modifiers with keyboard shortcuts 
+	and display the values with a GUI to determine the optimal settings. 
+
+#9/23/12
+-The camera seems to run into small invisible objects and bounces off of them, or stops completely. It seems that increasing the weight of the camera's body helps. 
+
+#9/24/14
+-I've pretty much gotten the camera done. The damping, friction, mass, and movement speed are all changeable for better optimization, but these seem to be the best settings:
+	Mass: 6.0, Friction: 1.0, Damping: 0.3, translate *= 2.5; 
+-The pitch is limited to 80 degrees now, I had to add/subtract 0.115 to the x value of the orientation quaternion that's applied. 
+-Also, the forwards vector has been calculated correctly, only thing is that I'm using a kind of cheap hack (IMO), by dividing the x and z values of the translate vector
+	by the y-value of the forwards vector. The keeps it going at the same speed regardless of pitch. But it allows the camera to climb steep inclines by looking straight down 
+	and moving horizontally. This was temporarily solved by applying the 80 degrees pitch limit. 
+-Integrated FMOD into project. Pretty straightforward. To infinitely loop a single sound, pass the FMOD_LOOP_NORMAL in the flags of System::createSound().
+
+#9/25/12
+-Been experimenting with Blender as a level editor. 
+-The texture image file name must not contain spaces in the .material script. 
+-Built a demo maze which works quite well. There is flickering on the textures as the sun moves, however, it must be fixed. Editing the .material files may help.
+* I can climb walls and jump in the air, change the jump to detect if the player is above the ground or not first by casting a ray. If the player is above, prevent jumping.
+TODO: Add NPC class, Weapon class, and create concept for "floating island in the sky" which will traverse the realms like in Gauntlet. 
+	TAKE THE SPIDER OUTSIDE. 
+
+#9/26/12
+-I can repeat a seamless texture along walls by adding this line in the .material script under texture_unit: "scale 0.2 0.2" - which would repeat it five times. Just 
+	divide 10 by the scale number to know how many times it will be repeated. 
+
+#9/27/12
+-It turns out using the Octree scene manager is as simple as passing "OctreeSceneManager" into the first argument of m_pRoot->createSceneManager().
+
+#9/30/12
+-I've created a brand new project and added previous files that I needed. This will be for a clean game framework, and I've started concept development for "Maze Monster."
+-The camera has been reprogrammed to include the Bullet rigid body within its own class, for better organization.
+
+#10/1/12
+-If there is a run-time error when entering a state, it's because you forgot to add it to the states in App.cpp.
+-When exiting the game state and starting again, the physics run slower. Figure out how to properly remove all physics objects when the state is exited. 
+	Note: This seems to only happen in debug mode.
+-The extreme frame rate drop in certain areas only occurs in debug mode. It appears all is fine in release mode, though further testing must ensure this.
+
+#10/2/12
+-I got an idea for a platforming game, where you have different suits/boots, which give you different jumping abilities. One gives you the ability to jump far distances forward/backward, 
+	and another to jump heights. I think this may be the core component of my first game. There are double-jump upgrades, which can be used to go back to earlier levels
+	and go to previously unaccessible locations, and they are required to progress in the current levels. Gravity boots for space level.
+	-Velocity boots: first set the player gets, allows fast x-z jumping.
+	-There a portals/zones which you can't pass through without wearing normal boots.
+	-Like Rayman 2, you can shoot glowing balls, and enemies pop out from places occasionally, like the pirates.
+	-Boots that allow you to fall great distances without taking damage.
+
+-Optimal settings for velocity boots:
+	Mass: 6.0
+	Divider: 12.0
+	Divider2: 1024.0
+	m_translateVector *= 2.5
+TODO *** Need to fix the bug where the player gets "glued" to the walls after jumping at them.
+TODO: Work on designs for a "Boot/Power" class, and NPC as well as World Object(with scene node and entity members) class. 
+
+#10/3/12
+-Made Boots class and implemented it into the camera class jumping controls. I will now easily be able to switch between boots.
+-Optimized the jumping code to prevent "cheat" moving after jumping straight up. The player can also move in the air when falling or after a jump.
+	Still need to optimize code for falling down after a jump, as of now, the gravity is increased back to normal and it looks acceptable. 
+
+#10/4/12
+-Added debug configuration for boots and editable options at run-time. Here are some configurations:
+
+---
+
+// Most realistic
+XZ: 2.50
+Y: 450.0
+A: 0.06
+G: -5.10
+
+// Good, by XZ movement a bit too far
+XZ: 3.0
+Y: 400.0
+A: 0.07
+G: -5.50
+
+// Forms a near-perfect arc, great default 
+XZ: 2.50
+Y: 450.0
+A: 0.08
+G: -5.00
+
+---
+
+Velocity Boots (not quite, close):
+XZ: 2.50
+Y: 450.0
+A: 0.18
+G: -4.50
+// should remove resetting gravity after reaching jump height again
+
+Best So Far:
+XZ: 3.50
+Y: 500.0
+A: 0.18
+G: -4.00
+
+// glitchy when jumping sometimes, perhaps due to gravity changing back to normal at the wrong time. 
+// This happens with the above when gravity is lowered as well, so it's the gravity causing it.
+XZ: 2.50
+Y: 350.0
+A: 0.06
+G: -3.50
+
+XZ: 3.50
+Y: 450.0
+A: 0.12
+G: -3.50
+
+---
+
+"High-jump" boots:
+XZ: 2.50
+Y: 2500.0
+A: 0.05
+G: -8.80
+
+---
+
+#10/6/12
+-Testing out "high-jump" boots, it seems I will have to allow air movement all the time with them, otherwise they are obstreperous. 
+	They must not be able to move farther than the velocity boots, preferrably a good bit less than them.
+	X movement must be nerfed.
+-Made weapon class, and derived a class for a test weapon(MLP). I'm rendering my own model, the offset for the weapon can be determined at runtime by using
+	the arrow keys and +/- keys to move it. I added a fire animation, which should also be customized to a vector for each weapon. 
+	Next, I must create a player class, which will contain everything (perhaps the boots as well), like the weapon, health, armour, etc. Remember to keep as little
+	code as possible in the actual state file. A particle class must also be created for firing projectiles--so perhaps a vector of projectile classes in the weapon class. 
+-Make EventManager abstract class, and derive a child class for each level. This will test for events within the level.
+
+#10/7/12
+-Added player class. Perhaps passing a reference to timeSinceLastFrame would improve performance if needed, there are quite a few copies being passed.
+-Added Projectile class. This is giving me trouble. The coordinates are screwed up or something.
+-Turns out the problem was due to setting the light and billboardset position in addition to the scene node's position for the particle. Only set the scene node, and set
+	the billboardset to (0, 0, 0).
+-I put the camera inside the player class, which I believe (along with other adjustments today) improved the performance, as far as FPS. 
+-I think it would be beneficial to remove the EnvironmentManager class for now and put the projectile vector in the Player class. Later, the EnvironmentManager
+	will be replaced with the EventManager class, which is for events in the world(e.g. doors, switches, elevators, etc.). 
+
+#10/8/12
+-Calling getPosition() on a child node will not get the actual position. You must call _getDerivedPosition().
+-To get the normal of a collision ray: normal = (characterPos - collisionPos).normalise();
+-I was trying to delete an Ogre::Light pointer after destroy it with the scene manager, this caused a crash. The pointer is freed automatically when destroyed. 
+-Created EventManager class and ProjectileManager class as part of it. The projectiles are managed by a vector container, and tested each frame for being alive or dead. 
+	Collision for the projectiles must be added later. I think a contactTest with Bullet would be the best solution.
+-The camera class now has a getDirection() function which multiplies the yaw orientation by the pitch orientation by a unit vector (0, 0, -1). 
+
+#10/13/12
+-Changed the jump function to decrement the gravity in small steps each frame rather than just set the gravity back to normal instantly. 
+-When setting the player's weapon to none, it crashes in the camera update function--fix.
+
+#10/14/12
+-For determining the projectile collisions, perhaps cast a Bullet ray each frame in the direction of the projectile, and test the distance, rather than creating a rigid body
+	for each one. 
+-If there is an error complaining about a parameter not getting aligned you probably need to pass a reference to the parameter rather than a copy.
+	(formal parameter with __declspec(align('16')) won't be aligned)
+-I've implemented the raycasting solution for testing projectile collisions, however the distance determined seems to vary, so I'll have to transform some of the 
+	values accordingly. When the projectiles are faster, the minimum collision distance will have to be higher as well, it seems. 
+-I solved the problem with the projectiles going too fast and missing the ray cast tests. Each frame, in the EventManager, I simply added a for loop which repeats
+	so many times based on the projectile's velocity. This allows the projectile to move multiple times per frame(at seemingly no visual cost) and test for collisions
+	more often. The collisionDistance variable may need testing still, but this works about perfectly for stopping the projectile once it's hit a world object. Brilliant!
+-So to test if it's damaging a NPC, cast an Ogre ray once it has collided, and check the collision flags on the entity, if so, send damage to the NPC class.
+
+#10/15/12
+-Fixed the weapon to not be clipped by the walls it ran into. This is done by making the material script run two passes. In the first pass, colour_write is off 
+	and depth_write on, and depth_func is always_pass. In the second pass, all that's needed is for colour_write to be on. 
+	
+#10/18/12
+-Changed the weapon class to include a pointer to a projectile manager, which is set by setProjectileManager() in the GameState enter() function. The projectile manager
+	is still created within the EventManager, however its pointer is grabbed and passed to the weapon. This makes the firing code in the mouse click much smaller, as 
+	there is no need to create a new PROJECTILE_DATA struct and retrieve the weapon's data--it's all done from within the Weapon class now. Perhaps, a projectile manager
+	for the player and one for all other NPCs is what's needed.
+
+#10/29/12
+-Modified the jumping code to be completely frame rate independent. The air movement needs to be transformed by the timeSinceLastFrame variable, and it would be incorrect
+	to transform the original jump force by the elapsed time. 
+
+#10/30/12
+-When resuming the MenuState, it appears the scene manager is still null from being deleted in the exit() function by the GameState. This prevents the GUI platform from
+	being able to set the scene manager.
+-Fixed the MyGUI problem. Turns out that if you destroy a scene manager while it's still attached to the MyGUI render manager, it causes problems like above. So, before
+	destroying the scene manager, you must call setSceneManager(nullptr) on the platform's render manager (this is now done in the destroyGUI() function). 
+	For managing the GUI between states, I am creating/destroying it each time the state is entered, paused, resumed, or exited. 
+
+#11/9/12
+-Added DynamicObject class and DynamicObjectManager which is updated through the EventManager (it is a class member). The DynamicObject class has a scene node for Ogre
+	and a btCollisionObject for Bullet. The Ogre updating works fine but I still need to figure out how to properly update the Bullet world for collision objects. One 
+	way this could be done is to instead use rigid bodies and set the activation state to ISLAND_SLEEPING. I first wish to see if it's possible using only collision
+	objects, however.
+-Added a feature which detects the name of a scene node upon being added to the physics world and if it matches a string it will make it a dynamic object and add it to 
+	the stack in the dynamic object manager, where it will be updated each frame. 
+-The DyamicObject class is abstract and each type of object will inherit its features, making it easy to keep track of the different types of dynamic objects. Types I 
+	plan to implement: door, elevator, helicopter, button, lever, etc.
+
+#11/10/12
+-Fixed the Bullet issue. Turns out I just need to create a btTransform from the scene node's position and call setWorldTransform on the collision object. Then the AABB
+	must be updated by calling updateSingleAabb() on m_btWorld with the collision object pointer as the parameter. This is done in the abstract class DynamicObject, in
+	the update function.
+-I am faced with the problem that the player does not move with the platform when it moves. It seems I should use a kinematic object, but I have tried unsuccessfully. 
+
+#11/14/12
+-Tried to make the kinematic platform work with no success. 
+-Added BtOgre and enabled the debug drawing feature. 
+
+#11/15/12
+-Moved the registerAsColliders functions to the BtOgre files. I have removed the old files that contain the functions.
+-Finally made a moving platform that carries the player. I had to add an entirely new rigid body and update the world transform on the rigid body itself and its motion	
+	state. It has to be kinematic and the activation state must be DISABLE_DEACTIVATION. 
+-Made a fool of myself on Ogre3D forums again: http://www.ogre3d.org/forums/viewtopic.php?f=8&t=75383
+-Fixed the issue. I had to move the objects in Blender using object mode, and when the .scene file is loaded I can scale it using scene->setInheritScale(true); and 
+	scene->scale(20.0, 20.0, 20.0); Also in the registerAllEntitiesAsColliders() function, I changed the btTransform for the collision object by modifying the 
+	position, orientation, and scale to retrieve the derived values, which allows the .scene to be properly loaded without having to move objects in edit mode. 
+-If MSVC starts generating 100+ random errors it's probably due to a circular include somewhere, I accidently include Base.hpp in itself including a file that included
+	another file which was being included by Base.hpp and also through the heirarchy ended up including Base.hpp back. Tricky stuff. 
+-After eight hours I've finally fixed this. Just took a lot of messing with the code. Now I must enable a "user data" type option to allow custom movements. 
+
+#11/16/12
+-Ranalyzing what I did yesterday: The scaling of the dotscene node changed a few things. On the child nodes of the scene I must use _getDerivedX() to retrieve the proper
+	data. It's still not exactly clear why I must do it this way for the DynamicObject operations, but it works. The setInitialState() has to do with it, I believe it
+	resets the local coordinate system for the node, and due to the animation the position relative to the parent is always zero. 
+-Modified the DotSceneLoader to load data from the <animation /> element. The ANIMATION_DATA struct is now allocated on the heap and passed via pointer to the 
+	setupAnimation() function and then freed by the DynamicObjectManager after it's done. Only drawback is you need to manually add the data to the .scene file
+	which isn't that big of a deal. It would take too long to configure the Blender exporter to write animation data and is not really necessary at this point in time. 
+-All that's needed to make an object animate is to precede it with the proper type ("MovingObject_" etc) and then add the animation element with the needed data,
+	like so: 
+	<animation length="10.0" step="2.5" divisor="2000.0" spline="false" numpos="5"
+			pos0="0.0 0.0 0.0"
+			pos1="100.0 0.0 0.0"
+			pos2="100.0 100.0 0.0"
+			pos3="25.0 75.0 0.0"
+			pos4="0.0 0.0 0.0" />
+
+#11/17/12
+-Added featue to .scene file which allows you to put a placeholder in Blender to keep track of where a node animates to. The name should start with "Placeholder_" and
+	it will be removed from the world in BtOgre.cpp (registerEntity...).
+-Slipping on kinematic platforms may be due to the camera being a capsule with only one contact point. Could try updating the motion state of the capsule. Also,
+	try changing the collision shape of the camera just to see. 
+*Useful info: "You can use the SetCollisionShape function to change an object's shape at run-time for crouching. Also, you should look into the functions:
+				btCollisionWorld::convexSweepTest
+				btCollisionWorld::rayTest
+				Both of those return the hit distance (called the "fraction") and a hit normal and hit position."
+"I still believe you'd be better of using a sphere as a wheel below the player, else you'll be coding extra stuff to make the player not change direction while in mid-air etc."
+
+#11/18/12
+-TODO: Make a small program to write the .scene file to a binary file using a propreitary data structure which can then be used to parse the .scene file within the game.
+-Tried changing the camera's body to a box and it did not fix the sliding. 
+-It seems the kinematic platform works properly in debug draw mode. Weird. The frame rate would be influencing the correctness of the physics. 
+-Setting vsync on fixes it, due to the frame rate being locked at 60. 
+
+#11/19/12
+-I've exhausted every attempt I can think of to solve this problem, nothing is working. I raised the friction which seems to help.
+-The jittering could be caused by Ogre's automatic interpolation in the animation, i should try manually moving the object.
+
+#11/20/12
+-Tested it this morning and the jittering on 60fps is gone. I think it just had to do with system resource usage or something. 
+-I was looking at the camera code and realized there's no reason to make the movement vector frame rate independent. This would in fact make the movement speed
+	dependent on the frame rate. Strangely, though, with vsync on I walk slower on the platform when its friction is high, but normal with vsync off. 
+-It's confusing me when in the jump code it requires a time step to be frame-rate independent in air movement when the normal movement requires there not to be a 
+	time step for frame-rate independence. 
+-I discovered I can retrieve a pointer to the collision object that's hit by a raycast, using this, I can get the velocity of the moving platform, and adjust the
+	player's speed accordingly. 
+
+#11/21/12
+-An impulse is now applied to the player when on a platform. 
+
+#11/28/12
+-By calling m_pCamera->setAutoAspectRatio(true) after the camera is created, you can prevent the view being distorted when the resolution is in 16:9 format. 
+-Setup player class to cast a ray forward when E is pressed. The scene node of the object hit can be retrieve as well as the distance to the object.
+-The action() function now finds if the node is dynamic or not, by iterating through the dynamic object manager's list.
+-Made an elevator which inherits MovingObject. It is animated like normal, I should change it to stop once it's hit one point of animation.
+-Also created a Switch which inherits DynamicObject. This class holds a pointer to the DynamicObject it's linked to, and when the switch is activated, it sends
+	the commmand to the linked object, thus activating the linked object. Good for doors/elevators etc.
+
+#11/29/12
+-Added a sound ability to the DynamicObject class, the Switch will play a sound when activated. 
+
+#12/6/12
+-Created the WarpGun, which allows the player to teleport to where the projectile is after it's fired. This of course is not the final design, however it's a 
+	starting point for the concept. 
+
+#12/7/12
+-Added and test NPC class that uses lookAt() to track the player.
+
+#12/8/12
+-Added NPCManager and improved NPC class. It is loaded through the .scene file now and tracks the user by the location. Data will need to be loaded into the user any	
+	pointer for use later. The NPCManager is in the EventManager and updated inside. 
+-The Monster NPC is set to activate when the player is within range, I should add a separate function so the manager can check it before jumping to the update funciton. 
+-Updated the update() function for DynamicObject to get the derived orientation and apply it to the transform as well. 
+
+#12/9/12
+-Added ability for NPCs to take damage from a ray weapon (which I also added today). The ray weapon has a pointer to the NPC manager and iterates through the NPCs to test
+	if one of the matches the collision object that was hit. 
+
+#12/10/12
+-Solved the problem I was having yesterday with the ray casting for the ray weapon not always being straight from the camera. The solution was to acquire the target
+	point like so: forwards = pos + (direction * range) instead of just (direction * range). That's all that's needed. :)
+-Fixed a small segfault error in the NPCManager where the iterator was being incremented after a dead NPC was removed and the iterator moved to the next one. 
+
+#12/11/12
+-Added an EffectManager for particle systems to be added when the scene is loaded. The loading of these still needs to be implemented in the DotSceneLoader. 
+-Created a WeaponEffects file with the ImpactManager and Impact class. This is for showing some kind of impact cloud where bullets hit. This could also be a texture
+	that is rendered where the bullet landed, with a certain time for life or a maximum number of impacts. 
+
+#12/12/12
+-Created a muzzle flash effect. It repeats the same billboard texture with a little bit of a random offset. This can be improved by having 3 or 4 textures that are 
+	randomly selected or iterated through to display the flash. At this point, it seems it would be best to just customize the programming for each weapon, as I don't
+	plan on having a large enough amount of weapons to need some sort of automation. 
+	Also, the muzzle flash moves quite a bit if the player is moving when firing. I will have to check other games to see how normal this is. 
+-Fixed a number of other bugs.
+
+#12/13/12
+-Created a sound wrapper for FMOD which will be used for sound effects and music alike. 
+
+#12/15/12
+-Added a reticule using Ogre overlays. It can load a normal material and use the texture associated with it. 
+-To blend a png file with a balck background, you must use add, and with a white background, src_alpha one_minus_src_alpha. 
+-Added the ability for a reticule to change colour to red when it's over an enemy. This is done by calling a function in the main loop, updateUI(). This casts a ray	
+	every single frame directly forward and tests if it hits an NPC, then checks if the NPC is friendly or not, and adjusts the reticule material accordingly. The needed
+	material name is retrieved through the weapon pointer by getReticuleMaterialName(). 
+
+#12/16/12
+-To make a red reticule into a blue reticule, simply invert the colours in Paint.NET and adjust the luminosity levels. 
+-Added ability for NPCs to animate, tested it with the basic robot. Each NPC's behaviour will be hard-coded into its own class. 
+-Exported a BR from Blendswap and discovered the Blender2Ogre exporter creates a corrupt XML in this case. Not sure why, but the <user_data section is created only 
+	with this blend and the quote marks are not properly escaped, even though the error is claimed to be fixed. I had to manually remove each user_data line to allow it
+	to work. 
+-It works much better to combine the blend file into a single mesh and export it. It loads faster as well. I forgot I needed to use radians to rotate it around so I ended up
+	using pi/2 to move it the 90 degrees it needed. 
+-Fixed the overlay element already exists error. 
+-Finally fixed the error with crashing during the updateUI() function when casting a ray. Eventually I determined in my head that it was because the physics world was
+	not being deleted each time the game state was exited. This created an error where sometimes the ray would hit the 'old' version of the collision object and there
+	was no scene node in the user pointer since it was removed in the exit() function previously. 
+	I added the code to remove all collision objects in the exit() function and it seems to be working. It did trigger the same error once after about the fifth time
+	entering the game state when I was looking/shooting at the giant robot. I haven't since been able to reproduce the error. 
+
+#12/17/12
+-Got some shadows working. I used SHADOWTYPE_STENCIL_ADDITIVE, as well as modulative. For some reason only stencil shadows work and texture shadows don't. They also
+	only currently work on the packaged .mesh files--I will need to edit the material scripts for the others. 
+	Also, the Bullet meshes are disformed on the shadow casters when the shadow mode is set in the enter() function before everything. I solved this by setting the 
+	shadows at the end of createScene(). Not entirely satisfied with this solution. 
+-The randomization of the weapon flare was relative to the orientation of the player, thus it would be more off when looking in certain directions. 
+-I changed the weapon flare billboard node to be the child of the weapon node itself. This way the flare moves with the weapon if the player is moving. This is how Halo 2
+	does it. 
+-By enabling shadows, when the game state is re-entered the collision meshes are reduced to a little ball. This only happens when the game state is restarted and shadows
+	are enabled. 
+-Loop to remove collision objects didn't get to zero, silly mistake. 
+-It appears the generation of the edge list is causing the shadow errors on restart. 
+
+#12/18/12
+-It appears the error of meshes not reloading each state is due to the resource.
+-Changed the shadows to use texture, doesn't have the Bullet problem.
+
+#12/19/12
+-I've got some depth shadow mapping working, but weird things happen. If I alt-tab out the shadows turn a blue-green colour and a random robot clear model appears at the origin. 
+-Shadows will be the most challenging part of the graphics aspect. 
+-There are some weird things going on with my shadow settings, I should consider resetting the scene basically to get these to work. I will do this next time. Changing the pixel
+	format fixes some things and breaks others. It will just take experimenting to get these fixed. 
+
+#12/20/12
+-Finally got some very good shadows working using nullsquared's SSAO demo. It appears the shadows only work with spotlights, which is pretty much fine with me, because
+	they look amazing. In any level/world there will only be one directional light anyway which will still affect the lighting of objects. Spotlights can be utilized as
+	needed for shadows. 
+
+#12/21/12   :O
+-Maybe the reason the spotlight doesn't work properly on the dotscene loaded meshes is because of the scaling done in the xml file etc. 
+-Perhaps the DotSceneLoader is the cause. Ogre should automatically normalise normals on scaling but it appears it's not with the .scene meshes, because I can set
+	their scale to 1.0 in the xml file and the spotlight works fine. 
+-If I scale the mesh itself (using edit mode in Blender) then the normals act fine under the spotlight. 
+-If I am correct, scaling the meshes in edit mode will work fine with the way I've setup the scene loader and Bullet engine and dynamic objects etc.
+-I've discovered a bug in which the elevator was added after the switch, so the link was never set, resulting in a segfault due to null pointer access. 
+-I think it would be wise to use a separate function for loading the dynamic objects rather than integrating it within the BtOgre function. 
+
+#12/23/12
+-Created the function registerAllObjectsInScene() for the dynamic object manager. It was actually rather trivial--I've separated the objects into tiers, depending on their	
+	order to be added in the world. Base items that don't depend on others are tier 1, such as MovingObjects, Elevators, etc. Tier 2 objects are dependent on a tier 1 object,
+	such as Switches. Adding tier 2 objects after tier 1 ensures that the tier 2 object will be able to find its tier 1 object. 
+*Fixed the problem with projectile weapons where projectiles would randomly make it through objects. This was done by instead casting the ray from the previous position
+	to the current position. This eliminates the possibility of gaps in the ray casting.  
+
+#12/27/12
+-Added ability for muzzle flash to create a point light.
+-Added a Settings class, which is a singleton. This will be used for the global game settings, such as graphics, controls, difficulty, etc. 
+	The header Settings.hpp is included in stdafx.h since many files will probably be using its singleton. 
+
+#12/28/12
+-Added MeleeWeapons.hpp with Blade class and child Sword class. The attack animation will be done with an animation track like moving objects. 
+
+#12/31/12
+-Added swing animation for sword. I've learned a bit more about animations and why you need to call setInitialState() --due to the animated node being translated in a certain
+	way. 
+-The sword animation still needs to be fixed however, due to it repositioning itself once the animation has started.  
+
+#1/3/13
+-Made the weapon class use Ogre animations. Working good, however for specialized weapons that can't fire contiuously, I will just need to override the update() and fire(0
+	functions completely. 
+
+#1/6/13
+-Fixed the lag spike when switching to the sword by preloading the mesh in GameState::enter(). This can be used for any mesh in the game as needed. 
+-The strange issues with the orientation of the sword were solved by simply setting the default orientation to the identity quaternion. This is because of setInitialState()
+	so the default orientation became (1, 0, 0, 0). 
+-Fixed the issue with being able to trigger the animation too early on the warp gun. Trivial fix. 
+
+#1/8/13
+-Moved the ray firing code to rayAttack() in Weapon class. This reduces the redundancy of raycasting with ray weapons. 
+-To solve the confusion between the constructor and init functions in the Weapon classes, the init function will only take care of aesthetic properties and animations.
+-Cleaned up Projectile classes. It could still use some optimization, sometimes the frame rate drops significantly, but it may be due to debug mode and lights.  
+-Added projectileAttack() and meleeAttack() in Weapon class. These should be used for every weapon as needed, except for very specialized weapons. 
+
+#1/11/13
+-Added getNegativeYNode() function to camera class, and a pointer to the camera in the EventManager (kind of messy?). This holds the scene node the player is standing on. 
+	This can be used for the TriggerManager to activate player dependent triggers. 
+-Added updateRays() to Camera, this replaces updateFooting(), and controls global rays to be used throughout, e.g. negative Y and Z rays. 
+
+#1/13/13
+-Modified the player action function to use the camera's negative Z raycast instead of casting another ray. 
+-Added trigger manager, it it initialized in the EventManager. I am still figuring out how the trigger system will work. 
+
+#1/14/13
+-Removed the TriggerManager as it seemed unnecessary. Instead a Trigger is derived from DynamicObject and added as a tier 3 object. This way, any dynamic object can also
+	be a trigger. I may need to modify the registerAllObjectsInScene to iterate through the entities rather than collision objects, since all triggers might not be
+	collision objects. 
+-Created a test trigger TriggerWalkOver which activates when the player walks over the space of the scene node. It works, now I just need to add an action, which perhaps
+	could be a TriggerAction object that's created, or something. 
+-The triggers are added by tokenizing the string and finding "Trigger.Condition" after "ObjectName." 
+
+#1/15/13
+-Changed ANIMATION_DATA to DYNAMIC_OBJECT_DATA which is retrieved again after it's set to acquire any trigger data.
+-Tested a trigger case (loaded by .scene loader), which set the ambient light successfully and looped with a timeout timer as expected. 
+-Had a strange debug assertion error with the iterator not being compatible when adding the animation positions to the animation track, due to calling memset() to 0 
+	on the data pointer when it was initialised.
+
+#1/18/13
+-Made the .scene loader parse the name of a scene node for the trigger. It failed to completely parse the string if it was at the end of the < /> section, but worked when
+	it was first. I'm not sure if this is a rapidxml error or mine. 
+-Added a trigger action to activate a dynamic object. The pointer to the dynamic object is set through the dynamic object manager after the trigger is created. 
+
+#1/21/13
+-Created LookAt trigger, tested it to stop the elevator when looking at the sphere. 
+-In the setLinkedObject() function for Trigger, the pointer didn't work when I used the void* version for a DynamicObject, and caused a segfault. Strange, I will have to
+	be careful with void pointers. 
+
+	
+#TODO
+-Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 
+-Add a "profile" singleton which is loaded as a save game upon entering the game state and saved when exiting. This will include the inventory and stuff. 
+	This should be saved as a binary file and have protection from editing and run-time hacking. 
+-Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  
+-Make bvhtri mesh update with animated NPCs (not trivial at all)
+-Figure out how to make a proper point light that won't interfere with soft shadows. 
+-Change the resource group loading...only load what's necessary for the current state. 
+-Ladder climbing--use ground trigger or forward ray. 
+-Fix weapon switching fire rate glitch. 
+-Make dynamic object manager automatically activate idle objects if they get in their defined range.

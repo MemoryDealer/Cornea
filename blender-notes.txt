@@ -1,0 +1,16 @@
+***BLENDER***
+-To properly prepare a mesh with a texture for exporting: Create mesh, and give it the name, then create material and give same name, then texture and give same name. 
+	Then split the window and go to UV/Image mode, select the image (should be in the drop-down menu already) and then in the 3d viewport go to edit mode and press U->unwrap. 
+	Now it's ready to export. 
+	-If it won't unwrap then press U->Reset.
+-Instead of going through all that, in the texture tab, go down to Mapping and change the Coordinates mode to UV, from there it can all be arranged. 
+-Recalculate normals outside (Ctrl + N).
+-Recalculate normals inside (Ctrl + Shift + N). 
+-To create a tunnel, create the cylinder first, then duplicate it, don't move it and invert the normals to the inside.
+-If an object was created in Object Mode, move the cursor to the center and then move the object's origin to the 3D Cursor.
+-For snapping walls together, set snap to face, and choose closest. Then select the whole object and point the viewport in the direction of the object you wish to snap to,
+	then drag it until it snaps to the face. 
+
+-CHANGE CLIPPING DISTANCE
+
+-For proper normals I must do all scaling directly to the mesh by using edit mode. 

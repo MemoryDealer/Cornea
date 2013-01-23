@@ -1,0 +1,25 @@
+# CRITICAL
+
+# - 
+
+# AVERAGE
+- Sometimes projectiles make it through the floor plane.
+- Jumping straight against a wall makes the player get stuck, and slide down the wall slowly.
+- Casting a ray from a moving platform causes the origin/direction of the ray to be offset. I will need to visualize this to debug. 
+- Sometimes when starting the game or warping all of the objects disappear and there is nothing but the skybox (caused by updateFooting() in camera).
+- I crashed it in release mode after firing probably 500+ projectiles with lights. Perhaps the lights/billboards are not being freed properly. 
+- Possible frame stuttering, look into setFrameSmoothingRate again. 
+- Weapon shakes when player is moving or turning when the player is farther away from the origin. 
+- When switching back and forth between two weapons, the animation restarts and the player can fire again too soon (and muzzlelight gets duplicated--exception thrown). 
+# - 
+
+# MINIMAL
+- Random crash when pressing E to activate pointing at nothing.
+- Possible error still exists when casting a ray forward every frame in updateUI() when retrieving the scene node via collision object user pointer. 
+# -  
+
+# POSSIBLE
+- Passing a copy of timeSinceLastFrame so many times might be wasting memory, could try a reference if perfmormance needs enhancement. 
+- Not sure if a "shadow camera" is needed. I can remove the listener from the scene manager and I don't see a difference. 
+
+# - 
