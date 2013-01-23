@@ -207,6 +207,8 @@ bool MenuState::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 void MenuState::GUI_startButton(MyGUI::WidgetPtr _sender)
 {
 	this->pushAppState(findByName("GameState"));
+
+	// load player profile...
 }
 
 //================================================//

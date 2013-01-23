@@ -39,11 +39,6 @@ public:
 
 private:
 	// All sensitive data needs to be private and less hackable
-
-	Ogre::String	name;
-
-	Inventory*		m_pInventory;
-
 	struct game_t{
 		int		difficulty;
 	} game;
@@ -51,8 +46,11 @@ private:
 	typedef struct{
 		Ogre::String	magic;
 
+		Ogre::String	name;
 		Inventory		inventory;
 	} BINARY_FILE, *PBINARY_FILE;
+
+	BINARY_FILE			data;
 };
 
 //================================================//

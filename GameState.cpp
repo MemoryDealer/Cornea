@@ -2,32 +2,6 @@
 
 #include "GameState.hpp"
 
-struct shadowListener: public Ogre::SceneManager::Listener
-{
-    // this is a callback we'll be using to set up our shadow camera
-    void shadowTextureCasterPreViewProj(Ogre::Light *light, Ogre::Camera *cam, size_t)
-    {
-        // basically, here we do some forceful camera near/far clip attenuation
-        // yeah.  simplistic, but it works nicely.  this is the function I was talking
-        // about you ignoring above in the Mgr declaration.
-        float range = light->getAttenuationRange();
-        cam->setNearClipDistance(0.01);
-        cam->setFarClipDistance(range);
-        // we just use a small near clip so that the light doesn't "miss" anything
-        // that can shadow stuff.  and the far clip is equal to the lights' range.
-        // (thus, if the light only covers 15 units of objects, it can only
-        // shadow 15 units - the rest of it should be attenuated away, and not rendered)
-    }
-
-    // these are pure virtual but we don't need them...  so just make them empty
-    // otherwise we get "cannot declare of type Mgr due to missing abstract
-    // functions" and so on
-    void shadowTexturesUpdated(size_t) {}
-    void shadowTextureReceiverPreViewProj(Ogre::Light*, Ogre::Frustum*) {}
-    void preFindVisibleObjects(Ogre::SceneManager*, Ogre::SceneManager::IlluminationRenderStage, Ogre::Viewport*) {}
-    void postFindVisibleObjects(Ogre::SceneManager*, Ogre::SceneManager::IlluminationRenderStage, Ogre::Viewport*) {}
-} shadowCameraUpdater;
-
 //================================================//
 
 GameState::GameState(void)
@@ -157,47 +131,9 @@ void GameState::createScene(void)
 		m_pSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
 		m_pSceneMgr->setShadowTextureFSAA(settings.graphics.shadows.fsaa);
 	}
-	//m_pSceneMgr->addListener(&shadowCameraUpdater);
 	
-	// light
-	//Ogre::Light* light = m_pSceneMgr->createLight("MainLight");
-	//Ogre::Vector3 dir(0.2, -0.3, -0.75);
-	//dir.normalise();
-
-	///*light->setType(Ogre::Light::LT_SPOTLIGHT);
-	//light->setDirection(dir);
-	//light->setDiffuseColour(1.0, 1.0, 1.0);
-	//light->setSpecularColour(0.8, 0.8, 0.8);
-	//light->setCastShadows(true);
-	//light->setPosition( Ogre::Vector3::ZERO + (-dir * 500000.0));
-	//light->setSpotlightInnerAngle(Ogre::Degree(2000));
-	//light->setSpotlightOuterAngle(Ogre::Degree(500000));
-	//light->setAttenuation(500000, 0.5, 0, 0);*/
-
-	//light->setType(Ogre::Light::LT_DIRECTIONAL);
-	//light->setDirection(dir);
-	//light->setPowerScale(0.2);
-	//light->setDiffuseColour(1.0, 1.0, 1.0);
-	//light->setSpecularColour(0.8, 0.8, 0.8);
-	//light->setCastShadows(true);
-	//light->setShadowNearClipDistance(1);
-	//light->setShadowFarClipDistance(30000);
-
-	m_pFlashlight = m_pSceneMgr->createLight("Flashlight");
-	m_pFlashlight->setType(Ogre::Light::LT_SPOTLIGHT);
-	m_pFlashlight->setDiffuseColour(1.0, 1.0, 1.0);
-	m_pFlashlight->setSpecularColour(0.8, 0.8, 0.8);
-	m_pFlashlight->setCastShadows(true);
-	m_pFlashlight->setSpotlightInnerAngle(Ogre::Degree(5));
-	m_pFlashlight->setSpotlightOuterAngle(Ogre::Degree(20));
-	m_pFlashlight->setSpotlightFalloff(5.0);
-	m_pFlashlight->setAttenuation(1000, 0.5, 0, 0);
-	m_pFlashlight->setDirection(Ogre::Vector3(0.0, 0.0, -1.0));
-	//m_pSceneMgr->getRootSceneNode()->createChildSceneNode("Flashlight")->attachObject(m_pFlashlight);
-	m_player->getCamera()->getRollNode()->createChildSceneNode("Flashlight")->attachObject(m_pFlashlight);
-	m_pSceneMgr->getSceneNode("Flashlight")->translate(5.0, -2.5, 0.0, Ogre::Node::TS_LOCAL);
-	//m_pSceneMgr->getRootSceneNode()->createChildSceneNode("FL")->attachObject(m_pFlashlight);
-	//m_pSceneMgr->getSceneNode("FL")->setPosition(40.0, 60.0, 0.0);
+	// Player flashlight
+	m_player->initFlashlight();
 
 	// plane
 	Ogre::Entity* e;
@@ -409,7 +345,7 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		break;
 
 	case OIS::KC_F:
-		m_pFlashlight->setVisible(!m_pFlashlight->getVisible());
+		m_player->getFlashlight()->switchState();
 		break;
 
 	case OIS::KC_Q:

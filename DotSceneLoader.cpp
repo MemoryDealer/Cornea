@@ -964,7 +964,7 @@ void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNo
 
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_ACTIVATE:
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_DEACTIVATE:
-		data->trigger.buffer = getAttrib(XMLNode, "name");
+		data->trigger.buffer = getAttrib(XMLNode, "buffer");
 
 		break;
 	}

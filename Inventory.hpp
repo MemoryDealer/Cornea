@@ -13,6 +13,9 @@ public:
 
 private:
 
+
+	// Weapons
+	unsigned		m_weaponSlots[4];
 };
 
 //================================================//

@@ -29,6 +29,7 @@ Player::~Player(void)
 {
 	if(m_pCamera) delete m_pCamera;
 	if(m_pWeapon) delete m_pWeapon;
+	if(m_pFlashlight != nullptr) delete m_pFlashlight;
 }
 
 //================================================//
@@ -56,46 +57,12 @@ void Player::action(EventManager* eventManager)
 	}
 }
 
-//void Player::action(EventManager* eventManager)
-//{
-//	// Cast a ray forward from the player and test it against the object hit
-//	Ogre::Vector3 pos = m_pCamera->getSceneNode()->getPosition();
-//	Ogre::Vector3 direction = pos + (m_pCamera->getDirection() * 5000.0);
-//
-//	btVector3 from(pos.x, pos.y, pos.z);
-//	btVector3 to(direction.x, direction.y, direction.z);
-//
-//	btCollisionWorld::ClosestRayResultCallback res(from, to);
-//	Base::getSingletonPtr()->m_btWorld->rayTest(from, to, res);
-//
-//	if(res.hasHit()){
-//		Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(res.m_collisionObject->getUserPointer());
-//		if(node){
-//			Ogre::Vector3 hit(res.m_hitPointWorld.getX(), res.m_hitPointWorld.getY(), res.m_hitPointWorld.getZ());
-//			Ogre::Real distance = pos.distance(hit);
-//
-//			// retrieve the container of dynamic objects
-//			std::vector<DynamicObject*> objects = eventManager->getDynamicObjectManager()->getObjects();
-//
-//			printf("Object hit %s\nDistance: %.2f\n", node->getName().c_str(), distance);
-//
-//			// If the object is within range, see if it's dynamic, and send an action command to it
-//			for(std::vector<DynamicObject*>::iterator itr = objects.begin();
-//				itr != objects.end();){
-//					if((*itr)->getSceneNode() == node){
-//						
-//						// The node is a dynamic object, send it the action command if it's in range
-//						if(distance <= m_actionRange){
-//							(*itr)->send(DynamicObject::ARG_ACTION);
-//							break;
-//						}
-//					}
-//
-//					++itr;
-//			}
-//		}
-//	}
-//}
+//================================================//
+
+void Player::initFlashlight(void)
+{
+	m_pFlashlight = new Flashlight(m_pSceneMgr, m_pCamera->getRollNode());
+}
 
 //================================================//
 
@@ -143,6 +110,9 @@ void Player::update(double timeSinceLastFrame)
 	// Update the player's weapon
 	if(m_nWeapon != WEAPON_NONE)
 		m_pWeapon->update(timeSinceLastFrame);
+
+	// Update player's flashlight
+	m_pFlashlight->update(timeSinceLastFrame);
 }
 
 //================================================//

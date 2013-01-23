@@ -59,8 +59,6 @@ private:
 
 	// Environment
 	EventManager*			m_pEventManager;
-	Ogre::Light*			m_pTorch;
-	Ogre::Light*			m_pFlashlight;
 	
 	// Player 
 	Player*					m_player;
@@ -73,7 +71,6 @@ private:
 
 	// HUD elements
 	MyGUI::ButtonPtr		m_button;
-	MyGUI::ImageBox			m_bootsImage;
 	
 	// Overlay
 	Ogre::Overlay*			m_overlay;

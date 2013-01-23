@@ -5,19 +5,23 @@
 
 //================================================//
 
+#include "stdafx.h"
 #include "Base.hpp"
 #include "Camera.hpp"
 
 // Game headers
+#include "Inventory.hpp"
 #include "Boots.hpp"
 #include "EventManager.hpp"
 #include "DynamicObject.hpp"
 
-// Weapon headers
+// Weapon/Item headers
 #include "Weapon.hpp"
 #include "MLP.hpp"
 #include "WarpGun.hpp"
 #include "MeleeWeapons.hpp"
+
+#include "Flashlight.hpp"
 
 //================================================//
 
@@ -29,10 +33,14 @@ public:
 
 	void action(EventManager* eventManager);
 
+	// Flashlight
+	void initFlashlight(void);
+
 	// Getter functions
 	Weapon* getWeapon(void) const;
 	const Ogre::Vector3 getPosition(void) const;
 	Sparks::Camera* getCamera(void) const;
+	Flashlight* getFlashlight(void) const;
 
 	// Setter functions
 	void setWeapon(unsigned weapon, EventManager* pEventManager);
@@ -54,9 +62,15 @@ private:
 	// Camera
 	Sparks::Camera*			m_pCamera;
 
-	Weapon*			m_pWeapon;
-	unsigned		m_nWeapon;
-	Ogre::Real		m_actionRange;
+	// Game
+	Inventory*				m_pInventory;
+
+	Flashlight*				m_pFlashlight;
+
+	Weapon*					m_pWeapon;
+	unsigned				m_nWeapon;
+	Ogre::Real				m_actionRange;
+
 };
 
 //================================================//
@@ -69,6 +83,9 @@ inline const Ogre::Vector3 Player::getPosition(void) const
 
 inline Sparks::Camera* Player::getCamera(void) const
 { return m_pCamera; }
+
+inline Flashlight* Player::getFlashlight(void) const
+{ return m_pFlashlight; }
 
 //================================================//
 
