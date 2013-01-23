@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{86088501-F154-4F4F-B8E5-57267398F107}</ProjectGuid>
+    <RootNamespace>MazeMonster</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(MYGUI_PATH)\include;$(BULLET_ROOT)\src;$(BULLET_ROOT)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MYGUI_PATH)\lib\debug;$(LibraryPath);D:\OgreSDK\Bullet\lib</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(MYGUI_PATH)\include;$(BULLET_ROOT)\src;$(BULLET_ROOT)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MYGUI_PATH)\lib\release;$(LibraryPath);D:\OgreSDK\Bullet\lib</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(OGRE_SDK)\include;$(OGRE_SDK)\include\OGRE;$(OGRE_SDK)\include\OIS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OGRE_SDK)\lib\debug;$(OGRE_SDK)\lib\release;$(OGRE_SDK)\boost\lib;$(OGRE_SDK)\lib\debug\opt;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OgreMain_d.lib;OgreTerrain_d.lib;OIS_d.lib;MyGUIEngine_d.lib;MyGUI.OgrePlatform_d.lib;BulletDynamics_debug.lib;BulletCollision_debug.lib;ConvexDecomposition_debug.lib;LinearMath_debug.lib;SkyX.lib;fmodexL_vc.lib;Plugin_OctreeSceneManager_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_SDK)\Bin\$(Configuration)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(OGRE_SDK)\include;$(OGRE_SDK)\include\OGRE;$(OGRE_SDK)\include\OIS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(OGRE_SDK)\lib\debug;$(OGRE_SDK)\lib\release;$(OGRE_SDK)\boost\lib;$(OGRE_SDK)\lib\debug\opt;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OgreMain.lib;OgreTerrain.lib;OIS.lib;MyGUIEngine.lib;MyGUI.OgrePlatform.lib;BulletDynamics.lib;BulletCollision.lib;ConvexDecomposition.lib;LinearMath.lib;SkyX.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_SDK)\Bin\$(Configuration)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="App.hpp" />
+    <ClInclude Include="AppState.hpp" />
+    <ClInclude Include="AppStateManager.hpp" />
+    <ClInclude Include="Base.hpp" />
+    <ClInclude Include="Boots.hpp" />
+    <ClInclude Include="BtOgre.hpp" />
+    <ClInclude Include="BtOgreExtras.h" />
+    <ClInclude Include="BtOgreGP.h" />
+    <ClInclude Include="BtOgrePG.h" />
+    <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="Compositor.hpp" />
+    <ClInclude Include="DotSceneLoader.hpp" />
+    <ClInclude Include="DynamicObjectManager.hpp" />
+    <ClInclude Include="Effect.hpp" />
+    <ClInclude Include="EffectManager.hpp" />
+    <ClInclude Include="EventManager.hpp" />
+    <ClInclude Include="GameState.hpp" />
+    <ClInclude Include="Inventory.hpp" />
+    <ClInclude Include="MeleeWeapons.hpp" />
+    <ClInclude Include="MenuState.hpp" />
+    <ClInclude Include="MLP.hpp" />
+    <ClInclude Include="NPC-Robot.hpp" />
+    <ClInclude Include="NPC.hpp" />
+    <ClInclude Include="NPCManager.hpp" />
+    <ClInclude Include="Player.hpp" />
+    <ClInclude Include="Profile.hpp" />
+    <ClInclude Include="Projectile.hpp" />
+    <ClInclude Include="rapidxml.hpp" />
+    <ClInclude Include="Settings.hpp" />
+    <ClInclude Include="SkyX\AtmosphereManager.h" />
+    <ClInclude Include="SkyX\BasicController.h" />
+    <ClInclude Include="SkyX\CloudsManager.h" />
+    <ClInclude Include="SkyX\ColorGradient.h" />
+    <ClInclude Include="SkyX\Controller.h" />
+    <ClInclude Include="SkyX\GPUManager.h" />
+    <ClInclude Include="SkyX\MeshManager.h" />
+    <ClInclude Include="SkyX\MoonManager.h" />
+    <ClInclude Include="SkyX\Prerequisites.h" />
+    <ClInclude Include="SkyX\SkyX.h" />
+    <ClInclude Include="SkyX\VCloudsManager.h" />
+    <ClInclude Include="SkyX\VClouds\DataManager.h" />
+    <ClInclude Include="SkyX\VClouds\Ellipsoid.h" />
+    <ClInclude Include="SkyX\VClouds\FastFakeRandom.h" />
+    <ClInclude Include="SkyX\VClouds\GeometryBlock.h" />
+    <ClInclude Include="SkyX\VClouds\GeometryManager.h" />
+    <ClInclude Include="SkyX\VClouds\Lightning.h" />
+    <ClInclude Include="SkyX\VClouds\LightningManager.h" />
+    <ClInclude Include="SkyX\VClouds\VClouds.h" />
+    <ClInclude Include="Sound.hpp" />
+    <ClInclude Include="Sparks.hpp" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Trigger.hpp" />
+    <ClInclude Include="TriggerCode.hpp" />
+    <ClInclude Include="WarpGun.hpp" />
+    <ClInclude Include="Weapon.hpp" />
+    <ClInclude Include="DynamicObject.hpp" />
+    <ClInclude Include="WeaponEffects.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="AppStateManager.cpp" />
+    <ClCompile Include="Base.cpp" />
+    <ClCompile Include="Boots.cpp" />
+    <ClCompile Include="BtOgre.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Compositor.cpp" />
+    <ClCompile Include="DotSceneLoader.cpp" />
+    <ClCompile Include="DynamicObject.cpp" />
+    <ClCompile Include="DynamicObjectManager.cpp" />
+    <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="EffectManager.cpp" />
+    <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MeleeWeapons.cpp" />
+    <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="MLP.cpp" />
+    <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="NPCManager.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Profile.cpp" />
+    <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Sparks.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Trigger.cpp" />
+    <ClCompile Include="WarpGun.cpp" />
+    <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="WeaponEffects.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="blender-notes.txt" />
+    <None Include="bug-log.txt" />
+    <None Include="work-log.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

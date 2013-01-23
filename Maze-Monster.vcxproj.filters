@@ -1,0 +1,371 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\SkyX">
+      <UniqueIdentifier>{e0a9ef64-b4de-4b99-ad39-e66cba0b3962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SkyX\VClouds">
+      <UniqueIdentifier>{95b4e371-67db-47c6-88ad-12937cca4a6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{f85a534b-310b-488d-b278-552e392442a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States">
+      <UniqueIdentifier>{66842986-2886-4561-b82f-9378219769f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Sparks">
+      <UniqueIdentifier>{1cbfeb10-7fc7-44b5-bcf1-ddecb7b11bbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Sparks">
+      <UniqueIdentifier>{166de89f-558b-4d10-bb45-430ad8114ebd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{e99b216d-fa23-421c-b716-155b9ed73f92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game">
+      <UniqueIdentifier>{a3fe3d5f-1a74-4f17-b2f8-a6549e91388e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Weapons">
+      <UniqueIdentifier>{54612a8b-eaa0-44a5-bb57-443bcc7f5cbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Weapons">
+      <UniqueIdentifier>{bb83544c-546f-4e57-98cc-8b484133f430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\NPC">
+      <UniqueIdentifier>{269b9884-6323-402c-b247-66828e20d25d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\NPC">
+      <UniqueIdentifier>{3e51324d-2d14-4740-b0e4-c6d459c5bc14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\WorldObjects">
+      <UniqueIdentifier>{14f5deaf-d475-489b-81f4-7e8a5205575e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\WorldObjects">
+      <UniqueIdentifier>{28aa6e0f-82e5-4663-94cb-ed5f44f7abfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Bullet">
+      <UniqueIdentifier>{cf4e1e8d-031e-48e9-9be1-00c5e240f40b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bullet">
+      <UniqueIdentifier>{81bd96e9-0d21-40e3-b36e-3e300df3ecbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Effects">
+      <UniqueIdentifier>{d189ca56-33f4-494a-8d88-4bfce8a1c13d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Effects">
+      <UniqueIdentifier>{92a5d2ec-6ca3-4534-a9b0-c24cce8b75cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Sound">
+      <UniqueIdentifier>{9355473e-f2c6-4ab7-bd1f-e13aa0413b72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Sound">
+      <UniqueIdentifier>{d632913b-d35f-4251-8804-56f495e10325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\Player">
+      <UniqueIdentifier>{aa8f1ade-f26e-41f6-9334-3e53912e78a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Player">
+      <UniqueIdentifier>{9e5b3e69-ba39-4972-95dc-96694895b5a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game\WorldObjects\Trigger">
+      <UniqueIdentifier>{72c3dfff-5bdf-45ac-8dbe-84cf61bb35c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\WorldObjects\Trigger">
+      <UniqueIdentifier>{7d44c4e9-39d6-4462-8f2e-1cc307de9088}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppStateManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Base.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DotSceneLoader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rapidxml.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\AtmosphereManager.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\BasicController.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\CloudsManager.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\ColorGradient.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\Controller.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\GPUManager.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\MeshManager.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\MoonManager.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\Prerequisites.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\SkyX.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VCloudsManager.h">
+      <Filter>Header Files\SkyX</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VClouds\DataManager.h">
+      <Filter>Header Files\SkyX\VClouds</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VClouds\Ellipsoid.h">
+      <Filter>Header Files\SkyX\VClouds</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VClouds\FastFakeRandom.h">
+      <Filter>Header Files\SkyX\VClouds</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VClouds\GeometryBlock.h">
+      <Filter>Header Files\SkyX\VClouds</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VClouds\GeometryManager.h">
+      <Filter>Header Files\SkyX\VClouds</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VClouds\Lightning.h">
+      <Filter>Header Files\SkyX\VClouds</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VClouds\LightningManager.h">
+      <Filter>Header Files\SkyX\VClouds</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyX\VClouds\VClouds.h">
+      <Filter>Header Files\SkyX\VClouds</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuState.hpp">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Sparks.hpp">
+      <Filter>Header Files\Sparks</Filter>
+    </ClInclude>
+    <ClInclude Include="Compositor.hpp">
+      <Filter>Header Files\Sparks</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.hpp">
+      <Filter>Header Files\Sparks</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.hpp">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Boots.hpp">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.hpp">
+      <Filter>Header Files\Game\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="MLP.hpp">
+      <Filter>Header Files\Game\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.hpp">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="NPC.hpp">
+      <Filter>Header Files\Game\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicObjectManager.hpp">
+      <Filter>Header Files\Game\WorldObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicObject.hpp">
+      <Filter>Header Files\Game\WorldObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="BtOgreGP.h">
+      <Filter>Header Files\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="BtOgrePG.h">
+      <Filter>Header Files\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="BtOgreExtras.h">
+      <Filter>Header Files\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="BtOgre.hpp">
+      <Filter>Header Files\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="WarpGun.hpp">
+      <Filter>Header Files\Game\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="NPCManager.hpp">
+      <Filter>Header Files\Game\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.hpp">
+      <Filter>Header Files\Game\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectManager.hpp">
+      <Filter>Header Files\Game\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponEffects.hpp">
+      <Filter>Header Files\Game\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.hpp">
+      <Filter>Header Files\Game\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="NPC-Robot.hpp">
+      <Filter>Header Files\Game\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.hpp">
+      <Filter>Header Files\Sparks</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>Header Files\Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Profile.hpp">
+      <Filter>Header Files\Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.hpp">
+      <Filter>Header Files\Game\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="MeleeWeapons.hpp">
+      <Filter>Header Files\Game\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="Projectile.hpp">
+      <Filter>Header Files\Game\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="Trigger.hpp">
+      <Filter>Header Files\Game\WorldObjects\Trigger</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerCode.hpp">
+      <Filter>Header Files\Game\WorldObjects\Trigger</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AppStateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DotSceneLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Compositor.cpp">
+      <Filter>Source Files\Sparks</Filter>
+    </ClCompile>
+    <ClCompile Include="Sparks.cpp">
+      <Filter>Source Files\Sparks</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Sparks</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Boots.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Source Files\Game\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="MLP.cpp">
+      <Filter>Source Files\Game\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="NPC.cpp">
+      <Filter>Source Files\Game\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicObject.cpp">
+      <Filter>Source Files\Game\WorldObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicObjectManager.cpp">
+      <Filter>Source Files\Game\WorldObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="BtOgre.cpp">
+      <Filter>Source Files\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="WarpGun.cpp">
+      <Filter>Source Files\Game\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="NPCManager.cpp">
+      <Filter>Source Files\Game\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>Source Files\Game\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectManager.cpp">
+      <Filter>Source Files\Game\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponEffects.cpp">
+      <Filter>Source Files\Game\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>Source Files\Game\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Settings.cpp">
+      <Filter>Source Files\Sparks</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Profile.cpp">
+      <Filter>Source Files\Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Source Files\Game\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="MeleeWeapons.cpp">
+      <Filter>Source Files\Game\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>Source Files\Game\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="Trigger.cpp">
+      <Filter>Source Files\Game\WorldObjects\Trigger</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="work-log.txt">
+      <Filter>Header Files\Sparks</Filter>
+    </None>
+    <None Include="bug-log.txt">
+      <Filter>Header Files\Sparks</Filter>
+    </None>
+    <None Include="blender-notes.txt">
+      <Filter>Header Files\Sparks</Filter>
+    </None>
+  </ItemGroup>
+</Project>

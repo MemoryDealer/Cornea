@@ -1,0 +1,209 @@
+﻿Build started 1/21/2013 2:17:57 PM.
+     1>Project "C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Maze-Monster\Maze-Monster.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\Maze-Monster.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ID:\OgreSDK\include /ID:\OgreSDK\include\OGRE /ID:\OgreSDK\include\OIS /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt App.cpp BtOgre.cpp DynamicObjectManager.cpp EventManager.cpp GameState.cpp NPC.cpp NPCManager.cpp Player.cpp Trigger.cpp main.cpp
+         App.cpp
+     1>d:\ogresdk\include\ogre\ogreutfstring.h(206): warning C4275: non dll-interface class 'std::runtime_error' used as base for dll-interface class 'Ogre::UTFString::invalid_data'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdexcept(158) : see declaration of 'std::runtime_error'
+                 d:\ogresdk\include\ogre\ogreutfstring.h(206) : see declaration of 'Ogre::UTFString::invalid_data'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(36): warning C4275: non dll-interface class 'SkyX::Controller' used as base for dll-interface class 'SkyX::BasicController'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\controller.h(34) : see declaration of 'SkyX::Controller'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(35) : see declaration of 'SkyX::BasicController'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\app.cpp(25): warning C4005: '_DEBUG' : macro redefinition
+                 command-line arguments :  see previous definition of '_DEBUG'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\app.cpp(40): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(249) : see declaration of 'freopen'
+         Generating Code...
+         Compiling...
+         main.cpp
+     1>d:\ogresdk\include\ogre\ogreutfstring.h(206): warning C4275: non dll-interface class 'std::runtime_error' used as base for dll-interface class 'Ogre::UTFString::invalid_data'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdexcept(158) : see declaration of 'std::runtime_error'
+                 d:\ogresdk\include\ogre\ogreutfstring.h(206) : see declaration of 'Ogre::UTFString::invalid_data'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(36): warning C4275: non dll-interface class 'SkyX::Controller' used as base for dll-interface class 'SkyX::BasicController'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\controller.h(34) : see declaration of 'SkyX::Controller'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(35) : see declaration of 'SkyX::BasicController'
+         Trigger.cpp
+     1>d:\ogresdk\include\ogre\ogreutfstring.h(206): warning C4275: non dll-interface class 'std::runtime_error' used as base for dll-interface class 'Ogre::UTFString::invalid_data'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdexcept(158) : see declaration of 'std::runtime_error'
+                 d:\ogresdk\include\ogre\ogreutfstring.h(206) : see declaration of 'Ogre::UTFString::invalid_data'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(36): warning C4275: non dll-interface class 'SkyX::Controller' used as base for dll-interface class 'SkyX::BasicController'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\controller.h(34) : see declaration of 'SkyX::Controller'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(35) : see declaration of 'SkyX::BasicController'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\trigger.cpp(53): warning C4482: nonstandard extension used: enum 'TRIGGER_ACTION_CODE' used in qualified name
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\trigger.cpp(57): warning C4482: nonstandard extension used: enum 'TRIGGER_ACTION_CODE' used in qualified name
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\trigger.cpp(61): warning C4482: nonstandard extension used: enum 'TRIGGER_ACTION_CODE' used in qualified name
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\trigger.cpp(68): warning C4482: nonstandard extension used: enum 'TRIGGER_ACTION_CODE' used in qualified name
+         Player.cpp
+     1>d:\ogresdk\include\ogre\ogreutfstring.h(206): warning C4275: non dll-interface class 'std::runtime_error' used as base for dll-interface class 'Ogre::UTFString::invalid_data'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdexcept(158) : see declaration of 'std::runtime_error'
+                 d:\ogresdk\include\ogre\ogreutfstring.h(206) : see declaration of 'Ogre::UTFString::invalid_data'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(36): warning C4275: non dll-interface class 'SkyX::Controller' used as base for dll-interface class 'SkyX::BasicController'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\controller.h(34) : see declaration of 'SkyX::Controller'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(35) : see declaration of 'SkyX::BasicController'
+         GameState.cpp
+     1>d:\ogresdk\include\ogre\ogreutfstring.h(206): warning C4275: non dll-interface class 'std::runtime_error' used as base for dll-interface class 'Ogre::UTFString::invalid_data'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdexcept(158) : see declaration of 'std::runtime_error'
+                 d:\ogresdk\include\ogre\ogreutfstring.h(206) : see declaration of 'Ogre::UTFString::invalid_data'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(36): warning C4275: non dll-interface class 'SkyX::Controller' used as base for dll-interface class 'SkyX::BasicController'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\controller.h(34) : see declaration of 'SkyX::Controller'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(35) : see declaration of 'SkyX::BasicController'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(14): warning C4305: 'argument' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(189): warning C4305: 'argument' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(189): warning C4305: 'argument' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(189): warning C4305: 'argument' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(251): warning C4305: 'argument' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(251): warning C4305: 'argument' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(252): warning C4305: 'argument' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(252): warning C4305: 'argument' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(258): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(258): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(258): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(371): warning C4996: 'MyGUI::MemberObsolete<MyGUI::Widget>::isVisible':  is deprecated, use : bool Widget::getVisible() const
+                 d:\mygui\include\mygui_backwardcompatibility.h(382) : see declaration of 'MyGUI::MemberObsolete<MyGUI::Widget>::isVisible'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(427): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(427): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(427): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(431): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(431): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(431): warning C4305: 'argument' : truncation from 'double' to 'float'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(453): warning C4305: '-=' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(463): warning C4305: '+=' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(473): warning C4305: '+=' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(483): warning C4305: '-=' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(493): warning C4305: '+=' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(503): warning C4305: '-=' : truncation from 'double' to 'Ogre::Real'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(686): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : see declaration of 'sprintf'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\gamestate.cpp(698): warning C4101: 'strUtil' : unreferenced local variable
+         EventManager.cpp
+     1>d:\ogresdk\include\ogre\ogreutfstring.h(206): warning C4275: non dll-interface class 'std::runtime_error' used as base for dll-interface class 'Ogre::UTFString::invalid_data'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdexcept(158) : see declaration of 'std::runtime_error'
+                 d:\ogresdk\include\ogre\ogreutfstring.h(206) : see declaration of 'Ogre::UTFString::invalid_data'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(36): warning C4275: non dll-interface class 'SkyX::Controller' used as base for dll-interface class 'SkyX::BasicController'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\controller.h(34) : see declaration of 'SkyX::Controller'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(35) : see declaration of 'SkyX::BasicController'
+         DynamicObjectManager.cpp
+     1>d:\ogresdk\include\ogre\ogreutfstring.h(206): warning C4275: non dll-interface class 'std::runtime_error' used as base for dll-interface class 'Ogre::UTFString::invalid_data'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdexcept(158) : see declaration of 'std::runtime_error'
+                 d:\ogresdk\include\ogre\ogreutfstring.h(206) : see declaration of 'Ogre::UTFString::invalid_data'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(36): warning C4275: non dll-interface class 'SkyX::Controller' used as base for dll-interface class 'SkyX::BasicController'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\controller.h(34) : see declaration of 'SkyX::Controller'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(35) : see declaration of 'SkyX::BasicController'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\dynamicobjectmanager.cpp(36): warning C4101: 'strUtil' : unreferenced local variable
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\dynamicobjectmanager.cpp(203): warning C4482: nonstandard extension used: enum 'TRIGGER_ACTION_CODE' used in qualified name
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\dynamicobjectmanager.cpp(207): warning C4482: nonstandard extension used: enum 'TRIGGER_ACTION_CODE' used in qualified name
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\dynamicobjectmanager.cpp(208): warning C4482: nonstandard extension used: enum 'TRIGGER_ACTION_CODE' used in qualified name
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\dynamicobjectmanager.cpp(218): warning C4101: 'strUtil' : unreferenced local variable
+         BtOgre.cpp
+     1>d:\ogresdk\include\ogre\ogreutfstring.h(206): warning C4275: non dll-interface class 'std::runtime_error' used as base for dll-interface class 'Ogre::UTFString::invalid_data'
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdexcept(158) : see declaration of 'std::runtime_error'
+                 d:\ogresdk\include\ogre\ogreutfstring.h(206) : see declaration of 'Ogre::UTFString::invalid_data'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(36): warning C4275: non dll-interface class 'SkyX::Controller' used as base for dll-interface class 'SkyX::BasicController'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\controller.h(34) : see declaration of 'SkyX::Controller'
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\skyx\basiccontroller.h(35) : see declaration of 'SkyX::BasicController'
+     1>c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\btogre.cpp(45): warning C4101: 'strUtil' : unreferenced local variable
+     1>c:\program files (x86)\microsoft visual studio 10.0\vc\include\utility(163): warning C4244: 'initializing' : conversion from 'unsigned short' to 'const unsigned char', possible loss of data
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\utility(255) : see reference to function template instantiation 'std::_Pair_base<_Ty1,_Ty2>::_Pair_base<_Ty,std::vector<Ogre::Vector3>>(_Other1 &&,_Other2 &&)' being compiled
+                 with
+                 [
+                     _Ty1=const unsigned char,
+                     _Ty2=std::vector<Ogre::Vector3> *,
+                     _Ty=unsigned short,
+                     _Other1=unsigned short,
+                     _Other2=BtOgre::Vector3Array *
+                 ]
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\xmemory(208) : see reference to function template instantiation 'std::pair<_Ty1,_Ty2>::pair<unsigned short,BtOgre::Vector3Array*>(std::pair<unsigned short,_Ty2> &&)' being compiled
+                 with
+                 [
+                     _Ty1=const unsigned char,
+                     _Ty2=std::vector<Ogre::Vector3> *
+                 ]
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\xmemory(280) : see reference to function template instantiation 'void std::allocator<_Ty>::construct<std::pair<_Ty1,_Ty2>>(std::pair<const _Kty,_Ty2> ,_Other &&)' being compiled
+                 with
+                 [
+                     _Ty=std::pair<const unsigned char,std::vector<Ogre::Vector3> *>,
+                     _Ty1=unsigned short,
+                     _Ty2=BtOgre::Vector3Array *,
+                     _Kty=unsigned char,
+                     _Other=std::pair<unsigned short,BtOgre::Vector3Array *>
+                 ]
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\xtree(592) : see reference to function template instantiation 'void std::_Cons_val<std::allocator<_Ty>,_Ty,std::pair<_Ty1,_Ty2>>(_Alloc &,std::pair<const _Kty,_Ty2> *,std::pair<_Ty1,_Ty2> &&)' being compiled
+                 with
+                 [
+                     _Ty=std::pair<const unsigned char,std::vector<Ogre::Vector3> *>,
+                     _Ty1=unsigned short,
+                     _Ty2=BtOgre::Vector3Array *,
+                     _Alloc=std::allocator<std::pair<const unsigned char,std::vector<Ogre::Vector3> *>>,
+                     _Kty=unsigned char
+                 ]
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\xtree(755) : see reference to function template instantiation 'std::_Tree_nod<_Traits>::_Node *std::_Tree_val<_Traits>::_Buynode<_Ty>(_Valty &&)' being compiled
+                 with
+                 [
+                     _Traits=std::_Tmap_traits<unsigned char,std::vector<Ogre::Vector3> *,std::less<Ogre::uchar>,std::allocator<std::pair<const unsigned char,std::vector<Ogre::Vector3> *>>,false>,
+                     _Ty=std::pair<unsigned short,BtOgre::Vector3Array *>,
+                     _Valty=std::pair<unsigned short,BtOgre::Vector3Array *>
+                 ]
+                 c:\users\sparky\documents\visual studio 2010\projects\ogre3d\maze-monster\maze-monster\btogre.cpp(315) : see reference to function template instantiation 'std::pair<_Ty1,_Ty2> std::_Tree<_Traits>::insert<std::pair<unsigned short,BtOgre::Vector3Array *>>(_Valty &&)' being compiled
+                 with
+                 [
+                     _Ty1=std::_Tree_iterator<std::_Tree_val<std::_Tmap_traits<unsigned char,std::vector<Ogre::Vector3> *,std::less<Ogre::uchar>,std::allocator<std::pair<const unsigned char,std::vector<Ogre::Vector3> *>>,false>>>,
+                     _Ty2=bool,
+                     _Traits=std::_Tmap_traits<unsigned char,std::vector<Ogre::Vector3> *,std::less<Ogre::uchar>,std::allocator<std::pair<const unsigned char,std::vector<Ogre::Vector3> *>>,false>,
+                     _Valty=std::pair<unsigned short,BtOgre::Vector3Array *>
+                 ]
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         NPCManager.cpp
+         NPC.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Debug\Maze-Monster.exe" /NOLOGO /LIBPATH:D:\OgreSDK\lib\debug /LIBPATH:D:\OgreSDK\lib\release /LIBPATH:D:\OgreSDK\boost\lib /LIBPATH:D:\OgreSDK\lib\debug\opt OgreMain_d.lib OgreTerrain_d.lib OIS_d.lib MyGUIEngine_d.lib MyGUI.OgrePlatform_d.lib BulletDynamics_debug.lib BulletCollision_debug.lib ConvexDecomposition_debug.lib LinearMath_debug.lib SkyX.lib fmodexL_vc.lib Plugin_OctreeSceneManager_d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Maze-Monster.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Debug\Maze-Monster.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Debug\Maze-Monster.lib" /MACHINE:X86 Debug\App.obj
+         Debug\AppStateManager.obj
+         Debug\Base.obj
+         Debug\Boots.obj
+         Debug\BtOgre.obj
+         Debug\Camera.obj
+         Debug\Compositor.obj
+         Debug\DotSceneLoader.obj
+         Debug\DynamicObject.obj
+         Debug\DynamicObjectManager.obj
+         Debug\Effect.obj
+         Debug\EffectManager.obj
+         Debug\EventManager.obj
+         Debug\GameState.obj
+         Debug\Inventory.obj
+         Debug\main.obj
+         Debug\MeleeWeapons.obj
+         Debug\MenuState.obj
+         Debug\MLP.obj
+         Debug\NPC.obj
+         Debug\NPCManager.obj
+         Debug\Player.obj
+         Debug\Profile.obj
+         Debug\Projectile.obj
+         Debug\Settings.obj
+         Debug\Sound.obj
+         Debug\Sparks.obj
+         Debug\stdafx.obj
+         Debug\Trigger.obj
+         Debug\WarpGun.obj
+         Debug\Weapon.obj
+         Debug\WeaponEffects.obj
+         LINK : C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Debug\Maze-Monster.exe not found or not built by the last incremental link; performing full link
+     1>LINK : warning LNK4098: defaultlib 'LIBCMTD' conflicts with use of other libs; use /NODEFAULTLIB:library
+         Maze-Monster.vcxproj -> C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Debug\Maze-Monster.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Debug\Maze-Monster.exe;#1" /manifest "Debug\Maze-Monster.exe.intermediate.manifest"
+       PostBuildEvent:
+         copy "C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Debug\\Maze-Monster.exe" "D:\OgreSDK\Bin\Debug"
+         :VCEnd
+                 1 file(s) copied.
+       FinalizeBuildStatus:
+         Deleting file "Debug\Maze-Monster.unsuccessfulbuild".
+         Touching "Debug\Maze-Monster.lastbuildstate".
+     1>Done Building Project "C:\Users\Sparky\documents\visual studio 2010\Projects\Ogre3D\Maze-Monster\Maze-Monster\Maze-Monster.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:01:15.79
