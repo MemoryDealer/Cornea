@@ -72,7 +72,7 @@ unsigned DynamicObject::send(unsigned arg)
 
 	case ARG_DEACTIVATE:
 		m_state = STATE_IDLE;
-		// branch test 2
+		// branch test 3
 		break;
 	}
 
