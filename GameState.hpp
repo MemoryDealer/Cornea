@@ -63,9 +63,6 @@ private:
 	// Player 
 	Player*					m_player;
 
-	// NPCs
-	NPC*					m_npc; // for testing
-
 	// Physics
 	BtOgre::DebugDrawer*	m_debugDrawer;
 
