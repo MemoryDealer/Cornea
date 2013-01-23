@@ -72,7 +72,6 @@ unsigned DynamicObject::send(unsigned arg)
 
 	case ARG_DEACTIVATE:
 		m_state = STATE_IDLE;
-		// test
 		break;
 	}
 
