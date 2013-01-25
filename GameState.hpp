@@ -13,6 +13,7 @@
 
 #include "EventManager.hpp"
 #include "Boots.hpp"
+#include "Profile.hpp"
 #include "Player.hpp"
 #include "NPC.hpp"
 

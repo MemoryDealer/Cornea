@@ -71,6 +71,7 @@
 // STL headers etc.
 #include <map>
 #include <cassert>
+#include <fstream>
 #include <iostream>
 #include <string>
 

@@ -131,12 +131,17 @@ void MenuState::createGUI(void)
 	int buttonWidth = 300, buttonHeight = 26;
 	int screenWidth = Base::getSingletonPtr()->m_pViewport->getActualWidth();
 	int screenHeight = Base::getSingletonPtr()->m_pViewport->getActualHeight();
+
 	m_GUI_ButtonPtr_Start = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::Button>("Button", 
 		(screenWidth / 2) - (buttonWidth / 2), (screenHeight / 2) - (buttonHeight / 2), buttonWidth, buttonHeight, MyGUI::Align::Default, "Main");
 	m_GUI_ButtonPtr_Start->setCaption("Start Game");
 	m_GUI_ButtonPtr_Start->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::GUI_startButton);
 
-	// set the GUI to visible
+	m_GUI_EditPtr_Name = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::EditBox>("EditBox", (screenWidth / 2) - (buttonWidth / 2), 
+		(screenHeight / 2) - (buttonHeight / 2) + 100, buttonWidth, buttonHeight, MyGUI::Align::Default, "Main2");
+	m_GUI_EditPtr_Name->setCaption("Enter Name Here");
+
+	// set the pointer to visible
 	MyGUI::PointerManager::getInstancePtr()->setVisible(true);
 }
 
@@ -145,6 +150,7 @@ void MenuState::createGUI(void)
 void MenuState::destroyGUI(void)
 {
 	m_GUI_ButtonPtr_Start->detachFromLayer();
+	m_GUI_EditPtr_Name->detachFromLayer();
 
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(nullptr);
 }
@@ -206,9 +212,10 @@ bool MenuState::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 
 void MenuState::GUI_startButton(MyGUI::WidgetPtr _sender)
 {
-	this->pushAppState(findByName("GameState"));
+	// Load player profile...create new one for now
+	Profile::getSingletonPtr()->create("TestProfile");
 
-	// load player profile...
+	this->pushAppState(findByName("GameState"));
 }
 
 //================================================//

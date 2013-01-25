@@ -79,6 +79,12 @@ public:
 		STATE_RELOADING
 	};
 
+	// Weapon definitions
+	enum{
+		NONE = 0,
+		TEST_GUN,
+		TEST_SWORD
+	};
 
 protected:
 	bool rayAttack(Sparks::Camera* camera);
@@ -178,6 +184,26 @@ inline void Weapon::setProjectileManager(ProjectileManager* mgr)
 inline void Weapon::setNPCManager(NPCManager* mgr)
 { m_pNPCManager = mgr; }
 
+//================================================//
+//================================================//
+
+class WeaponNone : public Weapon
+{
+public:
+	WeaponNone(Ogre::SceneManager* mgr);
+
+	void init(Ogre::SceneNode* node);
+	void createAnimations(void);
+	void attack(Sparks::Camera* camera){}
+	void attackAlt(Sparks::Camera* camera){}
+
+	void update(double timeSinceLastFrame);
+
+private:
+
+};
+
+//================================================//
 //================================================//
 
 #endif

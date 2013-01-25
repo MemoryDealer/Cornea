@@ -16,8 +16,8 @@ Player::Player(Ogre::SceneManager* mgr)
 	Base::getSingletonPtr()->m_pViewport->setCamera(m_pCamera->getOgreCamera());
 
 	// Set weapon to NULL for now
-	m_nWeapon = WEAPON_NONE;
-	m_pWeapon = 0;
+	m_nWeapon = Weapon::NONE;
+	m_pWeapon = nullptr;
 
 	// How close a player should be to trigger an action
 	m_actionRange = 45.0;
@@ -28,7 +28,7 @@ Player::Player(Ogre::SceneManager* mgr)
 Player::~Player(void)
 {
 	if(m_pCamera) delete m_pCamera;
-	if(m_pWeapon) delete m_pWeapon;
+	if(m_pWeapon != nullptr) delete m_pWeapon;
 	if(m_pFlashlight != nullptr) delete m_pFlashlight;
 }
 
@@ -68,27 +68,30 @@ void Player::initFlashlight(void)
 
 void Player::setWeapon(unsigned weapon, EventManager* pEventManager)
 {
-	if(m_nWeapon == weapon){
-		return;
+	if(weapon != Weapon::NONE){
+		if(m_nWeapon == weapon){
+			return;
+		}
 	}
 
 	// Set new weapon and delete the old class
 	m_nWeapon = weapon;
-	if(m_pWeapon != NULL)
+	if(m_pWeapon != nullptr)
 		delete m_pWeapon;
 
 	// Load the new derived class for the weapon
 	switch(m_nWeapon){
-	case WEAPON_NONE:
+	case Weapon::NONE:
 	default:
-		return;
-
-	case WEAPON_DEFAULT:
-		m_pWeapon = new Sword(m_pSceneMgr);
+		m_pWeapon = new WeaponNone(m_pSceneMgr);
 		break;
 
-	case WEAPON_WARPGUN:
+	case Weapon::TEST_GUN:
 		m_pWeapon = new MLP(m_pSceneMgr);
+		break;
+
+	case Weapon::TEST_SWORD:
+		m_pWeapon = new Sword(m_pSceneMgr);
 		break;
 	}
 
@@ -108,8 +111,7 @@ void Player::update(double timeSinceLastFrame)
 	m_pCamera->update(timeSinceLastFrame);
 
 	// Update the player's weapon
-	if(m_nWeapon != WEAPON_NONE)
-		m_pWeapon->update(timeSinceLastFrame);
+	m_pWeapon->update(timeSinceLastFrame);
 
 	// Update player's flashlight
 	m_pFlashlight->update(timeSinceLastFrame);

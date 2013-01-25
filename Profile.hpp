@@ -22,41 +22,48 @@ public:
 	Profile(void);
 	~Profile(void);
 
-	bool load(Ogre::String filename);
+	bool create(Ogre::String name);
+	bool load(Ogre::String name);
 	bool save(void);
 
 	// Getter functions
 	const int getDifficulty(void) const;
+	Inventory* getInventory(void) const;
 
 	// --- //
 
 	enum DIFFICULTY{
 		CASUAL = 0,
-		CHALLENGING,
+		NORMAL,
 		INSANE,
 		RIDICULOUS
 	};
 
 private:
 	// All sensitive data needs to be private and less hackable
-	struct game_t{
-		int		difficulty;
-	} game;
 
 	typedef struct{
 		Ogre::String	magic;
 
 		Ogre::String	name;
-		Inventory		inventory;
-	} BINARY_FILE, *PBINARY_FILE;
 
-	BINARY_FILE			data;
+		int				difficulty;
+
+		// In-game data
+		Inventory*		pInventory;
+		
+	} PROFILE_DATA;
+
+	PROFILE_DATA*		m_pData;
 };
 
 //================================================//
 
 inline const int Profile::getDifficulty(void) const
-{ return game.difficulty; }
+{ return m_pData->difficulty; }
+
+inline Inventory* Profile::getInventory(void) const
+{ return m_pData->pInventory; }
 
 //================================================//
 

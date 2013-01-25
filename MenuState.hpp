@@ -6,6 +6,7 @@
 //================================================//
 
 #include "AppState.hpp"
+#include "Profile.hpp"
 
 //================================================//
 
@@ -46,7 +47,10 @@ private:
 	Ogre::AnimationState*		m_animState;
 
 	// GUI
+	MyGUI::WidgetPtr			m_GUI_Root_Node;
 	MyGUI::ButtonPtr			m_GUI_ButtonPtr_Start;
+	MyGUI::EditPtr				m_GUI_EditPtr_Name;
+
 
 	// FMOD
 	FMOD::Sound*				m_music;

@@ -30,10 +30,12 @@ Weapon::Weapon(Ogre::SceneManager* mgr)
 
 Weapon::~Weapon(void)
 {
-	m_pEntity->detachFromParent();
-	m_pSceneMgr->destroyEntity(m_pEntity);
+	if(m_isLoaded){
+		m_pEntity->detachFromParent();
+		m_pSceneMgr->destroyEntity(m_pEntity);
 
-	m_pSceneMgr->destroySceneNode(m_pSceneNode);
+		m_pSceneMgr->destroySceneNode(m_pSceneNode);
+	}
 
 	delete m_pSoundAttack;
 }
@@ -277,8 +279,37 @@ void Weapon::update(double timeSinceLastFrame)
 }
 
 //================================================//
+//================================================//
 
-// *** //
+WeaponNone::WeaponNone(Ogre::SceneManager* mgr) : Weapon(mgr)
+{
+	m_isLoaded = false;
+}
+
+//================================================//
+
+void WeaponNone::init(Ogre::SceneNode* node)
+{
+	
+}
+
+//================================================//
+
+void WeaponNone::createAnimations(void)
+{
+
+}
+
+//================================================//
+
+void WeaponNone::update(double timeSinceLastFrame)
+{
+	
+}
+
+//================================================//
+
+
 
 //================================================//
 

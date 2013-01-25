@@ -17,6 +17,9 @@ public:
 
 	void switchState(void);
 
+	// Getter functions
+	Ogre::Light* getLight(void) const;
+
 	void update(double timeSinceLastFrame);
 
 private:
@@ -25,6 +28,7 @@ private:
 	Ogre::Light*			m_pLight;
 
 	Ogre::Real				m_attenuationRange;
+	Ogre::Degree			m_innerAngle;
 	Ogre::Degree			m_outerAngle;
 	int						m_state;
 
@@ -36,6 +40,11 @@ private:
 		STATE_TURNING_OFF
 	};
 };
+
+//================================================//
+
+inline Ogre::Light* Flashlight::getLight(void) const
+{ return m_pLight; }
 
 //================================================//
 

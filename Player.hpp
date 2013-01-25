@@ -38,6 +38,7 @@ public:
 
 	// Getter functions
 	Weapon* getWeapon(void) const;
+	const unsigned getWeaponValue(void) const;		
 	const Ogre::Vector3 getPosition(void) const;
 	Sparks::Camera* getCamera(void) const;
 	Flashlight* getFlashlight(void) const;
@@ -49,21 +50,12 @@ public:
 
 	// --- //
 
-	enum{
-		WEAPON_NONE = 0,
-		WEAPON_DEFAULT,
-		WEAPON_WARPGUN
-	};
-
-private:
+protected:
 	// Ogre
 	Ogre::SceneManager*		m_pSceneMgr;
 
 	// Camera
 	Sparks::Camera*			m_pCamera;
-
-	// Game
-	Inventory*				m_pInventory;
 
 	Flashlight*				m_pFlashlight;
 
@@ -77,6 +69,9 @@ private:
 
 inline Weapon* Player::getWeapon(void) const
 { return m_pWeapon; }
+
+inline const unsigned Player::getWeaponValue(void) const
+{ return m_nWeapon; }
 
 inline const Ogre::Vector3 Player::getPosition(void) const
 { return m_pCamera->getSceneNode()->getPosition(); }

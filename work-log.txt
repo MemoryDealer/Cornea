@@ -536,6 +536,18 @@ G: -8.80
 -In the setLinkedObject() function for Trigger, the pointer didn't work when I used the void* version for a DynamicObject, and caused a segfault. Strange, I will have to
 	be careful with void pointers. 
 
+#1/23/13
+-Made the flashlight increase/decrease attenuation when turned on and off. I am about to make a class for the flashlight since it will be a big item. Perhaps the outer 
+	angle would be better to change than the attenuation range. 
+
+#1/25/13
+-Changed the flashlight to increase/decrease the outer angle of the spotlight instead. I think this looks better. 
+-Created a WeaponNone class to be used when no weapon is equipped. This reduces having to call conditional functions in the main update loops. 
+-I need to remember that parent destructors are always called, since they need to clean up any data used by the parent class. 
+-Optimized the profile and inventory system. Weapons are switched via the numbers keys. Still need to add the ability to create new profiles from the menu with MyGUI. 
+-The file loader in Profile checks the size of the file and compares it with the PROFILE_DATA struct size before loading to avoid overflow. 
+TODO: Use MyGUI for making correct menu
+
 	
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 

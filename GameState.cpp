@@ -32,7 +32,7 @@ void GameState::enter(void)
 	preloadMeshData();
 
 	// Add weapon to the player
-	m_player->setWeapon(Player::WEAPON_WARPGUN, m_pEventManager);
+	m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(0), m_pEventManager);
 
 	// Setup the player's boots
 	new Boots();
@@ -281,15 +281,22 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 	// Keys for switching boots
 	case OIS::KC_1:
-		Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_NORMAL);
+		//Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_NORMAL);
+		m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(0), m_pEventManager);
 		break;
 
 	case OIS::KC_2:
-		Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_VELOCITY);
+		//Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_VELOCITY);
+		m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(1), m_pEventManager);
 		break;
 
 	case OIS::KC_3:
-		Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_HIGH);
+		//Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_HIGH);
+		m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(2), m_pEventManager);
+		break;
+
+	case OIS::KC_4:
+		m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(3), m_pEventManager);
 		break;
 
 	case OIS::KC_TAB:
@@ -348,14 +355,6 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		m_player->getFlashlight()->switchState();
 		break;
 
-	case OIS::KC_Q:
-		m_player->setWeapon(Player::WEAPON_DEFAULT, m_pEventManager);
-		break;
-
-	case OIS::KC_Z:
-		m_player->setWeapon(Player::WEAPON_WARPGUN, m_pEventManager);
-		break;
-
 	case OIS::KC_L:
 		{
 			static bool lighting = false;
@@ -380,6 +379,19 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 	case OIS::KC_F2:
 		m_player->getCamera()->setMode(Sparks::Camera::MODE_SPECTATOR);
+		break;
+
+	case OIS::KC_F5:
+		Profile::getSingletonPtr()->save();
+		break;
+
+	case OIS::KC_F9:
+		if(Profile::getSingletonPtr()->load("TestProfile")){
+			printf("Profile loaded!\n");
+		}
+		else{
+			printf("Invalid profile data.\n");
+		}
 		break;
 
 	case OIS::KC_UP:
