@@ -1,5 +1,5 @@
 # CRITICAL
-
+- Random segfault on updateNPCs in event manager when firing projectiles not directly at it while riding on elevator. 
 # - 
 
 # AVERAGE

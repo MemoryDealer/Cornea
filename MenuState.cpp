@@ -8,6 +8,7 @@ MenuState::MenuState(void)
 {
 	m_bQuit = false;
 	m_FrameEvent = Ogre::FrameEvent();
+	m_GUIEventId = 0;
 }
 
 //================================================//
@@ -128,29 +129,36 @@ void MenuState::createGUI(void)
 	// set the scene manager
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(m_pSceneMgr);
 
-	int buttonWidth = 300, buttonHeight = 26;
-	int screenWidth = Base::getSingletonPtr()->m_pViewport->getActualWidth();
-	int screenHeight = Base::getSingletonPtr()->m_pViewport->getActualHeight();
+	// Initialise all GUI layers for this state
+	m_GUIRootLayer = new GUIMenuState::GUIRootLayer(&m_GUIEventId);
+	m_GUIRootLayer->create();
 
-	m_GUI_ButtonPtr_Start = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::Button>("Button", 
-		(screenWidth / 2) - (buttonWidth / 2), (screenHeight / 2) - (buttonHeight / 2), buttonWidth, buttonHeight, MyGUI::Align::Default, "Main");
-	m_GUI_ButtonPtr_Start->setCaption("Start Game");
-	m_GUI_ButtonPtr_Start->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::GUI_startButton);
+	m_GUINewGameLayer = new GUIMenuState::GUINewGameLayer(&m_GUIEventId);
+	m_GUINewGameLayer->create();
 
-	m_GUI_EditPtr_Name = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::EditBox>("EditBox", (screenWidth / 2) - (buttonWidth / 2), 
-		(screenHeight / 2) - (buttonHeight / 2) + 100, buttonWidth, buttonHeight, MyGUI::Align::Default, "Main2");
-	m_GUI_EditPtr_Name->setCaption("Enter Name Here");
+	//int buttonWidth = 300, buttonHeight = 26;
+	//int screenWidth = Base::getSingletonPtr()->m_pViewport->getActualWidth();
+	//int screenHeight = Base::getSingletonPtr()->m_pViewport->getActualHeight();
 
-	// set the pointer to visible
-	MyGUI::PointerManager::getInstancePtr()->setVisible(true);
+	//m_GUI_ButtonPtr_Start = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::Button>("Button", 
+	//	(screenWidth / 2) - (buttonWidth / 2), (screenHeight / 2) - (buttonHeight / 2), buttonWidth, buttonHeight, MyGUI::Align::Default, "Main");
+	//static_cast<MyGUI::ButtonPtr>(m_GUI_ButtonPtr_Start)->setCaption("Start Game");
+	//m_GUI_ButtonPtr_Start->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::GUI_startButton);
+
+	//m_GUI_EditPtr_Name = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::EditBox>("EditBox", (screenWidth / 2) - (buttonWidth / 2), 
+	//	(screenHeight / 2) - (buttonHeight / 2) + 100, buttonWidth, buttonHeight, MyGUI::Align::Default, "Main");
+	//m_GUI_EditPtr_Name->setCaption("Enter Name Here");
+
+	//// set the pointer to visible
+	//MyGUI::PointerManager::getInstancePtr()->setVisible(true);
 }
 
 //================================================//
 
 void MenuState::destroyGUI(void)
 {
-	m_GUI_ButtonPtr_Start->detachFromLayer();
-	m_GUI_EditPtr_Name->detachFromLayer();
+	m_GUIRootLayer->destroy();
+	m_GUINewGameLayer->destroy();
 
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(nullptr);
 }
@@ -161,7 +169,16 @@ bool MenuState::keyPressed(const OIS::KeyEvent& arg)
 {
 	switch(arg.key){
 	case OIS::KC_ESCAPE:
-		m_bQuit = true;
+		// Store the layers in a vecotr and iterate backwards instead
+		if(m_GUICurrentLayer != m_GUIRootLayer){
+			m_GUICurrentLayer->setVisible(false);
+
+			m_GUIRootLayer->setVisible(true);
+			m_GUICurrentLayer = m_GUIRootLayer;
+		}
+		else{
+			m_bQuit = true;
+		}
 		break;
 
 	default:
@@ -210,12 +227,36 @@ bool MenuState::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 
 //================================================//
 
-void MenuState::GUI_startButton(MyGUI::WidgetPtr _sender)
+void MenuState::handleGUIEvent(void)
 {
-	// Load player profile...create new one for now
-	Profile::getSingletonPtr()->create("TestProfile");
+	switch(m_GUIEventId){
+	default:
+		break;
 
-	this->pushAppState(findByName("GameState"));
+	// Root Layer
+	case GUIMenuState::GUIRootLayer::EVENT_NEWGAME:
+		//printf("%s\n", m_GUIRootLayer->getWidgetText("Button_NewGame").c_str());
+		{
+			m_GUIRootLayer->setVisible(false);
+
+			m_GUINewGameLayer->setVisible(true);
+			m_GUICurrentLayer = m_GUINewGameLayer;
+			
+			/*Profile::getSingletonPtr()->create("TestProfile");
+			this->pushAppState(findByName("GameState"));*/
+		}
+		break;
+
+	// New Game Layer
+	case GUIMenuState::GUINewGameLayer::EVENT_START:
+		// Start a new game
+		Profile::getSingletonPtr()->create(m_GUINewGameLayer->getWidgetText("EditBox_Name"));
+		this->pushAppState(findByName("GameState"));
+		break;
+	}
+
+	// Reset GUI event
+	m_GUIEventId = 0;
 }
 
 //================================================//
@@ -226,6 +267,11 @@ void MenuState::update(double timeSinceLastFrame)
 
 	// update camera animation
 	m_animState->addTime(timeSinceLastFrame / 500.0);
+
+	// GUI
+	if(m_GUIEventId){
+		handleGUIEvent();
+	}
 
 	if(m_bQuit == true){
 		this->popAppState();

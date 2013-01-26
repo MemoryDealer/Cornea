@@ -546,7 +546,9 @@ G: -8.80
 -I need to remember that parent destructors are always called, since they need to clean up any data used by the parent class. 
 -Optimized the profile and inventory system. Weapons are switched via the numbers keys. Still need to add the ability to create new profiles from the menu with MyGUI. 
 -The file loader in Profile checks the size of the file and compares it with the PROFILE_DATA struct size before loading to avoid overflow. 
-TODO: Use MyGUI for making correct menu
+-Created a new GUI system--the GUILayer. This abstract class is used to control child classes for individual layers in a game state. The menu state has a root layer and
+	a new game layer for example (many more will be created). An int pointer is passed to the GUI layers and modified as needed by the layers to let the menu state
+	update loop know if an action needs to be performed. The widgets are stored in a vector in each layer and are properly removed when it's destroyed. 
 
 	
 #TODO

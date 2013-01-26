@@ -7,6 +7,7 @@
 
 #include "AppState.hpp"
 #include "Profile.hpp"
+#include "GUILayerMenuState.hpp"
 
 //================================================//
 
@@ -34,10 +35,8 @@ public:
 	bool mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id);
 
-	// GUI callbacks
-	void GUI_startButton(MyGUI::WidgetPtr _sender);
-	void GUI_optionsButton(MyGUI::WidgetPtr _sender);
-	void GUI_exitButton(MyGUI::WidgetPtr _sender);
+	// GUI
+	void handleGUIEvent(void);
 
 	// update
 	void update(double timeSinceLastFrame);
@@ -47,9 +46,10 @@ private:
 	Ogre::AnimationState*		m_animState;
 
 	// GUI
-	MyGUI::WidgetPtr			m_GUI_Root_Node;
-	MyGUI::ButtonPtr			m_GUI_ButtonPtr_Start;
-	MyGUI::EditPtr				m_GUI_EditPtr_Name;
+	GUILayer*					m_GUICurrentLayer;
+	GUILayer*					m_GUIRootLayer;
+	GUILayer*					m_GUINewGameLayer;
+	int							m_GUIEventId;
 
 
 	// FMOD
