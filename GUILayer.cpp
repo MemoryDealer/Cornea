@@ -64,6 +64,24 @@ Ogre::String GUILayer::getWidgetText(std::string name)
 
 //================================================//
 
+Ogre::String GUILayer::getListBoxSelectedText(std::string listBoxName)
+{
+	MyGUI::ListPtr listBox = static_cast<MyGUI::ListPtr>(this->getWidgetPtr(listBoxName));
+	size_t index = listBox->getIndexSelected();
+
+	if(index != MyGUI::ITEM_NONE){
+		std::string data;
+
+		data = listBox->getItemNameAt(index);
+
+		return Ogre::String(data);
+	}
+	
+	return Ogre::String("None");
+}
+
+//================================================//
+
 MyGUI::WidgetPtr GUILayer::getWidgetPtr(std::string name)
 {
 	for(std::vector<MyGUI::WidgetPtr>::iterator itr = m_widgets.begin();

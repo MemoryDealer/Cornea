@@ -550,6 +550,12 @@ G: -8.80
 	a new game layer for example (many more will be created). An int pointer is passed to the GUI layers and modified as needed by the layers to let the menu state
 	update loop know if an action needs to be performed. The widgets are stored in a vector in each layer and are properly removed when it's destroyed. 
 
+#1/26/13
+-Changed the define macros for widget names to be static constants in each GUI layer class. 
+-Created a stack for GUI layers in the menu state. 
+-Created the load game GUI layer, with a listbox that allows the user to select a file and start from using that save file. The files are discovered with FindFirstFile
+	using Win32 API. It is first checked that the compiler is using WIN32 with macros. 
+
 	
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 

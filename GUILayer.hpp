@@ -25,6 +25,7 @@ public:
 
 	// Some functions to retrieve GUI data
 	Ogre::String getWidgetText(std::string name);
+	Ogre::String getListBoxSelectedText(std::string listBoxName);
 
 	MyGUI::WidgetPtr getWidgetPtr(std::string name);
 

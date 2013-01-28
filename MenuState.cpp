@@ -126,31 +126,23 @@ void MenuState::createScene(void)
 
 void MenuState::createGUI(void)
 {
-	// set the scene manager
+	// Set the scene manager
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(m_pSceneMgr);
 
 	// Initialise all GUI layers for this state
 	m_GUIRootLayer = new GUIMenuState::GUIRootLayer(&m_GUIEventId);
 	m_GUIRootLayer->create();
+	m_GUILayers.push_back(m_GUIRootLayer);
 
 	m_GUINewGameLayer = new GUIMenuState::GUINewGameLayer(&m_GUIEventId);
 	m_GUINewGameLayer->create();
 
-	//int buttonWidth = 300, buttonHeight = 26;
-	//int screenWidth = Base::getSingletonPtr()->m_pViewport->getActualWidth();
-	//int screenHeight = Base::getSingletonPtr()->m_pViewport->getActualHeight();
+	m_GUILoadGameLayer = new GUIMenuState::GUILoadGameLayer(&m_GUIEventId);
+	m_GUILoadGameLayer->create();
 
-	//m_GUI_ButtonPtr_Start = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::Button>("Button", 
-	//	(screenWidth / 2) - (buttonWidth / 2), (screenHeight / 2) - (buttonHeight / 2), buttonWidth, buttonHeight, MyGUI::Align::Default, "Main");
-	//static_cast<MyGUI::ButtonPtr>(m_GUI_ButtonPtr_Start)->setCaption("Start Game");
-	//m_GUI_ButtonPtr_Start->eventMouseButtonClick += MyGUI::newDelegate(this, &MenuState::GUI_startButton);
-
-	//m_GUI_EditPtr_Name = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::EditBox>("EditBox", (screenWidth / 2) - (buttonWidth / 2), 
-	//	(screenHeight / 2) - (buttonHeight / 2) + 100, buttonWidth, buttonHeight, MyGUI::Align::Default, "Main");
-	//m_GUI_EditPtr_Name->setCaption("Enter Name Here");
-
-	//// set the pointer to visible
-	//MyGUI::PointerManager::getInstancePtr()->setVisible(true);
+	// Set the mouse pointer to visible
+	if(!MyGUI::PointerManager::getInstancePtr()->isVisible())
+		MyGUI::PointerManager::getInstancePtr()->setVisible(true);
 }
 
 //================================================//
@@ -159,6 +151,7 @@ void MenuState::destroyGUI(void)
 {
 	m_GUIRootLayer->destroy();
 	m_GUINewGameLayer->destroy();
+	m_GUILoadGameLayer->destroy();
 
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(nullptr);
 }
@@ -169,12 +162,12 @@ bool MenuState::keyPressed(const OIS::KeyEvent& arg)
 {
 	switch(arg.key){
 	case OIS::KC_ESCAPE:
-		// Store the layers in a vecotr and iterate backwards instead
-		if(m_GUICurrentLayer != m_GUIRootLayer){
-			m_GUICurrentLayer->setVisible(false);
+		// Pop the back of the GUI layers vector until the root layer
+		if(m_GUILayers.back() != m_GUIRootLayer){
+			m_GUILayers.back()->setVisible(false);
+			m_GUILayers.pop_back();
 
-			m_GUIRootLayer->setVisible(true);
-			m_GUICurrentLayer = m_GUIRootLayer;
+			m_GUILayers.back()->setVisible(true);
 		}
 		else{
 			m_bQuit = true;
@@ -234,24 +227,79 @@ void MenuState::handleGUIEvent(void)
 		break;
 
 	// Root Layer
+		// Resume Game
+	case GUIMenuState::GUIRootLayer::EVENT_RESUMEGAME:
+
+		break;
+
+		// New Game
 	case GUIMenuState::GUIRootLayer::EVENT_NEWGAME:
-		//printf("%s\n", m_GUIRootLayer->getWidgetText("Button_NewGame").c_str());
 		{
 			m_GUIRootLayer->setVisible(false);
 
 			m_GUINewGameLayer->setVisible(true);
-			m_GUICurrentLayer = m_GUINewGameLayer;
-			
-			/*Profile::getSingletonPtr()->create("TestProfile");
-			this->pushAppState(findByName("GameState"));*/
+			m_GUILayers.push_back(m_GUINewGameLayer);
 		}
 		break;
 
+		// Load Game
+	case GUIMenuState::GUIRootLayer::EVENT_LOADGAME:
+		{
+			m_GUIRootLayer->setVisible(false);
+
+			m_GUILoadGameLayer->setVisible(true);
+			m_GUILayers.push_back(m_GUILoadGameLayer);
+		}
+		break;
+
+		// Options
+	case GUIMenuState::GUIRootLayer::EVENT_OPTIONS:
+
+		break;
+
+		// Credits
+	case GUIMenuState::GUIRootLayer::EVENT_CREDITS:
+
+		break;
+
+		// Exit Game
+	case GUIMenuState::GUIRootLayer::EVENT_EXITGAME:
+		m_bQuit = true;
+		break;
+
 	// New Game Layer
+		// Start Game
 	case GUIMenuState::GUINewGameLayer::EVENT_START:
-		// Start a new game
-		Profile::getSingletonPtr()->create(m_GUINewGameLayer->getWidgetText("EditBox_Name"));
-		this->pushAppState(findByName("GameState"));
+		{
+			// Begins a new game
+			Ogre::String name = m_GUINewGameLayer->getWidgetText(GUIMenuState::GUINewGameLayer::EDITBOX_NAME);
+			if(name.length() > 0){
+				Ogre::StringUtil strUtil;
+				if(strUtil.match(name, "Enter Your Name...", false)){
+					break;
+				}
+
+				// Clear main menu GUI layer stack
+				m_GUILayers.clear();
+				m_GUILayers.push_back(m_GUIRootLayer);
+
+				Profile::getSingletonPtr()->create(name);
+				this->pushAppState(findByName("GameState"));
+			}
+		}
+		break;
+
+	// Load Game Layer
+		// Load Game
+	case GUIMenuState::GUILoadGameLayer::EVENT_LOAD:
+		{
+			Ogre::String name = m_GUILoadGameLayer->getListBoxSelectedText(GUIMenuState::GUILoadGameLayer::LISTBOX_SAVES);
+			
+			if(name != "None"){
+				Profile::getSingletonPtr()->load(name);
+				this->pushAppState(findByName("GameState"));
+			}
+		}
 		break;
 	}
 

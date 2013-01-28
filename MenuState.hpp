@@ -46,10 +46,13 @@ private:
 	Ogre::AnimationState*		m_animState;
 
 	// GUI
-	GUILayer*					m_GUICurrentLayer;
 	GUILayer*					m_GUIRootLayer;
 	GUILayer*					m_GUINewGameLayer;
+	GUILayer*					m_GUILoadGameLayer;
+	GUILayer*					m_GUIOptionsLayer;
+	GUILayer*					m_GUICreditsLayer;
 	int							m_GUIEventId;
+	std::vector<GUILayer*>		m_GUILayers;
 
 
 	// FMOD
