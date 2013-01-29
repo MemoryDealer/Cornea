@@ -44,6 +44,7 @@ public:
 private:
 	// Ogre
 	Ogre::AnimationState*		m_animState;
+	Ogre::Camera*				m_pCamera;
 
 	// GUI
 	GUILayer*					m_GUIRootLayer;

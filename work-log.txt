@@ -556,6 +556,12 @@ G: -8.80
 -Created the load game GUI layer, with a listbox that allows the user to select a file and start from using that save file. The files are discovered with FindFirstFile
 	using Win32 API. It is first checked that the compiler is using WIN32 with macros. 
 
+#1/28/13
+-Made all save files go to the "Saves" directory.
+-Moved the GameState GUI into its own GUILayer. Added an overlay container stack to the GUILayer abstract class which is deleted with the delete function. For some reason
+	the material for a container must be set before it's added to the overlay or else it seems you cannot set the material afterwards. 
+
+
 	
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 

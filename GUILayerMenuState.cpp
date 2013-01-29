@@ -207,7 +207,7 @@ void GUILoadGameLayer::resetWidgets(void)
 	HANDLE				hFind	= NULL;
 
 	// TODO: Look in "Saves" directory
-	hFind = FindFirstFile("*.save", &fd);
+	hFind = FindFirstFile("Saves/*.save", &fd);
 	do{
 		// Remove extension
 		char* p = fd.cFileName;

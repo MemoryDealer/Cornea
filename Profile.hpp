@@ -39,6 +39,11 @@ public:
 		RIDICULOUS
 	};
 
+	enum LEVEL{
+		OIL_RIG = 0,
+		END
+	};
+
 private:
 	// All sensitive data needs to be private and less hackable
 
@@ -47,10 +52,13 @@ private:
 
 		Ogre::String	name;
 
+		// Game save data
 		int				difficulty;
+		int				level;
 
 		// In-game data
 		Inventory*		pInventory;
+		int				health;
 		
 	} PROFILE_DATA;
 

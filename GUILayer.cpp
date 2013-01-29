@@ -7,6 +7,7 @@
 GUILayer::GUILayer(int* eventId)
 {
 	m_eventId = eventId;
+	m_useOverlay = false;
 }
 
 //================================================//
@@ -20,12 +21,25 @@ GUILayer::~GUILayer(void)
 
 void GUILayer::destroy(void)
 {
+	// MyGUI widgets
 	for(std::vector<MyGUI::WidgetPtr>::iterator itr = m_widgets.begin();
 		itr != m_widgets.end();
 		){
 		(*itr)->detachFromLayer();
 		Base::getSingletonPtr()->m_GUI->destroyWidget((*itr));
 		itr = m_widgets.erase(itr);
+	}
+
+	// Ogre overlay
+	if(m_useOverlay){
+		for(std::vector<Ogre::OverlayContainer*>::iterator itr = m_overlayContainers.begin();
+			itr != m_overlayContainers.end();
+			++itr){
+			m_overlay->remove2D(*itr);
+			Ogre::OverlayManager::getSingletonPtr()->destroyOverlayElement(*itr);
+		}
+
+		Ogre::OverlayManager::getSingletonPtr()->destroy(m_overlay);
 	}
 }
 
@@ -42,6 +56,13 @@ void GUILayer::setVisible(bool visible)
 	if(visible){
 		this->resetWidgets();
 	}
+}
+
+//================================================//
+
+void GUILayer::setOverlayContainerMaterialName(Ogre::String container, Ogre::String material)
+{
+	this->getOverlayContainer(container)->setMaterialName(material);
 }
 
 //================================================//
@@ -93,6 +114,23 @@ MyGUI::WidgetPtr GUILayer::getWidgetPtr(std::string name)
 	}
 
 	return nullptr; 
+}
+
+//================================================//
+
+Ogre::OverlayContainer* GUILayer::getOverlayContainer(Ogre::String name)
+{
+	Ogre::StringUtil strUtil;
+
+	for(std::vector<Ogre::OverlayContainer*>::iterator itr = m_overlayContainers.begin();
+		itr != m_overlayContainers.end();
+		++itr){
+		if(strUtil.match((*itr)->getName(), name, true)){
+			return *itr;
+		}
+	}
+
+	return nullptr;
 }
 
 //================================================//

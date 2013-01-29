@@ -22,17 +22,22 @@ public:
 	virtual void resetWidgets(void){}
 
 	void setVisible(bool visible);
+	void setOverlayContainerMaterialName(Ogre::String container, Ogre::String material);
 
 	// Some functions to retrieve GUI data
 	Ogre::String getWidgetText(std::string name);
 	Ogre::String getListBoxSelectedText(std::string listBoxName);
 
 	MyGUI::WidgetPtr getWidgetPtr(std::string name);
+	Ogre::OverlayContainer* getOverlayContainer(Ogre::String name);
 
 protected:
-	int*							m_eventId;
+	int*									m_eventId;
 
-	std::vector<MyGUI::WidgetPtr>	m_widgets;
+	std::vector<MyGUI::WidgetPtr>			m_widgets;
+	std::vector<Ogre::OverlayContainer*>	m_overlayContainers;
+	Ogre::Overlay*							m_overlay;
+	bool									m_useOverlay;
 };
 
 //================================================//

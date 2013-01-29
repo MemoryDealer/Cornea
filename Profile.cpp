@@ -46,7 +46,7 @@ bool Profile::load(Ogre::String name)
 {
 	// Add encryption
 
-	std::ifstream fp(name + ".save", std::ifstream::binary);
+	std::ifstream fp("Saves/" + name + ".save", std::ifstream::binary);
 
 	if(fp.is_open()){
 		// Compare sizes
@@ -75,7 +75,12 @@ bool Profile::load(Ogre::String name)
 
 bool Profile::save(void)
 {
-	std::ofstream fp(m_pData->name + ".save", std::ofstream::binary);
+	// Create Saves directory if not already there
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+	(void)CreateDirectory("Saves", NULL);
+#endif
+
+	std::ofstream fp("Saves/" + m_pData->name + ".save", std::ofstream::binary);
 
 	if(fp.is_open()){
 		fp.write(reinterpret_cast<const char*>(m_pData), sizeof(PROFILE_DATA));

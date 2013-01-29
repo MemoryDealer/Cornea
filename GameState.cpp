@@ -6,7 +6,9 @@
 
 GameState::GameState(void)
 {
+	//m_GUIEventId = new int(0);
 	m_bQuit = false;
+	m_GUIEventId = 0;
 }
 
 //================================================//
@@ -51,11 +53,6 @@ void GameState::exit(void)
 	Base::getSingletonPtr()->m_pLog->logMessage("[S] Leaving GameState...");
 
 	destroyGUI();
-
-	// Destroy overlay
-	m_overlay->remove2D(m_overlayReticule);
-	Ogre::OverlayManager::getSingletonPtr()->destroyOverlayElement(m_overlayReticule);
-	Ogre::OverlayManager::getSingletonPtr()->destroy(m_overlay);
 
 	// Free environment
 	delete m_pEventManager;
@@ -180,16 +177,6 @@ void GameState::createScene(void)
 	Base::getSingletonPtr()->m_btWorld->setDebugDrawer(m_debugDrawer);
 	m_debugDrawer->setDebugMode(0);
 
-	// Crosshair overlay
-	Ogre::OverlayManager& manager = Ogre::OverlayManager::getSingleton();
-	m_overlay = manager.create("Overlay");
-	m_overlayReticule = static_cast<Ogre::OverlayContainer*>(manager.createOverlayElement("Panel", "ReticulePanel"));
-	m_overlayReticule->setPosition(0.48, 0.48);
-	m_overlayReticule->setDimensions(0.04, 0.04);
-	m_overlayReticule->setMaterialName(m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_DEFAULT));
-	m_overlay->add2D(m_overlayReticule);
-	m_overlay->show();
-
 	// Reset ambient light
 	m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 }
@@ -200,11 +187,10 @@ void GameState::createGUI(void)
 {
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(m_pSceneMgr);
 
-	int buttonWidth = 800, buttonHeight = 26;
-	int screenWidth = Base::getSingletonPtr()->m_pViewport->getActualWidth();
-	int screenHeight = Base::getSingletonPtr()->m_pViewport->getActualHeight();
-	m_button = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::Button>("Button", 
-		screenWidth / 2.0, 0, buttonWidth, buttonHeight, MyGUI::Align::Default, "Main");
+	m_GUIHudLayer = new GUIGameState::GUIHudLayer(&m_GUIEventId);
+	m_GUIHudLayer->create();
+
+	/**/
 
 	MyGUI::PointerManager::getInstancePtr()->setVisible(false);
 
@@ -220,7 +206,7 @@ void GameState::createGUI(void)
 
 void GameState::destroyGUI(void)
 {
-	m_button->detachFromLayer();
+	m_GUIHudLayer->destroy();
 
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(nullptr);
 }
@@ -308,15 +294,6 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		break;
 
 	// NOTE: Below are debugging keys only, delete later
-
-	case OIS::KC_G:
-		{
-			if(m_button->isVisible())
-				m_button->setVisible(false);
-			else
-				m_button->setVisible(true);
-		}
-		break;
 
 	case OIS::KC_B:
 		{
@@ -574,7 +551,7 @@ bool GameState::keyReleased(const OIS::KeyEvent& arg)
 
 bool GameState::mouseMoved(const OIS::MouseEvent& arg)
 {
-	m_player->getCamera()->pitch(Ogre::Degree(arg.state.Y.rel));
+	m_player->getCamera()->pitch(Ogre::Degree(arg.state.Y.rel)); // * Profile::sensitivity
 	m_player->getCamera()->yaw(Ogre::Degree(arg.state.X.rel));
 	return true;
 }
@@ -627,13 +604,13 @@ void GameState::update(double timeSinceLastFrame)
 	updateBullet(timeSinceLastFrame);
 
 	// Display boot info (DEBUG)
-	char buf[1024];
-	sprintf(buf, "XZ: %.2f // Y:%.2f // A: %.2f // G: %.2f // Offset: <%.2f, %.2f, %.2f>",
-		Boots::getSingletonPtr()->getXMultiplier(), Boots::getSingletonPtr()->getYMultiplier(),
-		Boots::getSingletonPtr()->getXAirMultiplier(), Boots::getSingletonPtr()->getGravity().getY(),
-		m_player->getWeapon()->getOffset().x, m_player->getWeapon()->getOffset().y, m_player->getWeapon()->getOffset().z);
-	MyGUI::UString str((const char*)buf);
-	m_button->setCaption(str);
+	//char buf[1024];
+	//sprintf(buf, "XZ: %.2f // Y:%.2f // A: %.2f // G: %.2f // Offset: <%.2f, %.2f, %.2f>",
+	//	Boots::getSingletonPtr()->getXMultiplier(), Boots::getSingletonPtr()->getYMultiplier(),
+	//	Boots::getSingletonPtr()->getXAirMultiplier(), Boots::getSingletonPtr()->getGravity().getY(),
+	//	m_player->getWeapon()->getOffset().x, m_player->getWeapon()->getOffset().y, m_player->getWeapon()->getOffset().z);
+	//MyGUI::UString str((const char*)buf);
+	//m_button->setCaption(str);
 }
 
 //================================================//
@@ -662,10 +639,12 @@ void GameState::updateUI(void)
 						// Check the name for a match
 						if(strUtil.match(name, npcName, true)){
 							if((*itr)->isFriendly()){
-								m_overlayReticule->setMaterialName(m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_FRIENDLY));
+								m_GUIHudLayer->setOverlayContainerMaterialName(GUIGameState::GUIHudLayer::OVERLAY_RETICULE, 
+									m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_FRIENDLY));
 							}
 							else{
-								m_overlayReticule->setMaterialName(m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_ENEMY));
+								m_GUIHudLayer->setOverlayContainerMaterialName(GUIGameState::GUIHudLayer::OVERLAY_RETICULE, 
+									m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_ENEMY));
 							}
 
 							npcFound = true;
@@ -678,7 +657,8 @@ void GameState::updateUI(void)
 	}
 
 	if(!npcFound){
-		m_overlayReticule->setMaterialName(m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_DEFAULT));
+		m_GUIHudLayer->setOverlayContainerMaterialName(GUIGameState::GUIHudLayer::OVERLAY_RETICULE, 
+									m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_DEFAULT));
 	}
 }
 

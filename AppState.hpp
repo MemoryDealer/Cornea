@@ -59,7 +59,6 @@ protected:
 
 	AppStateListener*	m_pParent;
 
-	Ogre::Camera*		m_pCamera;
 	Ogre::SceneManager* m_pSceneMgr;
 	Ogre::FrameEvent	m_FrameEvent;
 

@@ -10,6 +10,7 @@
 #include "Sparks.hpp"
 #include "DotSceneLoader.hpp"
 #include "BtOgre.hpp"
+#include "GUILayerGameState.hpp"
 
 #include "EventManager.hpp"
 #include "Boots.hpp"
@@ -34,7 +35,7 @@ public:
 	virtual void createGUI(void);
 	virtual void destroyGUI(void);
 
-	void preloadMeshData(void);
+	virtual void preloadMeshData(void);
 
 	// OIS::KeyListener
 	bool keyPressed(const OIS::KeyEvent& arg);
@@ -48,14 +49,14 @@ public:
 	// GUI callbacks
 
 	// Updaters
-	void update(double timeSinceLastFrame);
+	virtual void update(double timeSinceLastFrame);
 	void updateUI(void);
 	void updateBullet(double timeSinceLastFrame);
 
-private:
+protected:
 	enum{
-		SUBSTATE_DEFAULT = 0,
-		SUBSTATE_LOADING
+		STATE_ACTIVE = 0,
+		STATE_LOADING
 	};
 
 	// Environment
@@ -67,12 +68,9 @@ private:
 	// Physics
 	BtOgre::DebugDrawer*	m_debugDrawer;
 
-	// HUD elements
-	MyGUI::ButtonPtr		m_button;
-	
-	// Overlay
-	Ogre::Overlay*			m_overlay;
-	Ogre::OverlayContainer* m_overlayReticule;
+	// GUI elements
+	GUILayer*				m_GUIHudLayer;
+	int						m_GUIEventId;
 
 	bool					m_bQuit;
 };
