@@ -561,7 +561,10 @@ G: -8.80
 -Moved the GameState GUI into its own GUILayer. Added an overlay container stack to the GUILayer abstract class which is deleted with the delete function. For some reason
 	the material for a container must be set before it's added to the overlay or else it seems you cannot set the material afterwards. 
 
-
+#1/30/13
+-Created a sub-state system for the GameState. The loop checks the sub-state and executes code accordingly. This is mainly used for loading screens, cutscenes (although
+	cutscenes could be done by pushing a new state and then popping it), etc. Moved most of the code from enter() to the update loop inside the loading sub-state. 
+-Modified a few misc. things--camera doesn't call init() in the constructor and it's done in GameState, as well as adding the camera to the viewport. 
 	
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 

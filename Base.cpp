@@ -240,7 +240,7 @@ bool Base::keyPressed(const OIS::KeyEvent& arg)
 	}
 
 	if(m_injectGUI){
-		MyGUI::InputManager::getInstance().injectKeyPress(MyGUI::KeyCode::Enum(arg.key), arg.text);
+		//MyGUI::InputManager::getInstance().injectKeyPress(MyGUI::KeyCode::Enum(arg.key), arg.text);
 	}
 
 	return true;
@@ -256,7 +256,7 @@ bool Base::keyReleased(const OIS::KeyEvent& arg)
 	}
 
 	if(m_injectGUI){
-		MyGUI::InputManager::getInstance().injectKeyRelease(MyGUI::KeyCode::Enum(arg.key));
+		//MyGUI::InputManager::getInstance().injectKeyRelease(MyGUI::KeyCode::Enum(arg.key));
 	}
 
 	return true;

@@ -26,14 +26,37 @@ public:
 
 	// --- //
 
-	static const Ogre::String BUTTON_INFO;
-
 	static const Ogre::String OVERLAY_RETICULE;
 
 protected:
 	// Overlay elements
 	Ogre::OverlayContainer*		m_overlayReticule;
 };
+
+//================================================//
+//================================================//
+
+class GUILoadingLayer : public GUILayer
+{
+public:
+	GUILoadingLayer(int* eventId) : GUILayer(eventId){}
+
+	void create(void);
+
+	// Setter functions
+
+
+	// --- //
+
+	static const Ogre::String PROGRESSBAR_STATUS;
+
+protected:
+
+};
+
+//================================================//
+
+
 
 //================================================//
 

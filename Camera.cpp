@@ -39,7 +39,7 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 	m_negativeYRayhit = nullptr;
 	m_negativeZRayhit = nullptr;
 
-	init();
+	//init();
 }
 
 //================================================//

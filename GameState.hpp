@@ -33,6 +33,7 @@ public:
 	virtual void resume(void);
 	virtual void createScene(void);
 	virtual void createGUI(void);
+	void createLoadingGUI(void);
 	virtual void destroyGUI(void);
 
 	virtual void preloadMeshData(void);
@@ -56,8 +57,28 @@ public:
 protected:
 	enum{
 		STATE_ACTIVE = 0,
-		STATE_LOADING
+		STATE_LOADING_FIRST_ENTRY,
+		STATE_LOADING_NEXT_STAGE
 	};
+
+	enum{
+		STEP_FIRST = 0,
+		STEP_CREATE_PHYSICS_WORLD,
+		STEP_INIT_EVENT_MANAGER,
+		STEP_PRELOAD_MESH_DATA,
+		STEP_CREATE_SCENE,
+		STEP_SETUP_COLLISION_WORLD,
+		STEP_CREATE_GUI,
+
+		STEP_FINAL
+	};
+
+	// Session
+	int						m_state;
+	int						m_stage;
+
+	// Loading
+	int						m_loadingStep;
 
 	// Environment
 	EventManager*			m_pEventManager;
@@ -70,6 +91,7 @@ protected:
 
 	// GUI elements
 	GUILayer*				m_GUIHudLayer;
+	GUILayer*				m_GUILoadingLayer;
 	int						m_GUIEventId;
 
 	bool					m_bQuit;

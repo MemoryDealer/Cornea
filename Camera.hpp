@@ -39,6 +39,8 @@ public:
 	Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance);
 	~Camera(void);
 
+	void init(void);
+
 	void update(double timeSinceLastFrame);
 	void setPosition(Ogre::Vector3 pos);
 	void moveFirstPerson(double timeSinceLastFrame);
@@ -85,7 +87,6 @@ public:
 			m_spacePressed;
 
 private:
-	void init(void);
 	void createRigidBody(void);
 	void createAltRigidBody(void);
 	void removeRigidBody(void);

@@ -28,6 +28,7 @@ public:
 
 	// Getter functions
 	const int getDifficulty(void) const;
+	const int getStage(void) const;
 	Inventory* getInventory(void) const;
 
 	// --- //
@@ -39,7 +40,7 @@ public:
 		RIDICULOUS
 	};
 
-	enum LEVEL{
+	enum STAGE{
 		OIL_RIG = 0,
 		END
 	};
@@ -54,7 +55,7 @@ private:
 
 		// Game save data
 		int				difficulty;
-		int				level;
+		int				stage;
 
 		// In-game data
 		Inventory*		pInventory;
@@ -69,6 +70,9 @@ private:
 
 inline const int Profile::getDifficulty(void) const
 { return m_pData->difficulty; }
+
+inline const int Profile::getStage(void) const
+{ return m_pData->stage; }
 
 inline Inventory* Profile::getInventory(void) const
 { return m_pData->pInventory; }

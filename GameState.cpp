@@ -18,32 +18,16 @@ void GameState::enter(void)
 	Base::getSingletonPtr()->m_pLog->logMessage("[S] Entering GameState...");
 	m_bQuit = false;
 
-	// Create Ogre scene manager
+	// Create Ogre octree scene manager
 	m_pSceneMgr = Base::getSingletonPtr()->m_pRoot->createSceneManager("OctreeSceneManager", "GameSceneMgr");
 
-	// Physics
-	Base::getSingletonPtr()->createPhysicsWorld();
+	// Allow update loop to load the game
+	m_state = STATE_LOADING_FIRST_ENTRY;
+	m_loadingStep = STEP_FIRST;
 
-	// Initialise the player object
-	m_player = new Player(m_pSceneMgr);
+	m_stage = Profile::getSingletonPtr()->getStage();
 
-	// Create environment
-	m_pEventManager = new EventManager(m_pSceneMgr, m_player->getCamera());
-
-	// Pre-load mesh data
-	preloadMeshData();
-
-	// Add weapon to the player
-	m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(0), m_pEventManager);
-
-	// Setup the player's boots
 	new Boots();
-
-	// Create the scene
-	createScene();
-
-	// Create the GUI
-	createGUI();
 }
 
 //================================================//
@@ -166,19 +150,8 @@ void GameState::createScene(void)
 
 	node2->setPosition(50, 100, 0);*/
 
-	// Add entities to the collision world
-	BtOgre::registerAllEntitiesAsColliders(m_pSceneMgr, Base::getSingletonPtr()->m_btWorld);
-
-	// Add dynamic objects
-	m_pEventManager->getDynamicObjectManager()->registerAllObjectsInScene();
-
-	// Debug drawer for Bullet
-	m_debugDrawer = new BtOgre::DebugDrawer(m_pSceneMgr->getRootSceneNode(), Base::getSingletonPtr()->m_btWorld);
-	Base::getSingletonPtr()->m_btWorld->setDebugDrawer(m_debugDrawer);
-	m_debugDrawer->setDebugMode(0);
-
 	// Reset ambient light
-	m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
+	//m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 }
 
 //================================================//
@@ -187,8 +160,10 @@ void GameState::createGUI(void)
 {
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(m_pSceneMgr);
 
+	// HUD
 	m_GUIHudLayer = new GUIGameState::GUIHudLayer(&m_GUIEventId);
 	m_GUIHudLayer->create();
+
 
 	/**/
 
@@ -204,9 +179,24 @@ void GameState::createGUI(void)
 
 //================================================//
 
+void GameState::createLoadingGUI(void)
+{
+	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(m_pSceneMgr);
+
+	// Loading Layer
+	m_GUILoadingLayer = new GUIGameState::GUILoadingLayer(&m_GUIEventId);
+	m_GUILoadingLayer->create();
+
+
+	Base::getSingletonPtr()->m_pViewport->setBackgroundColour(Ogre::ColourValue::Black);
+}
+
+//================================================//
+
 void GameState::destroyGUI(void)
 {
 	m_GUIHudLayer->destroy();
+	m_GUILoadingLayer->destroy();
 
 	Base::getSingletonPtr()->m_GUI_Platform->getRenderManagerPtr()->setSceneManager(nullptr);
 }
@@ -229,6 +219,10 @@ void GameState::preloadMeshData(void)
 
 bool GameState::keyPressed(const OIS::KeyEvent& arg)
 {
+	if(m_state != STATE_ACTIVE){
+		return true;
+	}
+
 	switch(arg.key){
 	case OIS::KC_W:
 		if(!m_player->getCamera()->m_moveForwardsPressed){
@@ -448,6 +442,10 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 bool GameState::keyReleased(const OIS::KeyEvent& arg)
 {
+	if(m_state != STATE_ACTIVE){
+		return true;
+	}
+
 	switch(arg.key){
 		case OIS::KC_W:
 		if(m_player->getCamera()->m_moveForwardsPressed){
@@ -479,67 +477,67 @@ bool GameState::keyReleased(const OIS::KeyEvent& arg)
 		}
 		break;
 
-	// NOTE: Below are only debugging keys, delete later
-	case OIS::KC_3:
-		if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-			Boots::getSingletonPtr()->setXMultiplier(Boots::getSingletonPtr()->getXMultiplier() - 0.1);
-			Boots::getSingletonPtr()->setZMultiplier(Boots::getSingletonPtr()->getZMultiplier() - 0.1);
-		}
-		break;
+	//// NOTE: Below are only debugging keys, delete later
+	//case OIS::KC_3:
+	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
+	//		Boots::getSingletonPtr()->setXMultiplier(Boots::getSingletonPtr()->getXMultiplier() - 0.1);
+	//		Boots::getSingletonPtr()->setZMultiplier(Boots::getSingletonPtr()->getZMultiplier() - 0.1);
+	//	}
+	//	break;
 
-	case OIS::KC_4:
-		if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-			Boots::getSingletonPtr()->setXMultiplier(Boots::getSingletonPtr()->getXMultiplier() + 0.1);
-			Boots::getSingletonPtr()->setZMultiplier(Boots::getSingletonPtr()->getZMultiplier() + 0.1);
-		}
-		break;
+	//case OIS::KC_4:
+	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
+	//		Boots::getSingletonPtr()->setXMultiplier(Boots::getSingletonPtr()->getXMultiplier() + 0.1);
+	//		Boots::getSingletonPtr()->setZMultiplier(Boots::getSingletonPtr()->getZMultiplier() + 0.1);
+	//	}
+	//	break;
 
-	case OIS::KC_5:
-		if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-			Boots::getSingletonPtr()->setYMultiplier(Boots::getSingletonPtr()->getYMultiplier() - 10.0);
-		}
-		break;
+	//case OIS::KC_5:
+	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
+	//		Boots::getSingletonPtr()->setYMultiplier(Boots::getSingletonPtr()->getYMultiplier() - 10.0);
+	//	}
+	//	break;
 
-	case OIS::KC_6:
-		if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-			Boots::getSingletonPtr()->setYMultiplier(Boots::getSingletonPtr()->getYMultiplier() + 10.0);
-		}
-		break;
+	//case OIS::KC_6:
+	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
+	//		Boots::getSingletonPtr()->setYMultiplier(Boots::getSingletonPtr()->getYMultiplier() + 10.0);
+	//	}
+	//	break;
 
-	case OIS::KC_7:
-		if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-			Boots::getSingletonPtr()->setXAirMultiplier(Boots::getSingletonPtr()->getXAirMultiplier() - 0.005);
-			Boots::getSingletonPtr()->setZAirMultiplier(Boots::getSingletonPtr()->getZAirMultiplier() - 0.005);
-		}
-		break;
+	//case OIS::KC_7:
+	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
+	//		Boots::getSingletonPtr()->setXAirMultiplier(Boots::getSingletonPtr()->getXAirMultiplier() - 0.005);
+	//		Boots::getSingletonPtr()->setZAirMultiplier(Boots::getSingletonPtr()->getZAirMultiplier() - 0.005);
+	//	}
+	//	break;
 
-	case OIS::KC_8:
-		if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-			Boots::getSingletonPtr()->setXAirMultiplier(Boots::getSingletonPtr()->getXAirMultiplier() + 0.005);
-			Boots::getSingletonPtr()->setZAirMultiplier(Boots::getSingletonPtr()->getZAirMultiplier() + 0.005);
-		}
-		break;
+	//case OIS::KC_8:
+	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
+	//		Boots::getSingletonPtr()->setXAirMultiplier(Boots::getSingletonPtr()->getXAirMultiplier() + 0.005);
+	//		Boots::getSingletonPtr()->setZAirMultiplier(Boots::getSingletonPtr()->getZAirMultiplier() + 0.005);
+	//	}
+	//	break;
 
-	case OIS::KC_9:
-		if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-			btVector3 gravity = Boots::getSingletonPtr()->getGravity();
+	//case OIS::KC_9:
+	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
+	//		btVector3 gravity = Boots::getSingletonPtr()->getGravity();
 
-			gravity.setY(gravity.getY() - 0.1);
-			Boots::getSingletonPtr()->setGravity(gravity);
-		}
-		break;
+	//		gravity.setY(gravity.getY() - 0.1);
+	//		Boots::getSingletonPtr()->setGravity(gravity);
+	//	}
+	//	break;
 
-	case OIS::KC_0:
-		if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-			btVector3 gravity = Boots::getSingletonPtr()->getGravity();
+	//case OIS::KC_0:
+	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
+	//		btVector3 gravity = Boots::getSingletonPtr()->getGravity();
 
-			gravity.setY(gravity.getY() + 0.1);
-			Boots::getSingletonPtr()->setGravity(gravity);
-		}
-		break;
+	//		gravity.setY(gravity.getY() + 0.1);
+	//		Boots::getSingletonPtr()->setGravity(gravity);
+	//	}
+	//	break;
 
-	default:
-		break;
+	//default:
+	//	break;
 	}
 
 	Base::getSingletonPtr()->keyReleased(arg);
@@ -551,6 +549,10 @@ bool GameState::keyReleased(const OIS::KeyEvent& arg)
 
 bool GameState::mouseMoved(const OIS::MouseEvent& arg)
 {
+	if(m_state != STATE_ACTIVE){
+		return false;
+	}
+
 	m_player->getCamera()->pitch(Ogre::Degree(arg.state.Y.rel)); // * Profile::sensitivity
 	m_player->getCamera()->yaw(Ogre::Degree(arg.state.X.rel));
 	return true;
@@ -560,6 +562,10 @@ bool GameState::mouseMoved(const OIS::MouseEvent& arg)
 
 bool GameState::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 {
+	if(m_state != STATE_ACTIVE){
+		return false;
+	}
+
 	if(id == OIS::MB_Left){
 		m_player->getWeapon()->attack(m_player->getCamera());
 	}
@@ -574,6 +580,9 @@ bool GameState::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 
 bool GameState::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 {
+	if(m_state != STATE_ACTIVE){
+		return false;
+	}
 
 	return true;
 }
@@ -587,21 +596,104 @@ void GameState::update(double timeSinceLastFrame)
 		return;
 	}
 
-	// Update player
-	//printf("Player...\n");
-	m_player->update(timeSinceLastFrame);
+	// Update according to sub-state
+	switch(m_state){
+	default:
+		break;
 
-	// Update events
-	//printf("Events...\n");
-	m_pEventManager->update(timeSinceLastFrame);
+	case STATE_ACTIVE:
+		// Update player
+		//printf("Player...\n");
+		m_player->update(timeSinceLastFrame);
 
-	// Update UI
-	//printf("UI...\n");
-	updateUI();
+		// Update events
+		//printf("Events...\n");
+		m_pEventManager->update(timeSinceLastFrame);
 
-	// Update physics
-	//printf("Bullet...\n");
-	updateBullet(timeSinceLastFrame);
+		// Update UI
+		//printf("UI...\n");
+		updateUI();
+
+		// Update physics
+		//printf("Bullet...\n");
+		updateBullet(timeSinceLastFrame);
+
+		break;
+
+	case STATE_LOADING_FIRST_ENTRY:
+		switch(m_loadingStep){
+		default:
+			
+			break;
+
+		case STEP_FIRST:
+			// Setup loading screen
+			createLoadingGUI();
+
+			// Init player so we can use the camera
+			m_player = new Player(m_pSceneMgr);
+			break;
+
+		case STEP_CREATE_PHYSICS_WORLD:
+			Base::getSingletonPtr()->createPhysicsWorld();
+			m_player->getCamera()->init(); // must have physics world to init
+			Base::getSingletonPtr()->m_pViewport->setCamera(m_player->getCamera()->getOgreCamera());
+			break;
+
+		case STEP_INIT_EVENT_MANAGER:
+			m_pEventManager = new EventManager(m_pSceneMgr, m_player->getCamera());
+			break;
+
+		case STEP_PRELOAD_MESH_DATA:
+			preloadMeshData();
+			break;
+
+		case STEP_CREATE_SCENE:
+			createScene();
+			break;
+
+		case STEP_SETUP_COLLISION_WORLD:
+			// Weird gray screen here after moving this code from createScene()
+			// Add entities to the collision world
+			BtOgre::registerAllEntitiesAsColliders(m_pSceneMgr, Base::getSingletonPtr()->m_btWorld);
+
+			// Add dynamic objects
+			m_pEventManager->getDynamicObjectManager()->registerAllObjectsInScene();
+
+			// Debug drawer for Bullet
+			m_debugDrawer = new BtOgre::DebugDrawer(m_pSceneMgr->getRootSceneNode(), Base::getSingletonPtr()->m_btWorld);
+			Base::getSingletonPtr()->m_btWorld->setDebugDrawer(m_debugDrawer);
+			m_debugDrawer->setDebugMode(0);
+
+			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
+			break;
+
+		case STEP_CREATE_GUI:
+			createGUI();
+			break;
+
+		case STEP_FINAL:
+			// Final steps before game begins
+			m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(0), m_pEventManager);
+			m_GUILoadingLayer->setVisible(false);
+			m_state = STATE_ACTIVE;
+			break;
+		}
+
+		// Increment loading step
+		m_loadingStep++;
+
+		// Update progress bar
+		m_GUILoadingLayer->incrementProgressBar(GUIGameState::GUILoadingLayer::PROGRESSBAR_STATUS, 100);
+
+		break; // STATE_LOADING_FIRST_ENTRY
+
+	case STATE_LOADING_NEXT_STAGE:
+
+		break; // STATE_LOADING_NEXT_STAGE
+	}
+
+	
 
 	// Display boot info (DEBUG)
 	//char buf[1024];

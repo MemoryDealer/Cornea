@@ -23,6 +23,8 @@ public:
 
 	void setVisible(bool visible);
 	void setOverlayContainerMaterialName(Ogre::String container, Ogre::String material);
+	void setProgressBarPosition(Ogre::String name, size_t pos);
+	void incrementProgressBar(Ogre::String name, size_t pos);
 
 	// Some functions to retrieve GUI data
 	Ogre::String getWidgetText(std::string name);
@@ -39,6 +41,16 @@ protected:
 	Ogre::Overlay*							m_overlay;
 	bool									m_useOverlay;
 };
+
+//================================================//
+
+inline void GUILayer::setProgressBarPosition(Ogre::String name, size_t pos)
+{ static_cast<MyGUI::ProgressPtr>(this->getWidgetPtr(name))->setProgressPosition(pos); }
+
+inline void GUILayer::incrementProgressBar(Ogre::String name, size_t pos)
+{ static_cast<MyGUI::ProgressPtr>(this->getWidgetPtr(name))->setProgressPosition(
+	static_cast<MyGUI::ProgressPtr>(this->getWidgetPtr(name))->getProgressPosition() + pos); 
+}
 
 //================================================//
 
