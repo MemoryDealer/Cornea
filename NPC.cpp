@@ -31,7 +31,7 @@ void NPC::takeDamage(Ogre::Real amount)
 void NPC::die(void)
 {
 	m_pSceneNode->detachAllObjects();
-	Base::getSingletonPtr()->m_btWorld->removeCollisionObject(m_collisionObject);
+	//Base::getSingletonPtr()->m_btWorld->removeCollisionObject(m_collisionObject);
 }
 
 //================================================//

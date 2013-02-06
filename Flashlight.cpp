@@ -19,7 +19,8 @@ Flashlight::Flashlight(Ogre::SceneManager* mgr, Ogre::SceneNode* parent)
 	m_pLight->setSpecularColour(0.8, 0.8, 0.8);
 	m_pLight->setCastShadows(Settings::getSingletonPtr()->graphics.shadows.enabled);
 	m_pLight->setSpotlightInnerAngle(m_innerAngle);
-	m_pLight->setSpotlightOuterAngle(m_innerAngle + Ogre::Degree(1));
+	//m_pLight->setSpotlightOuterAngle(m_innerAngle + Ogre::Degree(1));
+	m_pLight->setSpotlightOuterAngle(m_outerAngle);
 	m_pLight->setSpotlightFalloff(5.0);
 	m_pLight->setAttenuation(m_attenuationRange, 0.5, 0, 0);
 	m_pLight->setDirection(Ogre::Vector3(0.0, 0.0, -1.0));
@@ -44,22 +45,23 @@ Flashlight::~Flashlight(void)
 
 void Flashlight::switchState(void)
 {
-	if(m_pLight->getVisible()){
-		m_state = STATE_TURNING_OFF;
-	}
-	else{
-		m_state = STATE_TURNING_ON;
-		//m_pLight->setAttenuation(0.0, 0.5, 0.0, 0.0);
-		m_pLight->setSpotlightRange(m_innerAngle, m_innerAngle + Ogre::Degree(1));
-		m_pLight->setVisible(true);
-	}
+	//if(m_pLight->getVisible()){
+	//	m_state = STATE_TURNING_OFF;
+	//}
+	//else{
+	//	m_state = STATE_TURNING_ON;
+	//	//m_pLight->setAttenuation(0.0, 0.5, 0.0, 0.0);
+	//	m_pLight->setSpotlightRange(m_innerAngle, m_innerAngle + Ogre::Degree(1));
+	//	m_pLight->setVisible(true);
+	//}
+	m_pLight->setVisible(!m_pLight->isVisible());
 }
 
 //================================================//
 
 void Flashlight::update(double timeSinceLastFrame)
 {
-	if(m_state == STATE_TURNING_ON){
+	/*if(m_state == STATE_TURNING_ON){
 		Ogre::Degree outerAngle = m_pLight->getSpotlightOuterAngle();
 
 		if(outerAngle < m_outerAngle){
@@ -87,7 +89,7 @@ void Flashlight::update(double timeSinceLastFrame)
 			m_pLight->setVisible(false);
 			m_state = STATE_IDLE;
 		}
-	}
+	}*/
 
 	//// Fade light in and out
 	//if(m_state == STATE_TURNING_ON){

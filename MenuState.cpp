@@ -143,6 +143,8 @@ void MenuState::createGUI(void)
 	// Set the mouse pointer to visible
 	if(!MyGUI::PointerManager::getInstancePtr()->isVisible())
 		MyGUI::PointerManager::getInstancePtr()->setVisible(true);
+
+	Base::getSingletonPtr()->m_injectGUI = true;
 }
 
 //================================================//

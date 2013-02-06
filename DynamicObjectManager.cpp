@@ -9,6 +9,8 @@ DynamicObjectManager::DynamicObjectManager(Ogre::SceneManager* mgr, Sparks::Came
 	m_pSceneMgr = mgr;
 	m_pCamera = camera;
 
+	m_physics = m_pCamera->getPhysics();
+
 	// Register object hierarchy
 	firstTierObjects.push_back("MovingObject_");
 	firstTierObjects.push_back("MovingKinematicObject_");
@@ -39,7 +41,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 	case 1:
 		if(strUtil.startsWith(name, "MovingObject_", false)){
 			m_objects.push_back(new MovingObject());
-			m_objects.back()->init(m_pSceneMgr, node, obj);
+			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
 			// Fetch animation data
 			const Ogre::Any& any = node->getUserAny();
@@ -53,7 +55,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 		}
 		else if(strUtil.startsWith(name, "MovingKinematicObject_", false)){
 			m_objects.push_back(new MovingKinematicObject());
-			m_objects.back()->init(m_pSceneMgr, node, obj);
+			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
 			// Fetch animation data
 			const Ogre::Any& any = node->getUserAny();
@@ -67,7 +69,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 		}
 		else if(strUtil.startsWith(name, "Elevator_", false)){
 			m_objects.push_back(new Elevator());
-			m_objects.back()->init(m_pSceneMgr, node, obj);
+			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
 
 			// Fetch animation data
@@ -85,7 +87,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 	case 2:
 		if(strUtil.startsWith(name, "Switch_", false)){
 			m_objects.push_back(new Switch());
-			m_objects.back()->init(m_pSceneMgr, node, obj);
+			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
 			// Find the dynamic object it should be linked to
 			const Ogre::Any& any = node->getUserAny();
@@ -167,7 +169,7 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 
 	// Iterate through collision world objects and add them to the manager based on tier
 	for(;tier<=MAX_TIER; ++tier){
-		btCollisionObjectArray& objects = Base::getSingletonPtr()->m_btWorld->getCollisionObjectArray();
+		btCollisionObjectArray& objects = m_physics->getWorld()->getCollisionObjectArray();
 		int size = objects.size();
 		for(int i=(size - 1); i>=0; --i){
 

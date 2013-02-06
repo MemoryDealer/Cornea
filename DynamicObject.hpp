@@ -62,7 +62,7 @@ public:
 	virtual ~DynamicObject(void);
 
 	virtual void init(Ogre::SceneNode* node, btCollisionObject* colObj);
-	virtual void init(Ogre::SceneManager* mgr, Ogre::SceneNode* node, btCollisionObject* colObj);
+	virtual void init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* node, btCollisionObject* colObj);
 	virtual void initTrigger(Ogre::SceneManager* mgr, Ogre::SceneNode* node, Sparks::Camera* camera){} 
 	virtual void initSound(const char* file, bool loop = false);
 
@@ -102,6 +102,8 @@ protected:
 	
 	FMOD::Sound*		m_sound;
 	FMOD::Channel*		m_soundChannel;
+
+	Physics*			m_physics;
 };
 
 //================================================//
@@ -180,7 +182,7 @@ class Switch : public DynamicObject{
 public:
 	Switch(void);
 
-	void init(Ogre::SceneManager* mgr, Ogre::SceneNode* node, btCollisionObject* colObj);
+	void init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* node, btCollisionObject* colObj);
 
 	unsigned send(unsigned arg);
 	void setLinkedObject(DynamicObject* obj);

@@ -8,7 +8,7 @@
 #include "stdafx.h"
 #include "DynamicObject.hpp"
 #include "Trigger.hpp"
-#include "NPCManager.hpp" // 
+#include "NPCManager.hpp" 
 #include "Base.hpp"
 
 //================================================//
@@ -43,6 +43,8 @@ private:
 	NPCManager*					m_pNPCManager;
 
 	std::vector<DynamicObject*> m_objects;
+
+	Physics*					m_physics;
 };
 
 //================================================//

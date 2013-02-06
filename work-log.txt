@@ -565,6 +565,10 @@ G: -8.80
 -Created a sub-state system for the GameState. The loop checks the sub-state and executes code accordingly. This is mainly used for loading screens, cutscenes (although
 	cutscenes could be done by pushing a new state and then popping it), etc. Moved most of the code from enter() to the update loop inside the loading sub-state. 
 -Modified a few misc. things--camera doesn't call init() in the constructor and it's done in GameState, as well as adding the camera to the viewport. 
+
+#2/5/13
+-Wrapped Bullet into a Physics class which is created when the game state is entered and no longer from the Base class. A pointer to the Physics class has to be passed
+	around to some of the other classes as it's needed. No different that passing a pointer to the scene manager. 
 	
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 
@@ -577,3 +581,4 @@ G: -8.80
 -Ladder climbing--use ground trigger or forward ray. 
 -Fix weapon switching fire rate glitch. 
 -Make dynamic object manager automatically activate idle objects if they get in their defined range.
+-For vectors that may become large, implement sorting and binary searching.  http://en.cppreference.com/w/cpp/algorithm/binary_search http://www.cplusplus.com/reference/algorithm/sort/

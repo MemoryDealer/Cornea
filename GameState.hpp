@@ -9,7 +9,7 @@
 #include "Camera.hpp"
 #include "Sparks.hpp"
 #include "DotSceneLoader.hpp"
-#include "BtOgre.hpp"
+#include "Physics.hpp"
 #include "GUILayerGameState.hpp"
 
 #include "EventManager.hpp"
@@ -87,7 +87,7 @@ protected:
 	Player*					m_player;
 
 	// Physics
-	BtOgre::DebugDrawer*	m_debugDrawer;
+	Physics*				m_physics;
 
 	// GUI elements
 	GUILayer*				m_GUIHudLayer;

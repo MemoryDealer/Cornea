@@ -107,7 +107,8 @@ bool Weapon::rayAttack(Sparks::Camera* camera)
 	btVector3 to(forwards.x, forwards.y, forwards.z);
 	btCollisionWorld::ClosestRayResultCallback res(from, to);
 
-	Base::getSingletonPtr()->m_btWorld->rayTest(from, to, res);
+	//Base::getSingletonPtr()->m_btWorld->rayTest(from, to, res);
+	// GET CAMERA RAY
 
 	if(res.hasHit()){
 		Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(res.m_collisionObject->getUserPointer());
@@ -185,7 +186,8 @@ bool Weapon::meleeAttack(Sparks::Camera* camera)
 	btVector3 to(forwards.x, forwards.y, forwards.z);
 	btCollisionWorld::ClosestRayResultCallback res(from, to);
 
-	Base::getSingletonPtr()->m_btWorld->rayTest(from, to, res);
+	//Base::getSingletonPtr()->m_btWorld->rayTest(from, to, res);
+	// GET CAMERA RAY
 
 	if(res.hasHit()){
 		Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(res.m_collisionObject->getUserPointer());

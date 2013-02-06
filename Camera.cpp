@@ -59,8 +59,10 @@ Camera::~Camera(void)
 
 //================================================//
 
-void Camera::init(void)
+void Camera::init(Physics* physics)
 {
+	m_physics = physics;
+
 	m_pCamera = m_pSceneMgr->createCamera("PlayerCam");
 	m_pCamera->setAutoAspectRatio(true);
 
@@ -125,7 +127,8 @@ void Camera::createRigidBody(void)
 	m_btCamera->setGravity(m_defGravity);
 
 	// add the rigid body to the dynamics world
-	Base::getSingletonPtr()->m_btWorld->addRigidBody(m_btCamera);
+	//Base::getSingletonPtr()->m_btWorld->addRigidBody(m_btCamera);
+	m_physics->setCameraBody(m_btCamera);
 }
 
 //================================================//
@@ -159,7 +162,7 @@ void Camera::createAltRigidBody(void)
 	m_btCamera->setGravity(m_defGravity);
 
 	// add the rigid body to the dynamics world
-	Base::getSingletonPtr()->m_btWorld->addRigidBody(m_btCamera);
+	m_physics->setCameraBody(m_btCamera);
 }
 
 //================================================//
@@ -167,7 +170,7 @@ void Camera::createAltRigidBody(void)
 void Camera::removeRigidBody(void)
 {
 	// Remove Bullet objects
-	Base::getSingletonPtr()->m_btWorld->removeRigidBody(m_btCamera);
+	m_physics->removeCameraBody();
  	delete m_btCamera->getMotionState();
 	delete m_btCamera;
 }
@@ -500,7 +503,7 @@ void Camera::getRayhit(Ogre::Vector3& to, Rayhit* rayhit)
 
 	btCollisionWorld::ClosestRayResultCallback res(btFrom, btTo);
 
-	Base::getSingletonPtr()->m_btWorld->rayTest(btFrom, btTo, res);
+	m_physics->getWorld()->rayTest(btFrom, btTo, res);
 
 	if(res.hasHit()){
 		// Get scene node

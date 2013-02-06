@@ -13,7 +13,7 @@ EventManager::EventManager(Ogre::SceneManager* mgr, Sparks::Camera* camera)
 	m_pDynamicObjectManager = new DynamicObjectManager(m_pSceneMgr, m_pCamera);
 
 	// Init projectile manager
-	m_pProjectileManager = new ProjectileManager(m_pSceneMgr);
+	m_pProjectileManager = new ProjectileManager(m_pSceneMgr, m_pCamera->getPhysics());
 
 	// Init NPC Manager
 	m_pNPCManager = new NPCManager(m_pSceneMgr, m_pCamera);

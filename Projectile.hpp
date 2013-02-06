@@ -70,6 +70,8 @@ private:
 	bool					m_alive;
 
 	NPCManager*				m_pNPCManager;
+
+	Physics*				m_physics;
 };
 
 //================================================//
@@ -96,7 +98,7 @@ inline const Ogre::Vector3 Projectile::getPosition(void) const
 class ProjectileManager
 {
 public:
-	ProjectileManager(Ogre::SceneManager* mgr);
+	ProjectileManager(Ogre::SceneManager* mgr, Physics* physics);
 	~ProjectileManager(void);
 
 	void addProjectile(Projectile::PROJECTILE_DATA& data);
@@ -117,6 +119,8 @@ private:
 	NPCManager*					m_pNPCManager;
 
 	std::vector<Projectile*>	m_projectiles;
+
+	Physics*					m_physics;
 };
 
 //================================================//

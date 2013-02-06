@@ -32,9 +32,10 @@ void DynamicObject::init(Ogre::SceneNode* node, btCollisionObject* colObj)
 
 //================================================//
 
-void DynamicObject::init(Ogre::SceneManager* mgr, Ogre::SceneNode* node, btCollisionObject* colObj)
+void DynamicObject::init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* node, btCollisionObject* colObj)
 {
 	m_pSceneMgr = mgr;
+	m_physics = physics;
 	m_pSceneNode = node;
 	m_collisionObject = colObj;
 
@@ -113,7 +114,7 @@ void DynamicObject::update(double timeSinceLastFrame)
 		btVector3(m_pSceneNode->_getDerivedPosition().x, m_pSceneNode->_getDerivedPosition().y, m_pSceneNode->_getDerivedPosition().z));
 	m_collisionObject->setWorldTransform(transform);
 
-	Base::getSingletonPtr()->m_btWorld->updateSingleAabb(m_collisionObject);  // needed?
+	//Base::getSingletonPtr()->m_btWorld->updateSingleAabb(m_collisionObject);  // needed?
 }
 
 //================================================//
@@ -189,7 +190,7 @@ MovingKinematicObject::MovingKinematicObject(void)
 void MovingKinematicObject::setupAnimation(DYNAMIC_OBJECT_DATA* data)
 {
 	// Remove the collision object
-	Base::getSingletonPtr()->m_btWorld->removeCollisionObject(m_collisionObject);
+	m_physics->getWorld()->removeCollisionObject(m_collisionObject);
 
 	// Add rigid body
 	const float modifier = 0.98f; // Ogre's AABBs are slightly larger than Bullet's
@@ -223,7 +224,7 @@ void MovingKinematicObject::setupAnimation(DYNAMIC_OBJECT_DATA* data)
 	/*m_rigidBody->setHitFraction(0.0);
 	m_rigidBody->setContactProcessingThreshold(0.0);*/
 
-	Base::getSingletonPtr()->m_btWorld->addRigidBody(m_rigidBody);
+	m_physics->getWorld()->addRigidBody(m_rigidBody);
 
 	// Now set the animation track
 	MovingObject::setupAnimation(data);
@@ -300,9 +301,9 @@ Switch::Switch(void)
 
 //================================================//
 
-void Switch::init(Ogre::SceneManager* mgr, Ogre::SceneNode* node, btCollisionObject* colObj)
+void Switch::init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* node, btCollisionObject* colObj)
 {
-	DynamicObject::init(mgr, node, colObj);
+	DynamicObject::init(mgr, physics, node, colObj);
 
 	DynamicObject::initSound("C:/test.wav");
 

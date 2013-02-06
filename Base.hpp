@@ -4,6 +4,7 @@
 #define __BASE_HPP__
 
 #include "stdafx.h"
+//#include "Physics.hpp"
 
 //================================================//
 
@@ -15,9 +16,6 @@ public:
 
 	bool init(OIS::KeyListener* pKeyListener, OIS::MouseListener* pMouseListener);
 	void initResources(void);
-
-	void createPhysicsWorld(void);
-	void destroyPhysicsWorld(void);
 
 	void updateOgre(double timeSinceLastFrame);
 
@@ -36,6 +34,9 @@ public:
 
 	// Ogre::WindowEventListener
 	void windowResized(Ogre::RenderWindow* rw);
+
+	// Getter functions
+	//Physics* getPhysics(void) const;
 
 	// --- //
 
@@ -65,15 +66,7 @@ public:
 	bool					m_useSkyX;
 
 	// Bullet
-	bool									m_useBullet;
-	btDiscreteDynamicsWorld*				m_btWorld;
-	btCollisionWorld*						m_btColWorld;
-	std::vector<btRigidBody*>				m_btObjects;
-	int										m_btObjectCount;
-	btBroadphaseInterface*					m_btBroadphase;
-	btDefaultCollisionConfiguration*		m_btCollisionConfiguration;
-	btCollisionDispatcher*					m_btCollisionDispatcher;
-	btSequentialImpulseConstraintSolver*	m_btSolver;
+	//Physics*				m_physics;
 
 	// FMOD
 	FMOD::System*							m_soundSystem;
@@ -111,6 +104,13 @@ inline void Base::setClockSpeed(const float speed)
 {
 	m_clockSpeed = speed;
 }
+
+//================================================//
+
+//inline Physics* Base::getPhysics(void) const
+//{ 
+//	return m_physics;
+//}
 
 //================================================//
 

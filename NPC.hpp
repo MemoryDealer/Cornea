@@ -48,6 +48,7 @@ public:
 	const bool isActive(void) const;
 	const bool isAlive(void) const;
 	const bool isFriendly(void) const;
+	btCollisionObject* getCollisionObject(void) const;
 
 	// Setter functions
 	void setState(int state);
@@ -116,6 +117,9 @@ inline const bool NPC::isAlive(void) const
 
 inline const bool NPC::isFriendly(void) const
 { return m_friendly; }
+
+inline btCollisionObject* NPC::getCollisionObject(void) const
+{ return m_collisionObject; }
 
 // Setter functions
 inline void NPC::setState(int state)

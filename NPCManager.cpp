@@ -8,6 +8,7 @@ NPCManager::NPCManager(Ogre::SceneManager* mgr, Sparks::Camera* camera)
 {
 	m_pSceneMgr = mgr;
 	m_pCamera = camera;
+	m_physics = camera->getPhysics();
 }
 
 //================================================//
@@ -58,6 +59,7 @@ void NPCManager::update(double timeSinceLastFrame)
 	for(std::vector<NPC*>::iterator itr = m_NPCs.begin();
 		itr != m_NPCs.end();){
 			if(!(*itr)->isAlive()){
+				m_physics->getWorld()->removeCollisionObject((*itr)->getCollisionObject());
 				delete *itr;
 				itr = m_NPCs.erase(itr); // remove dead NPC and move to next one
 			}

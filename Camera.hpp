@@ -9,6 +9,7 @@
 #include "Base.hpp"
 #include "Boots.hpp"
 #include "Sparks.hpp"
+#include "Physics.hpp"
 
 //================================================//
 
@@ -39,7 +40,7 @@ public:
 	Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance);
 	~Camera(void);
 
-	void init(void);
+	void init(Physics* physics);
 
 	void update(double timeSinceLastFrame);
 	void setPosition(Ogre::Vector3 pos);
@@ -68,6 +69,7 @@ public:
 	btRigidBody*		getRigidBody(void) const;
 	const Ogre::Vector3 getTranslateVector(void) const;
 	const unsigned		getMode(void) const;
+	Physics*			getPhysics(void) const;
 
 	Rayhit*				getNegativeYRayhit(void) const; 
 	Rayhit*				getNegativeZRayhit(void) const;
@@ -113,6 +115,7 @@ private:
 	unsigned				m_mode;
 	Ogre::Real				m_cameraHeight;
 
+	Physics*				m_physics;
 	btRigidBody*			m_btCamera;
 	btVector3				m_defGravity;
 
@@ -160,6 +163,9 @@ inline Rayhit* Camera::getNegativeYRayhit(void) const
 
 inline Rayhit* Camera::getNegativeZRayhit(void) const
 { return m_negativeZRayhit; }
+
+inline Physics* Camera::getPhysics(void) const
+{ return m_physics; }
 
 //================================================//
 

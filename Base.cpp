@@ -19,8 +19,7 @@ Base::Base(void)
 	m_pInputMgr(0),
 	m_pMouse(0),
 	m_pKeyboard(0),
-	m_useSkyX(true),
-	m_useBullet(true)
+	m_useSkyX(true)
 {
 	m_clockSpeed = 1.0f; // 100% speed
 }
@@ -46,11 +45,6 @@ Base::~Base(void)
 
 		//m_platform->getRenderManagerPtr()->setSceneManager(m_pSceneMgr);
 		//m_platform->getRenderManagerPtr()->shutdown();
-	}
-
-	if(m_useBullet){
-		// needs proper cleanup here
-		
 	}
 
 	if(m_soundSystem){
@@ -240,7 +234,7 @@ bool Base::keyPressed(const OIS::KeyEvent& arg)
 	}
 
 	if(m_injectGUI){
-		//MyGUI::InputManager::getInstance().injectKeyPress(MyGUI::KeyCode::Enum(arg.key), arg.text);
+		MyGUI::InputManager::getInstance().injectKeyPress(MyGUI::KeyCode::Enum(arg.key), arg.text);
 	}
 
 	return true;
@@ -256,7 +250,7 @@ bool Base::keyReleased(const OIS::KeyEvent& arg)
 	}
 
 	if(m_injectGUI){
-		//MyGUI::InputManager::getInstance().injectKeyRelease(MyGUI::KeyCode::Enum(arg.key));
+		MyGUI::InputManager::getInstance().injectKeyRelease(MyGUI::KeyCode::Enum(arg.key));
 	}
 
 	return true;
@@ -306,39 +300,6 @@ void Base::windowResized(Ogre::RenderWindow* rw)
     const OIS::MouseState& ms = m_pMouse->getMouseState();
     ms.width = width;
     ms.height = height;
-}
-
-//================================================//
-
-void Base::createPhysicsWorld(void)
-{
-	m_btBroadphase = new btAxisSweep3(btVector3(-1000, -1000, -1000), btVector3(1000, 1000, 1000));
-	m_btCollisionConfiguration = new btDefaultCollisionConfiguration();
-	m_btCollisionDispatcher = new btCollisionDispatcher(m_btCollisionConfiguration);
-	m_btSolver = new btSequentialImpulseConstraintSolver();
-	m_btWorld = new btDiscreteDynamicsWorld(m_btCollisionDispatcher, m_btBroadphase, m_btSolver, m_btCollisionConfiguration);
-	m_btColWorld = new btCollisionWorld(m_btCollisionDispatcher, m_btBroadphase, m_btCollisionConfiguration);
-	m_btObjectCount = 0;
-}
-
-//================================================//
-
-void Base::destroyPhysicsWorld(void)
-{
-	// Remove collision objects
-	btCollisionObjectArray& objects = m_btWorld->getCollisionObjectArray();
-	int size = objects.size();
-	for(int i=(size - 1); i>=0; --i){
-		printf("Removing %s...\n", static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer())->getName().c_str()); 
-		m_btWorld->removeCollisionObject(objects.at(i));
-	}
-
-	m_btObjects.clear();
-	delete m_btWorld;
-	delete m_btSolver;
-	delete m_btCollisionDispatcher;
-	delete m_btCollisionConfiguration;
-	delete m_btBroadphase;
 }
 
 //================================================//

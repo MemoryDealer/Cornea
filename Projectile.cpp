@@ -16,6 +16,9 @@ void Projectile::init(Ogre::SceneManager* mgr, PROJECTILE_DATA& data, NPCManager
 	// Set NPCManager pointer
 	m_pNPCManager = npcManager;
 
+	// Set physics pointer
+	m_physics = npcManager->getPhysics();
+
 	// Set particle data
 	m_origin = data.origin;
 	m_direction = data.direction;
@@ -73,7 +76,7 @@ bool Projectile::isColliding(void)
 
 	btCollisionWorld::ClosestRayResultCallback res(from, to);
 
-	Base::getSingletonPtr()->m_btWorld->rayTest(from, to, res);
+	m_physics->getWorld()->rayTest(from, to, res);
 
 	// set the new "last" position
 	m_lastPosition = m_pSceneNode->getPosition();
@@ -142,9 +145,10 @@ void Projectile::update(double timeSinceLastFrame)
 
 //================================================//
 
-ProjectileManager::ProjectileManager(Ogre::SceneManager* mgr)
+ProjectileManager::ProjectileManager(Ogre::SceneManager* mgr, Physics* physics)
 {
 	m_pSceneMgr = mgr;
+	m_physics = physics;
 }
 
 //================================================//

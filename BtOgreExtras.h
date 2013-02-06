@@ -17,8 +17,6 @@
 #ifndef _BtOgreShapes_H_
 #define _BtOgreShapes_H_
 
-#include "EventManager.hpp"
-
 #include "btBulletDynamicsCommon.h"
 #include "OgreSceneNode.h"
 #include "OgreSimpleRenderable.h"

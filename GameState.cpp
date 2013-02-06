@@ -45,8 +45,8 @@ void GameState::exit(void)
 	delete Boots::getSingletonPtr();
 	delete m_player;
 	
-	// Clear physics
-	Base::getSingletonPtr()->destroyPhysicsWorld();
+	// Free physics world
+	m_physics->free();
 
 	// Cleanup scene manager
 	/*m_pSceneMgr->getSceneNode("ogrenode")->detachAllObjects();
@@ -64,8 +64,6 @@ void GameState::exit(void)
 	//Ogre::GpuProgramManager::getSingleton().unloadAll();
 
 	Base::getSingletonPtr()->m_pRoot->destroySceneManager(m_pSceneMgr);
-
-	
 }
 
 //================================================//
@@ -305,7 +303,7 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 	case OIS::KC_P:
 		{
-			m_debugDrawer->setDebugMode(!m_debugDrawer->getDebugMode());
+			m_physics->flipDebugDrawer();
 		}
 		break;
 
@@ -635,8 +633,10 @@ void GameState::update(double timeSinceLastFrame)
 			break;
 
 		case STEP_CREATE_PHYSICS_WORLD:
-			Base::getSingletonPtr()->createPhysicsWorld();
-			m_player->getCamera()->init(); // must have physics world to init
+			m_physics = new Physics();
+			m_physics->init();
+
+			m_player->getCamera()->init(m_physics); // must have physics world to init
 			Base::getSingletonPtr()->m_pViewport->setCamera(m_player->getCamera()->getOgreCamera());
 			break;
 
@@ -655,21 +655,20 @@ void GameState::update(double timeSinceLastFrame)
 		case STEP_SETUP_COLLISION_WORLD:
 			// Weird gray screen here after moving this code from createScene()
 			// Add entities to the collision world
-			BtOgre::registerAllEntitiesAsColliders(m_pSceneMgr, Base::getSingletonPtr()->m_btWorld);
+			m_physics->registerAllEntitiesInScene(m_pSceneMgr);
 
 			// Add dynamic objects
 			m_pEventManager->getDynamicObjectManager()->registerAllObjectsInScene();
 
 			// Debug drawer for Bullet
-			m_debugDrawer = new BtOgre::DebugDrawer(m_pSceneMgr->getRootSceneNode(), Base::getSingletonPtr()->m_btWorld);
-			Base::getSingletonPtr()->m_btWorld->setDebugDrawer(m_debugDrawer);
-			m_debugDrawer->setDebugMode(0);
+			m_physics->initDebugDrawer(m_pSceneMgr->getRootSceneNode());
 
 			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 			break;
 
 		case STEP_CREATE_GUI:
 			createGUI();
+			Base::getSingletonPtr()->m_injectGUI = false;
 			break;
 
 		case STEP_FINAL:
@@ -758,28 +757,11 @@ void GameState::updateUI(void)
 
 void GameState::updateBullet(double timeSinceLastFrame)
 {
-	Base::getSingletonPtr()->m_btWorld->stepSimulation(timeSinceLastFrame * 0.015f, 60);
-	//Base::getSingletonPtr()->m_btWorld->stepSimulation(1.0f / 60.0f, 60);
-
-	m_debugDrawer->step();
-
-	// Update all rigid bodies
-	btRigidBody* body;
-
-	for(std::vector<btRigidBody*>::iterator itr = Base::getSingletonPtr()->m_btObjects.begin(); itr!=Base::getSingletonPtr()->m_btObjects.end(); ++itr){
-		Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>((*itr)->getUserPointer());
-		body = *itr;
-
-		btVector3 pos = body->getCenterOfMassPosition();
-		node->setPosition(Ogre::Vector3((float)pos[0], (float)pos[1], (float)pos[2]));
-
-		btQuaternion orientation = body->getOrientation();
-		node->setOrientation(Ogre::Quaternion(orientation.w(), orientation.x(), orientation.y(), orientation.z()));
-	}
+	m_physics->update(timeSinceLastFrame);
 
 	// Update the camera's rigid body
 	if(m_player->getCamera()->getMode() == Sparks::Camera::MODE_FIRST_PERSON){
-		body = m_player->getCamera()->getRigidBody();
+		btRigidBody* body = m_player->getCamera()->getRigidBody();
 
 		btVector3 pos = body->getCenterOfMassPosition();
 		m_player->getCamera()->getSceneNode()->setPosition(Ogre::Vector3((float)pos[0], (float)pos[1], (float)pos[2]));
