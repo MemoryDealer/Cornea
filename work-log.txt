@@ -569,6 +569,14 @@ G: -8.80
 #2/5/13
 -Wrapped Bullet into a Physics class which is created when the game state is entered and no longer from the Base class. A pointer to the Physics class has to be passed
 	around to some of the other classes as it's needed. No different that passing a pointer to the scene manager. 
+
+#2/6/13
+-Added the ability to load the next stage in game state. For some reason when I didn't recreate the scene manager, an assertion appeared on Root::renderOneFrame, but
+	now I destroy and create the scene manager in STEP_FIRST when loading the next stage. 
+-Moved the Profile singleton to a single class that's held in GameState. This simplifies debugging the random problems I was having with loading/saving. The inventory
+	was previously a pointer and its address was written to the save file rather than the data, thus the weapons were corrupted. The inventory is no longer a pointer and
+	works now.
+-Added a SharedData singleton which can be used by anything as needed. Currently it is used for storing the name of the file to save/load when entering the game state. 
 	
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 
@@ -581,4 +589,5 @@ G: -8.80
 -Ladder climbing--use ground trigger or forward ray. 
 -Fix weapon switching fire rate glitch. 
 -Make dynamic object manager automatically activate idle objects if they get in their defined range.
+-"Glasses" feature.
 -For vectors that may become large, implement sorting and binary searching.  http://en.cppreference.com/w/cpp/algorithm/binary_search http://www.cplusplus.com/reference/algorithm/sort/

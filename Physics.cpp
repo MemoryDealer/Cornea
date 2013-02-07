@@ -92,6 +92,10 @@ void Physics::update(double timeSinceLastFrame)
 	// Update debug drawer
 	m_debugDrawer->step();
 
+	// Update player camera rigid body
+
+
+	// Update other rigid bodies
 	btRigidBody* body;
 
 	for(std::vector<btRigidBody*>::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr){

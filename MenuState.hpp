@@ -6,7 +6,7 @@
 //================================================//
 
 #include "AppState.hpp"
-#include "Profile.hpp"
+#include "SharedData.hpp"
 #include "GUILayerMenuState.hpp"
 
 //================================================//

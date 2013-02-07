@@ -21,5 +21,6 @@
 # POSSIBLE
 - Passing a copy of timeSinceLastFrame so many times might be wasting memory, could try a reference if perfmormance needs enhancement. 
 - Not sure if a "shadow camera" is needed. I can remove the listener from the scene manager and I don't see a difference. 
+- Memory leak when exiting game state ~1 MB
 
 # - 

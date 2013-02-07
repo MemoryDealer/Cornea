@@ -17,6 +17,7 @@
 #include "Profile.hpp"
 #include "Player.hpp"
 #include "NPC.hpp"
+#include "SharedData.hpp"
 
 //================================================//
 
@@ -32,6 +33,7 @@ public:
 	virtual bool pause(void);
 	virtual void resume(void);
 	virtual void createScene(void);
+	virtual void destroyScene(void);
 	virtual void createGUI(void);
 	void createLoadingGUI(void);
 	virtual void destroyGUI(void);
@@ -75,7 +77,6 @@ protected:
 
 	// Session
 	int						m_state;
-	int						m_stage;
 
 	// Loading
 	int						m_loadingStep;
@@ -85,6 +86,7 @@ protected:
 	
 	// Player 
 	Player*					m_player;
+	Profile*				m_profile;
 
 	// Physics
 	Physics*				m_physics;

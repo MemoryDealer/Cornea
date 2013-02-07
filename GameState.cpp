@@ -25,9 +25,18 @@ void GameState::enter(void)
 	m_state = STATE_LOADING_FIRST_ENTRY;
 	m_loadingStep = STEP_FIRST;
 
-	m_stage = Profile::getSingletonPtr()->getStage();
-
 	new Boots();
+
+	// Init profile
+	m_profile = new Profile();
+	if(SharedData::getSingletonPtr()->action == 0){
+		m_profile->create(SharedData::getSingletonPtr()->buffer);
+		printf("%s created!\n", SharedData::getSingletonPtr()->buffer.c_str());
+	}
+	else{
+		m_profile->load(SharedData::getSingletonPtr()->buffer);
+		printf("%s loaded!\n", SharedData::getSingletonPtr()->buffer.c_str());
+	}
 }
 
 //================================================//
@@ -36,25 +45,7 @@ void GameState::exit(void)
 {
 	Base::getSingletonPtr()->m_pLog->logMessage("[S] Leaving GameState...");
 
-	destroyGUI();
-
-	// Free environment
-	delete m_pEventManager;
-
-	// Free the player's boots
-	delete Boots::getSingletonPtr();
-	delete m_player;
-	
-	// Free physics world
-	m_physics->free();
-
-	// Cleanup scene manager
-	/*m_pSceneMgr->getSceneNode("ogrenode")->detachAllObjects();
-	m_pSceneMgr->getEntity("ogre")->getMesh()->unload();
-	m_pSceneMgr->destroyEntity("ogre");*/
-	
-	m_pSceneMgr->clearScene();
-	m_pSceneMgr->destroyAllCameras();
+	this->destroyScene();
 
 	//Ogre::MeshManager::getSingleton().removeAll();
 	//Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup("Popular");
@@ -64,6 +55,10 @@ void GameState::exit(void)
 	//Ogre::GpuProgramManager::getSingleton().unloadAll();
 
 	Base::getSingletonPtr()->m_pRoot->destroySceneManager(m_pSceneMgr);
+
+	// Save the profile
+	m_profile->save();
+	delete m_profile;
 }
 
 //================================================//
@@ -94,10 +89,8 @@ void GameState::resume(void)
 
 void GameState::createScene(void)
 {
+	// Initialise all settings
 	Settings& settings = Settings::getSingleton();
-
-	// Environment
-	m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox");
 
 	// Soft shadows
 	if(settings.graphics.shadows.enabled){
@@ -110,46 +103,114 @@ void GameState::createScene(void)
 		m_pSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
 		m_pSceneMgr->setShadowTextureFSAA(settings.graphics.shadows.fsaa);
 	}
-	
-	// Player flashlight
-	m_player->initFlashlight();
 
-	// plane
-	Ogre::Entity* e;
-	Ogre::Plane p;
-
-	p.normal = Ogre::Vector3(0, 1, 0); 
-	p.d = 0;
-
-	Ogre::MeshManager::getSingleton().createPlane("FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-		p, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
-	e = m_pSceneMgr->createEntity("Floor", "FloorPlane");
-	e->setMaterialName("metal");
-	Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("MofoPlane");
-	node->attachObject(e);
-	//e->getMesh()->buildEdgeList();
-	e->setCastShadows(false);
-
-	// Scene
+	// Init DotSceneLoader
 	DotSceneLoader* loader = new DotSceneLoader();
 	Ogre::SceneNode* scene = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("Scene");
-	loader->parseDotScene("level-test6.scene", "General", m_pSceneMgr, scene);
+
+	// Create the scene based on current stage
+	switch(m_profile->getStage()){
+	default:
+
+		break;
+
+	// ======== //
+
+	// Oil Rig
+	case Profile::STAGE::OIL_RIG:
+		{
+			// Skybox
+			m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox");
+
+			// Plane
+			Ogre::Entity* e;
+			Ogre::Plane p;
+
+			p.normal = Ogre::Vector3(0, 1, 0); 
+			p.d = 0;
+
+			Ogre::MeshManager::getSingleton().createPlane("FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+				p, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
+			e = m_pSceneMgr->createEntity("Floor", "FloorPlane");
+			e->setMaterialName("metal");
+			Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("MofoPlane");
+			node->attachObject(e);
+			//e->getMesh()->buildEdgeList();
+			e->setCastShadows(false);
+
+			loader->parseDotScene("level-test6.scene", "General", m_pSceneMgr, scene);
+
+			// Scale scene node and all child nodes
+			scene->setInheritScale(true);
+			scene->scale(20.0, 20.0, 20.0);
+		}
+		break;
+
+	// ======== //
+
+	// Test Stage
+	case Profile::STAGE::TEST_STAGE:
+		{
+			m_pSceneMgr->setSkyBox(true, "Examples/TrippySkyBox");
+
+			// Plane
+			Ogre::Entity* e;
+			Ogre::Plane p;
+
+			p.normal = Ogre::Vector3(0, 1, 0); 
+			p.d = 0;
+
+			Ogre::MeshManager::getSingleton().createPlane("FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+				p, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
+			e = m_pSceneMgr->createEntity("Floor", "FloorPlane");
+			e->setMaterialName("metal");
+			Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("MofoPlane");
+			node->attachObject(e);
+			//e->getMesh()->buildEdgeList();
+			e->setCastShadows(false);
+		}
+		break;
+
+	// ======== //
+
+	// End
+	case Profile::STAGE::END:
+		{
+
+		}
+		break;
+	}
+
+	// Scene loaded, delete the loader
 	delete loader;
 
-	// Scale it and all child nodes
-	scene->setInheritScale(true);
-	scene->scale(20.0, 20.0, 20.0);
 
-	/*Ogre::Entity* entity;
-	entity = m_pSceneMgr->createEntity("ogre", "ogrehead.mesh", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-	Ogre::SceneNode* node2 = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("ogrenode");
-	node2->attachObject(entity);
-	entity->setCastShadows(true);
-
-	node2->setPosition(50, 100, 0);*/
+	
 
 	// Reset ambient light
 	//m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
+}
+
+//================================================//
+
+void GameState::destroyScene(void)
+{
+	Base::getSingletonPtr()->m_pLog->logMessage("[S] Destroying Scene...");
+
+	destroyGUI();
+
+	// Free environment
+	delete m_pEventManager;
+
+	// Free the player's boots
+	delete Boots::getSingletonPtr();
+	delete m_player;
+	
+	// Free physics world
+	m_physics->free();
+	
+	m_pSceneMgr->clearScene();
+	m_pSceneMgr->destroyAllCameras();
 }
 
 //================================================//
@@ -205,7 +266,13 @@ void GameState::preloadMeshData(void)
 {
 	// Load certain mesh data before scene is created to avoid lag spikes during gameplay
 	Ogre::Entity* temp;
+
+	// Load specific meshes
+	switch(m_profile->getStage()){
 	
+	}
+	
+	// Load general meshes
 	temp = m_pSceneMgr->createEntity("temp", "br.mesh");
 	m_pSceneMgr->destroyEntity(temp);
 
@@ -260,21 +327,21 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 	// Keys for switching boots
 	case OIS::KC_1:
 		//Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_NORMAL);
-		m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(0), m_pEventManager);
+		m_player->setWeapon(m_profile->getInventory().getWeapon(0), m_pEventManager);
 		break;
 
 	case OIS::KC_2:
 		//Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_VELOCITY);
-		m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(1), m_pEventManager);
+		m_player->setWeapon(m_profile->getInventory().getWeapon(1), m_pEventManager);
 		break;
 
 	case OIS::KC_3:
 		//Boots::getSingletonPtr()->equipType(Boots::BOOTS_TYPE_HIGH);
-		m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(2), m_pEventManager);
+		m_player->setWeapon(m_profile->getInventory().getWeapon(2), m_pEventManager);
 		break;
 
 	case OIS::KC_4:
-		m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(3), m_pEventManager);
+		m_player->setWeapon(m_profile->getInventory().getWeapon(3), m_pEventManager);
 		break;
 
 	case OIS::KC_TAB:
@@ -338,6 +405,11 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		}
 		break;
 
+	case OIS::KC_N:
+		m_profile->nextStage();
+		m_state = STATE_LOADING_NEXT_STAGE;
+		break;
+
 	case OIS::KC_V:
 		Base::getSingletonPtr()->m_pRenderWindow->setVSyncEnabled(!Base::getSingletonPtr()->m_pRenderWindow->isVSyncEnabled());
 		break;
@@ -351,16 +423,16 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		break;
 
 	case OIS::KC_F5:
-		Profile::getSingletonPtr()->save();
+		m_profile->save();
 		break;
 
 	case OIS::KC_F9:
-		if(Profile::getSingletonPtr()->load("TestProfile")){
+		/*if(Profile::getSingletonPtr()->load("TestProfile")){
 			printf("Profile loaded!\n");
 		}
 		else{
 			printf("Invalid profile data.\n");
-		}
+		}*/
 		break;
 
 	case OIS::KC_UP:
@@ -626,10 +698,13 @@ void GameState::update(double timeSinceLastFrame)
 
 		case STEP_FIRST:
 			// Setup loading screen
-			createLoadingGUI();
+			this->createLoadingGUI();
 
 			// Init player so we can use the camera
 			m_player = new Player(m_pSceneMgr);
+
+			// Player flashlight
+			m_player->initFlashlight();
 			break;
 
 		case STEP_CREATE_PHYSICS_WORLD:
@@ -645,11 +720,11 @@ void GameState::update(double timeSinceLastFrame)
 			break;
 
 		case STEP_PRELOAD_MESH_DATA:
-			preloadMeshData();
+			this->preloadMeshData();
 			break;
 
 		case STEP_CREATE_SCENE:
-			createScene();
+			this->createScene();
 			break;
 
 		case STEP_SETUP_COLLISION_WORLD:
@@ -662,21 +737,22 @@ void GameState::update(double timeSinceLastFrame)
 
 			// Debug drawer for Bullet
 			m_physics->initDebugDrawer(m_pSceneMgr->getRootSceneNode());
-
-			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 			break;
 
 		case STEP_CREATE_GUI:
-			createGUI();
+			this->createGUI();
 			Base::getSingletonPtr()->m_injectGUI = false;
 			break;
 
 		case STEP_FINAL:
 			// Final steps before game begins
-			m_player->setWeapon(Profile::getSingletonPtr()->getInventory()->getWeapon(0), m_pEventManager);
+			m_player->setWeapon(m_profile->getInventory().getWeapon(0), m_pEventManager);
 			m_GUILoadingLayer->setVisible(false);
 			m_state = STATE_ACTIVE;
-			break;
+			m_loadingStep = 0;
+
+			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
+			return;
 		}
 
 		// Increment loading step
@@ -688,6 +764,73 @@ void GameState::update(double timeSinceLastFrame)
 		break; // STATE_LOADING_FIRST_ENTRY
 
 	case STATE_LOADING_NEXT_STAGE:
+		switch(m_loadingStep){
+		default:
+
+			break;
+
+		case STEP_FIRST:
+			// Clear the current scene and prepare for loading of next scene
+			this->destroyScene();
+
+			Base::getSingletonPtr()->m_pRoot->destroySceneManager(m_pSceneMgr);
+			m_pSceneMgr = Base::getSingletonPtr()->m_pRoot->createSceneManager("OctreeSceneManager", "GameSceneMgr");
+
+			this->createLoadingGUI();
+
+			m_player = new Player(m_pSceneMgr);
+			m_player->initFlashlight();
+
+			m_GUILoadingLayer->setProgressBarPosition(GUIGameState::GUILoadingLayer::PROGRESSBAR_STATUS, 0);
+			break;
+
+		case STEP_CREATE_PHYSICS_WORLD:
+			m_physics->init();
+
+			m_player->getCamera()->init(m_physics);
+			Base::getSingletonPtr()->m_pViewport->setCamera(m_player->getCamera()->getOgreCamera());
+			break;
+
+		case STEP_INIT_EVENT_MANAGER:
+			m_pEventManager = new EventManager(m_pSceneMgr, m_player->getCamera());
+			break;
+
+		case STEP_PRELOAD_MESH_DATA:
+			this->preloadMeshData();
+			break;
+
+		case STEP_CREATE_SCENE:
+			this->createScene();
+			break;
+
+		case STEP_SETUP_COLLISION_WORLD:
+			m_physics->registerAllEntitiesInScene(m_pSceneMgr);
+
+			m_pEventManager->getDynamicObjectManager()->registerAllObjectsInScene();
+
+			m_physics->initDebugDrawer(m_pSceneMgr->getRootSceneNode());
+
+			break;
+
+		case STEP_CREATE_GUI:
+			this->createGUI();
+			break;
+
+		case STEP_FINAL:
+			m_player->setWeapon(m_profile->getInventory().getWeapon(0), m_pEventManager);
+			m_GUILoadingLayer->setVisible(false);
+			m_state = STATE_ACTIVE;
+			m_loadingStep = 0;
+
+			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
+			return;
+		}
+
+		// Increment loading step
+		m_loadingStep++;
+
+		// Update progress bar
+		m_GUILoadingLayer->incrementProgressBar(GUIGameState::GUILoadingLayer::PROGRESSBAR_STATUS, 100);
 
 		break; // STATE_LOADING_NEXT_STAGE
 	}

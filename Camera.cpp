@@ -40,6 +40,11 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 	m_negativeZRayhit = nullptr;
 
 	//init();
+	// nodes
+	m_pCameraNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode(NODE_CAMERA);
+	m_pCameraYawNode = m_pCameraNode->createChildSceneNode(NODE_CAMERA_YAW);
+	m_pCameraPitchNode = m_pCameraYawNode->createChildSceneNode(NODE_CAMERA_PITCH);
+	m_pCameraRollNode = m_pCameraPitchNode->createChildSceneNode(NODE_CAMERA_ROLL);
 }
 
 //================================================//
@@ -55,6 +60,9 @@ Camera::~Camera(void)
 	m_pSceneMgr->destroySceneNode(m_pCameraYawNode);
 	m_pSceneMgr->destroySceneNode(m_pCameraRollNode);
 	m_pSceneMgr->destroyCamera(m_pCamera);
+
+	delete m_negativeYRayhit;
+	delete m_negativeZRayhit;
 }
 
 //================================================//
@@ -63,18 +71,14 @@ void Camera::init(Physics* physics)
 {
 	m_physics = physics;
 
+	m_pSceneMgr->destroyCamera("PlayerCam");
 	m_pCamera = m_pSceneMgr->createCamera("PlayerCam");
 	m_pCamera->setAutoAspectRatio(true);
 
-	// nodes
-	m_pCameraNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode(NODE_CAMERA);
-	m_pCameraYawNode = m_pCameraNode->createChildSceneNode(NODE_CAMERA_YAW);
-	m_pCameraPitchNode = m_pCameraYawNode->createChildSceneNode(NODE_CAMERA_PITCH);
-	m_pCameraRollNode = m_pCameraPitchNode->createChildSceneNode(NODE_CAMERA_ROLL);
-	m_pCameraRollNode->attachObject(m_pCamera);
-
 	m_pCamera->setNearClipDistance(1);
 	m_pCamera->setFarClipDistance(m_farClipDistance);
+
+	m_pCameraRollNode->attachObject(m_pCamera);
 
 	// set the initial position
 	m_pCameraNode->setPosition(0, 200, 0);

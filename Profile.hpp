@@ -12,16 +12,18 @@
 #include "stdafx.h"
 #include "Inventory.hpp"
 
+
 //================================================//
 
 /* This functions as a "saved game" that can be loaded and created from the main menu. 
 	Each one is named whatever the player calls it and stored in a binary file. */
-class Profile : public Ogre::Singleton<Profile>
+class Profile
 {
 public:
 	Profile(void);
 	~Profile(void);
 
+	void setDefaults(void);
 	bool create(Ogre::String name);
 	bool load(Ogre::String name);
 	bool save(void);
@@ -29,7 +31,11 @@ public:
 	// Getter functions
 	const int getDifficulty(void) const;
 	const int getStage(void) const;
-	Inventory* getInventory(void) const;
+	Inventory& getInventory(void) const;
+
+	// Setter functions
+	void setStage(int stage);
+	void nextStage(void);
 
 	// --- //
 
@@ -42,6 +48,7 @@ public:
 
 	enum STAGE{
 		OIL_RIG = 0,
+		TEST_STAGE,
 		END
 	};
 
@@ -58,7 +65,7 @@ private:
 		int				stage;
 
 		// In-game data
-		Inventory*		pInventory;
+		Inventory		inventory;
 		int				health;
 		
 	} PROFILE_DATA;
@@ -74,8 +81,14 @@ inline const int Profile::getDifficulty(void) const
 inline const int Profile::getStage(void) const
 { return m_pData->stage; }
 
-inline Inventory* Profile::getInventory(void) const
-{ return m_pData->pInventory; }
+inline Inventory& Profile::getInventory(void) const
+{ return m_pData->inventory; }
+
+inline void Profile::setStage(int stage)
+{ m_pData->stage = stage; }
+
+inline void Profile::nextStage(void)
+{ m_pData->stage++; }
 
 //================================================//
 

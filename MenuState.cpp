@@ -285,7 +285,8 @@ void MenuState::handleGUIEvent(void)
 				m_GUILayers.clear();
 				m_GUILayers.push_back(m_GUIRootLayer);
 
-				Profile::getSingletonPtr()->create(name);
+				SharedData::getSingletonPtr()->buffer = name;
+				SharedData::getSingletonPtr()->action = 0;
 				this->pushAppState(findByName("GameState"));
 			}
 		}
@@ -298,8 +299,9 @@ void MenuState::handleGUIEvent(void)
 			Ogre::String name = m_GUILoadGameLayer->getListBoxSelectedText(GUIMenuState::GUILoadGameLayer::LISTBOX_SAVES);
 			
 			if(name != "None"){
-				Profile::getSingletonPtr()->load(name);
-				this->pushAppState(findByName("GameState"));
+				SharedData::getSingletonPtr()->buffer = name;
+				SharedData::getSingletonPtr()->action = 1;
+				this->pushAppState(findByName("GameState"));	
 			}
 		}
 		break;

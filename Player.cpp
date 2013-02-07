@@ -25,7 +25,7 @@ Player::Player(Ogre::SceneManager* mgr)
 
 Player::~Player(void)
 {
-	if(m_pCamera) delete m_pCamera;
+	if(m_pCamera != nullptr) delete m_pCamera;
 	if(m_pWeapon != nullptr) delete m_pWeapon;
 	if(m_pFlashlight != nullptr) delete m_pFlashlight;
 }

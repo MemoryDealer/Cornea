@@ -2,8 +2,6 @@
 
 #include "Profile.hpp"
 
-template<> Profile* Ogre::Singleton<Profile>::msSingleton = 0;
-
 //================================================//
 
 Profile::Profile(void)
@@ -11,10 +9,7 @@ Profile::Profile(void)
 	m_pData = new PROFILE_DATA();
 	memset(m_pData, 0, sizeof(PROFILE_DATA));
 
-	m_pData->magic = BINARY_MAGIC;
-
-	// Inventory
-	m_pData->pInventory = new Inventory();
+	this->setDefaults();
 }
 
 //================================================//
@@ -27,12 +22,24 @@ Profile::~Profile(void)
 
 //================================================//
 
+void Profile::setDefaults(void)
+{
+	m_pData->magic = BINARY_MAGIC;
+	m_pData->name = "Default";
+	m_pData->difficulty = NORMAL;
+	m_pData->stage = 0;
+
+	m_pData->inventory.setDefaults();
+}
+
+//================================================//
+
 bool Profile::create(Ogre::String name)
 {
-	// Set everything to default, retrieve data as needed from menustate
+	this->setDefaults();
+	
 	m_pData->name = name;
-	m_pData->difficulty = NORMAL;
-
+	
 	if(save()){
 		return true;
 	}
@@ -46,7 +53,9 @@ bool Profile::load(Ogre::String name)
 {
 	// Add encryption
 
-	std::ifstream fp("Saves/" + name + ".save", std::ifstream::binary);
+	this->setDefaults();
+
+	std::ifstream fp("Saves/" + name, std::ifstream::binary);
 
 	if(fp.is_open()){
 		// Compare sizes
@@ -60,6 +69,7 @@ bool Profile::load(Ogre::String name)
 
 			Ogre::StringUtil strUtil;
 			if(strUtil.match(m_pData->magic, BINARY_MAGIC, true)){
+				printf("Matched!!\n");
 				return true;
 			}
 		}

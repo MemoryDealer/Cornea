@@ -15,6 +15,8 @@ public:
 	Inventory(void);
 	~Inventory(void);
 
+	void setDefaults(void);
+
 	// Getter functions
 	const unsigned	getWeapon(unsigned slot) const;
 
@@ -25,7 +27,7 @@ private:
 
 
 	// Weapons
-	unsigned		m_weapons[4];
+	int		m_weapons[4];
 };
 
 //================================================//

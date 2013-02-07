@@ -21,7 +21,7 @@ EventManager::EventManager(Ogre::SceneManager* mgr, Sparks::Camera* camera)
 	m_pProjectileManager->setNPCManager(m_pNPCManager);
 
 	// Init Effect Manager
-	m_pEffectManager = new EffectManager(m_pSceneMgr, 10);
+	//m_pEffectManager = new EffectManager(m_pSceneMgr, 10);
 }
 
 //================================================//
@@ -47,7 +47,7 @@ void EventManager::update(double timeSinceLastFrame)
 	m_pNPCManager->update(timeSinceLastFrame);
 
 	// Update Effect Manager
-	m_pEffectManager->update(timeSinceLastFrame);
+	//m_pEffectManager->update(timeSinceLastFrame);
 }
 
 //================================================//
