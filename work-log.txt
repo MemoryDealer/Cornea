@@ -578,6 +578,15 @@ G: -8.80
 	works now.
 -Added a SharedData singleton which can be used by anything as needed. Currently it is used for storing the name of the file to save/load when entering the game state. 
 	
+#2/7/13
+-Messed around with water and made a few small optimizations.
+-Going to add Hydrax next.
+
+#2/9/13
+-Put SkyX back in. Getting an error when compiling in release mode regarding _ITERTATOR_DEBUG_LEVEL preprocessor. 
+-For some reason the debug directory for lib files was in the release configuration. I think this caused the release build to link against the debug library for SkyX
+	and caused the errors. Thus, it would be wise to name all debug .lib files with a "_d" at the end. 
+
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 
 -Add a "profile" singleton which is loaded as a save game upon entering the game state and saved when exiting. This will include the inventory and stuff. 

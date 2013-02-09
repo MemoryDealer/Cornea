@@ -28,6 +28,9 @@ public:
 			int		textureCount;
 			int		textureSize;
 		} shadows;
+
+		bool useSkyX;
+		bool useHydraX;
 	} graphics;
 
 	// Audio

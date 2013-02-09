@@ -22,7 +22,6 @@ App::~App(void)
 
 void App::init(void)
 {
-#define _DEBUG
 	// Declare the Base singleton
 	new Base(); 
 	if(!Base::getSingletonPtr()->init(0, 0)) 

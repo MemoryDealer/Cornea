@@ -42,21 +42,6 @@ namespace BtOgre {
 
 void registerEntityAsCollider(Entity* entity, btCollisionWorld* colWorld)
 {
-	Ogre::StringUtil strUtil;
-	if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "Placeholder_", false)){
-		// This is just a placeholder used in Blender to determine the target of a moving object
-		// so it will just be removed from the world
-
-		Ogre::SceneNode* node = entity->getParentSceneNode();
-		node->getCreator()->destroySceneNode(node);
-
-		return;
-	}
-	// Any node that starts with a '$' won't be added to the physics world
-	else if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
-		return;
-	}
-
     // if you wish to do instancing you will have to share one
     // btTriangleMesh amongst multiple btBvhTriangleMeshShape
     // instances
@@ -160,10 +145,8 @@ void registerEntityAsCollider(Entity* entity, btCollisionWorld* colWorld)
     colWorld->addCollisionObject(btObj, 2, 1);
 
 	// DEBUG
-	if(!strUtil.startsWith(entity->getParentSceneNode()->getName(), "MofoPlane", false)){
-		entity->setMaterialName("blue");
-		entity->setCastShadows(true);
-	}
+	entity->setMaterialName("green");
+	entity->setCastShadows(true);
 }
 
 //================================================//
@@ -182,7 +165,26 @@ void registerAllEntitiesAsColliders(SceneManager* sceneMgr, btCollisionWorld* co
     while(i.hasMoreElements()) {
         Entity* entity = static_cast<Entity*>(i.getNext());
 
-		//printf("%s: <%.2f, %.2f, %.2f>\n", entity->getName().c_str(), entity->getParentSceneNode()->_getDerivedPosition().x, entity->getParentSceneNode()->_getDerivedPosition().y, entity->getParentSceneNode()->_getDerivedPosition().z);
+		printf("%s: <%.2f, %.2f, %.2f>\n", entity->getName().c_str(), entity->getParentSceneNode()->_getDerivedPosition().x, entity->getParentSceneNode()->_getDerivedPosition().y, entity->getParentSceneNode()->_getDerivedPosition().z);
+
+		Ogre::StringUtil strUtil;
+		if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "Placeholder_", false)){
+			// This is just a placeholder used in Blender to determine the target of a moving object
+			// so it will just be removed from the world
+
+			Ogre::SceneNode* node = entity->getParentSceneNode();
+			node->getCreator()->destroySceneNode(node);
+
+			continue;
+		}
+		// Any node that starts with a '$' won't be added to the physics world
+		else if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
+			continue;
+		}
+		// Prevent SkyX objects from being added
+		else if(strUtil.startsWith(entity->getName(), "SkyX", false)){
+			continue;
+		}
 		
         registerEntityAsCollider(entity, colWorld);
     }

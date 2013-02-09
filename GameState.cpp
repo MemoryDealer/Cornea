@@ -45,6 +45,10 @@ void GameState::exit(void)
 {
 	Base::getSingletonPtr()->m_pLog->logMessage("[S] Leaving GameState...");
 
+	// Save the profile
+	m_profile->save();
+	delete m_profile;
+
 	this->destroyScene();
 
 	//Ogre::MeshManager::getSingleton().removeAll();
@@ -55,10 +59,6 @@ void GameState::exit(void)
 	//Ogre::GpuProgramManager::getSingleton().unloadAll();
 
 	Base::getSingletonPtr()->m_pRoot->destroySceneManager(m_pSceneMgr);
-
-	// Save the profile
-	m_profile->save();
-	delete m_profile;
 }
 
 //================================================//
@@ -120,7 +120,31 @@ void GameState::createScene(void)
 	case Profile::STAGE::OIL_RIG:
 		{
 			// Skybox
-			m_pSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox");
+			//settings.graphics.useSkyX = false;
+			if(settings.graphics.useSkyX){
+				m_skyXController = new SkyX::BasicController();
+				m_skyX = new SkyX::SkyX(m_pSceneMgr, m_skyXController);
+				m_skyX->create();
+
+				Base::getSingletonPtr()->m_pRoot->addFrameListener(m_skyX);
+				Base::getSingletonPtr()->m_pRenderWindow->addListener(m_skyX);
+
+				// Add clouds
+				SkyX::CloudLayer::Options options;
+
+				options.WindDirection = Ogre::Vector2(10.0, 0.0);
+
+				m_skyX->getCloudsManager()->add(SkyX::CloudLayer::Options(options));
+
+				m_pSunlight = m_pSceneMgr->createLight("Sunlight");
+				m_pSunlight->setType(Ogre::Light::LT_DIRECTIONAL);
+				m_pSunlight->setDiffuseColour(Ogre::ColourValue(1.0, 1.0, 1.0));
+				m_pSunlight->setSpecularColour(Ogre::ColourValue(1.0, 1.0, 1.0));
+
+			}
+			else{
+				m_pSceneMgr->setSkyBox(true, "Examples/CloudyNoonSkyBox");
+			}
 
 			// Plane
 			Ogre::Entity* e;
@@ -132,17 +156,36 @@ void GameState::createScene(void)
 			Ogre::MeshManager::getSingleton().createPlane("FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 				p, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
 			e = m_pSceneMgr->createEntity("Floor", "FloorPlane");
-			e->setMaterialName("metal");
-			Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("MofoPlane");
+			e->setMaterialName("Examples/Water2");
+			Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("$WaterPlane");
 			node->attachObject(e);
 			//e->getMesh()->buildEdgeList();
-			e->setCastShadows(false);
+			//e->setCastShadows(false);
+
+			// Plane underneath
+			Ogre::Entity* underPlane;
+			Ogre::Plane p2;
+
+			p2.normal = Ogre::Vector3::UNIT_Y;
+			p2.d = 0;
+
+			Ogre::MeshManager::getSingleton().createPlane("UnderPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+				p2, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
+			underPlane = m_pSceneMgr->createEntity("Under", "UnderPlane");
+			underPlane->setMaterialName("blue");
+			Ogre::SceneNode* underPlaneNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("$UnderPlane");
+			underPlaneNode->attachObject(underPlane);
+			underPlaneNode->translate(0.0, -100.0, 0.0);
+			
+			//underPlane->setCastShadows(false);
 
 			loader->parseDotScene("level-test6.scene", "General", m_pSceneMgr, scene);
 
 			// Scale scene node and all child nodes
 			scene->setInheritScale(true);
 			scene->scale(20.0, 20.0, 20.0);
+
+			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 		}
 		break;
 
@@ -168,6 +211,8 @@ void GameState::createScene(void)
 			node->attachObject(e);
 			//e->getMesh()->buildEdgeList();
 			e->setCastShadows(false);
+
+			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 		}
 		break;
 
@@ -208,7 +253,21 @@ void GameState::destroyScene(void)
 	
 	// Free physics world
 	m_physics->free();
+
+	// Clear SkyX
+	Base::getSingletonPtr()->m_pRoot->removeFrameListener(m_skyX);
+	Base::getSingletonPtr()->m_pRenderWindow->removeListener(m_skyX);
+
+	if(Settings::getSingletonPtr()->graphics.useSkyX){
+		if(m_skyXController->getDeleteBySkyX()){
+			//delete m_skyXController; ?
+			m_skyX->remove();
+		}
+	}
 	
+	// ...
+	//m_pSceneMgr->destroyLight(m_pSunlight);
+
 	m_pSceneMgr->clearScene();
 	m_pSceneMgr->destroyAllCameras();
 }
@@ -673,20 +732,21 @@ void GameState::update(double timeSinceLastFrame)
 
 	case STATE_ACTIVE:
 		// Update player
-		//printf("Player...\n");
 		m_player->update(timeSinceLastFrame);
 
 		// Update events
-		//printf("Events...\n");
 		m_pEventManager->update(timeSinceLastFrame);
 
 		// Update UI
-		//printf("UI...\n");
 		updateUI();
 
 		// Update physics
-		//printf("Bullet...\n");
 		updateBullet(timeSinceLastFrame);
+
+		// skyx...
+		if(Settings::getSingletonPtr()->graphics.useSkyX)
+			m_pSunlight->setDirection(-m_skyXController->getSunDirection());
+		//m_skyXController->getTime();
 
 		break;
 
@@ -750,8 +810,6 @@ void GameState::update(double timeSinceLastFrame)
 			m_GUILoadingLayer->setVisible(false);
 			m_state = STATE_ACTIVE;
 			m_loadingStep = 0;
-
-			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 			return;
 		}
 
@@ -821,8 +879,6 @@ void GameState::update(double timeSinceLastFrame)
 			m_GUILoadingLayer->setVisible(false);
 			m_state = STATE_ACTIVE;
 			m_loadingStep = 0;
-
-			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 			return;
 		}
 

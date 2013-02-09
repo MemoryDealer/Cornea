@@ -83,6 +83,7 @@ protected:
 
 	// Environment
 	EventManager*			m_pEventManager;
+	Ogre::Light*			m_pSunlight;
 	
 	// Player 
 	Player*					m_player;
@@ -90,6 +91,10 @@ protected:
 
 	// Physics
 	Physics*				m_physics;
+
+	// SkyX
+	SkyX::SkyX*				m_skyX;
+	SkyX::BasicController*	m_skyXController;
 
 	// GUI elements
 	GUILayer*				m_GUIHudLayer;

@@ -21,6 +21,9 @@ Settings::Settings(void)
 	graphics.shadows.fsaa = 4;
 	graphics.shadows.textureCount = 4;
 	graphics.shadows.textureSize = 256;
+
+	graphics.useSkyX = true;
+	graphics.useHydraX = true;
 }
 
 //================================================//
