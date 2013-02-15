@@ -1,5 +1,9 @@
+//================================================//
+
 #ifndef __STDAFX_H__
 #define __STDAFX_H__
+
+//================================================//
 
 // Ogre
 #include <OgreCamera.h>
@@ -23,29 +27,37 @@
 #include <OgreCompositionPass.h>
 #include <OgreCompositionTargetPass.h>
 
+//================================================//
+
 // OIS input
 #include <OISEvents.h>
 #include <OISInputManager.h>
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
-// paged geometry
-//#include "PG/PagedGeometry.h"
-//#include "PG/BatchPage.h"
-//#include "PG/ImpostorPage.h"
-//#include "PG/TreeLoader3D.h"
-//#include "PG/GrassLoader.h"
+//================================================//
 
 // MyGUI
 #include <MyGUI.h>
 #include <MyGUI_OgrePlatform.h>
 
+//================================================//
+
 // SkyX
 #include "SkyX/SkyX.h"
 
+//================================================//
+
+// Hydrax
+#include "Hydrax/Hydrax.h"
+#include "Hydrax/Noise/Perlin/Perlin.h"
+#include "Hydrax/Modules/ProjectedGrid/ProjectedGrid.h"
+#include "Hydrax/Modules/SimpleGrid/SimpleGrid.h"
+#include "Hydrax/Modules/RadialGrid/RadialGrid.h"
+
+//================================================//
+
 // Bullet Physics
-//#include <OgreBullet/include/Dynamics/OgreBulletDynamics.h>
-//#include <OgreBullet/include/Collisions/OgreBulletCollisions.h>
 #include <btDefaultCollisionConfiguration.h>
 #include <btCollisionDispatcher.h>
 #include <btCollisionWorld.h>
@@ -58,15 +70,18 @@
 #include <btDefaultMotionState.h>
 #include <btStaticPlaneShape.h>
 #include <btBoxShape.h>
-//#include <btBody.h>
 #include <btSphereShape.h>
 #include <btStridingMeshInterface.h>
 #include <btBvhTriangleMeshShape.h>
 #include <btBulletCollisionCommon.h>
 
+//================================================//
+
 // Sound
 #include <FMOD/fmod.hpp>
 #include <FMOD/fmod_errors.h>
+
+//================================================//
 
 // STL headers etc.
 #include <map>
@@ -75,7 +90,11 @@
 #include <iostream>
 #include <string>
 
+//================================================//
+
 // Game
 #include "Settings.hpp"
+
+//================================================//
 
 #endif

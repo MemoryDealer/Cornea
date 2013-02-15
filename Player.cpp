@@ -60,6 +60,7 @@ void Player::action(EventManager* eventManager)
 void Player::initFlashlight(void)
 {
 	m_pFlashlight = new Flashlight(m_pSceneMgr, m_pCamera->getRollNode());
+	//m_pFlashlight = new Flashlight(m_pSceneMgr, m_pCamera->getSceneNode());
 }
 
 //================================================//
@@ -95,6 +96,7 @@ void Player::setWeapon(unsigned weapon, EventManager* pEventManager)
 
 	// Initialise the weapon
 	m_pWeapon->init(m_pCamera->getRollNode());
+	//m_pWeapon->init(m_pCamera->getSceneNode());
 
 	// Set manager pointers
 	m_pWeapon->setNPCManager(pEventManager->getNPCManager());

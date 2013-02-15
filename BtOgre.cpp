@@ -185,6 +185,9 @@ void registerAllEntitiesAsColliders(SceneManager* sceneMgr, btCollisionWorld* co
 		else if(strUtil.startsWith(entity->getName(), "SkyX", false)){
 			continue;
 		}
+		else if(strUtil.startsWith(entity->getName(), "Hydrax", false)){
+			continue;
+		}
 		
         registerEntityAsCollider(entity, colWorld);
     }

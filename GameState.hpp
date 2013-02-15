@@ -95,6 +95,11 @@ protected:
 	// SkyX
 	SkyX::SkyX*				m_skyX;
 	SkyX::BasicController*	m_skyXController;
+	bool					m_skyXInitialised;
+
+	// Hydrax
+	Hydrax::Hydrax*			m_hydrax;
+	bool					m_hydraxInitialised;
 
 	// GUI elements
 	GUILayer*				m_GUIHudLayer;

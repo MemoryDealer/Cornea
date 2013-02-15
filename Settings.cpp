@@ -22,8 +22,8 @@ Settings::Settings(void)
 	graphics.shadows.textureCount = 4;
 	graphics.shadows.textureSize = 256;
 
-	graphics.useSkyX = true;
-	graphics.useHydraX = true;
+	graphics.sky = MEDIUM;
+	graphics.water = MEDIUM;
 }
 
 //================================================//

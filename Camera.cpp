@@ -244,6 +244,7 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 	}
 
 	m_translateVector = (m_pCameraYawNode->getOrientation() * m_pCameraPitchNode->getOrientation() * m_translateVector);
+	//m_translateVector = (m_pCamera->getOrientationForViewUpdate() * m_translateVector);
 
 	// Calculate the forwards vector and use it to keep the camera going the same speed, despite the pitch
 	// Note: this may allow wall climbing where not conceivable
@@ -473,7 +474,10 @@ void Camera::moveSpectator(double timeSinceLastFrame)
 	}
 
 	// translate the camera node
+
 	m_translateVector = (m_pCameraYawNode->getOrientation() * m_pCameraPitchNode->getOrientation() * m_translateVector * timeSinceLastFrame / 240.0);
+	//m_translateVector = (m_pCamera->getOrientationForViewUpdate() * m_translateVector * timeSinceLastFrame / 300.0);
+
 	m_pCameraNode->translate(m_translateVector);
 }
 
@@ -481,14 +485,31 @@ void Camera::moveSpectator(double timeSinceLastFrame)
 
 void Camera::pitch(Ogre::Degree x)
 {
-	m_pCameraPitchNode->pitch(x * -m_rotateSpeed);
+	Ogre::Radian amount(x * -m_rotateSpeed);
+
+	m_pCameraPitchNode->pitch(amount);
+
+	//m_pCamera->pitch(amount);
+
+	//m_pCameraPitchNode->pitch(-amount);
+	//m_pCameraNode->setOrientation(m_pCamera->getOrientationForViewUpdate());
 }
 
 //================================================//
 
 void Camera::yaw(Ogre::Degree y)
 {
-	m_pCameraYawNode->yaw(y * -m_rotateSpeed);
+	Ogre::Radian amount(y * -m_rotateSpeed);
+
+	m_pCameraYawNode->yaw(amount);
+
+	//m_pCamera->yaw(amount);
+
+	//m_pCameraYawNode->yaw(-amount);
+	//m_pCameraNode->setOrientation(m_pCamera->getOrientationForViewUpdate());
+
+	// try simple grid instead
+	// or move camera to one node
 }
 
 //================================================//

@@ -9,6 +9,7 @@ GameState::GameState(void)
 	//m_GUIEventId = new int(0);
 	m_bQuit = false;
 	m_GUIEventId = 0;
+	m_skyXInitialised = false;
 }
 
 //================================================//
@@ -120,8 +121,7 @@ void GameState::createScene(void)
 	case Profile::STAGE::OIL_RIG:
 		{
 			// Skybox
-			//settings.graphics.useSkyX = false;
-			if(settings.graphics.useSkyX){
+			if(settings.graphics.sky == Settings::MEDIUM){
 				m_skyXController = new SkyX::BasicController();
 				m_skyX = new SkyX::SkyX(m_pSceneMgr, m_skyXController);
 				m_skyX->create();
@@ -141,41 +141,66 @@ void GameState::createScene(void)
 				m_pSunlight->setDiffuseColour(Ogre::ColourValue(1.0, 1.0, 1.0));
 				m_pSunlight->setSpecularColour(Ogre::ColourValue(1.0, 1.0, 1.0));
 
+				m_skyXInitialised = true;
+
 			}
 			else{
 				m_pSceneMgr->setSkyBox(true, "Examples/CloudyNoonSkyBox");
 			}
 
-			// Plane
-			Ogre::Entity* e;
-			Ogre::Plane p;
+			// DEBUG
+			settings.graphics.water = Settings::HIGH;
 
-			p.normal = Ogre::Vector3(0, 1, 0); 
-			p.d = 0;
+			// Water
+			if(settings.graphics.water == Settings::LOW){
+				Ogre::Entity* e;
+				Ogre::Plane p;
 
-			Ogre::MeshManager::getSingleton().createPlane("FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-				p, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
-			e = m_pSceneMgr->createEntity("Floor", "FloorPlane");
-			e->setMaterialName("Examples/Water2");
-			Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("$WaterPlane");
-			node->attachObject(e);
-			//e->getMesh()->buildEdgeList();
-			//e->setCastShadows(false);
+				p.normal = Ogre::Vector3(0, 1, 0); 
+				p.d = 0;
 
-			// Plane underneath
-			Ogre::Entity* underPlane;
-			Ogre::Plane p2;
+				Ogre::MeshManager::getSingleton().createPlane("FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+					p, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
+				e = m_pSceneMgr->createEntity("Floor", "FloorPlane");
+				e->setMaterialName("Examples/Water2");
+				Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("$WaterPlane");
+				node->attachObject(e);
+				//e->getMesh()->buildEdgeList();
+				//e->setCastShadows(false);
 
-			p2.normal = Ogre::Vector3::UNIT_Y;
-			p2.d = 0;
+				// Plane underneath
+				Ogre::Entity* underPlane;
+				Ogre::Plane p2;
 
-			Ogre::MeshManager::getSingleton().createPlane("UnderPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-				p2, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
-			underPlane = m_pSceneMgr->createEntity("Under", "UnderPlane");
-			underPlane->setMaterialName("blue");
-			Ogre::SceneNode* underPlaneNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("$UnderPlane");
-			underPlaneNode->attachObject(underPlane);
-			underPlaneNode->translate(0.0, -100.0, 0.0);
+				p2.normal = Ogre::Vector3::UNIT_Y;
+				p2.d = 0;
+
+				Ogre::MeshManager::getSingleton().createPlane("UnderPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+					p2, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
+				underPlane = m_pSceneMgr->createEntity("Under", "UnderPlane");
+				underPlane->setMaterialName("blue");
+				Ogre::SceneNode* underPlaneNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("$UnderPlane");
+				underPlaneNode->attachObject(underPlane);
+				underPlaneNode->translate(0.0, -100.0, 0.0);
+			}
+			else if(settings.graphics.water >= Settings::HIGH){
+				// Init Hydrax
+				m_hydrax = new Hydrax::Hydrax(m_pSceneMgr, m_player->getCamera()->getOgreCamera(), Base::getSingletonPtr()->m_pViewport);
+
+				// Create projected grid module
+				Hydrax::Module::ProjectedGrid* module
+					= new Hydrax::Module::ProjectedGrid(m_hydrax,
+														new Hydrax::Noise::Perlin(),
+														Ogre::Plane(Ogre::Vector3(0, 1, 0), Ogre::Vector3(0, 0, 0)),
+														Hydrax::MaterialManager::NM_VERTEX,
+														Hydrax::Module::ProjectedGrid::Options());
+				m_hydrax->setModule(module);
+
+				m_hydrax->loadCfg("HydraxDemo.hdx");
+
+				m_hydrax->create();
+				m_hydraxInitialised = true;
+			}
 			
 			//underPlane->setCastShadows(false);
 
@@ -258,11 +283,15 @@ void GameState::destroyScene(void)
 	Base::getSingletonPtr()->m_pRoot->removeFrameListener(m_skyX);
 	Base::getSingletonPtr()->m_pRenderWindow->removeListener(m_skyX);
 
-	if(Settings::getSingletonPtr()->graphics.useSkyX){
+	if(m_skyXInitialised){
 		if(m_skyXController->getDeleteBySkyX()){
 			//delete m_skyXController; ?
 			m_skyX->remove();
 		}
+	}
+
+	if(m_hydraxInitialised){
+		m_hydrax->remove();
 	}
 	
 	// ...
@@ -734,6 +763,17 @@ void GameState::update(double timeSinceLastFrame)
 		// Update player
 		m_player->update(timeSinceLastFrame);
 
+		// skyx...
+		if(m_skyXInitialised)
+			m_pSunlight->setDirection(-m_skyXController->getSunDirection());
+		//m_skyXController->getTime();
+
+		// Hydrax
+		if(m_hydraxInitialised){
+			m_hydrax->update(timeSinceLastFrame / 1024.0);
+			m_hydrax->setSunPosition(m_skyXController->getSunDirection());
+		}
+
 		// Update events
 		m_pEventManager->update(timeSinceLastFrame);
 
@@ -742,11 +782,6 @@ void GameState::update(double timeSinceLastFrame)
 
 		// Update physics
 		updateBullet(timeSinceLastFrame);
-
-		// skyx...
-		if(Settings::getSingletonPtr()->graphics.useSkyX)
-			m_pSunlight->setDirection(-m_skyXController->getSunDirection());
-		//m_skyXController->getTime();
 
 		break;
 

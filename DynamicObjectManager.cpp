@@ -33,6 +33,8 @@ DynamicObjectManager::~DynamicObjectManager(void)
 bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* obj, int tier)
 {
 	Ogre::String name = node->getName();
+	const Ogre::Any& any = node->getUserAny();
+	DynamicObject::DYNAMIC_OBJECT_DATA* data = nullptr;
 
 	// Determine the type of dynamic object
 	Ogre::StringUtil strUtil;
@@ -44,9 +46,8 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
 			// Fetch animation data
-			const Ogre::Any& any = node->getUserAny();
 			if(!any.isEmpty()){
-				DynamicObject::DYNAMIC_OBJECT_DATA* data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 				m_objects.back()->setupAnimation(data);
 				//delete data; // you no longer need those <-- (Palpatine quote)
 
@@ -58,9 +59,8 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
 			// Fetch animation data
-			const Ogre::Any& any = node->getUserAny();
 			if(!any.isEmpty()){
-				DynamicObject::DYNAMIC_OBJECT_DATA* data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 				m_objects.back()->setupAnimation(data);
 				//delete data;
 
@@ -73,9 +73,8 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
 
 			// Fetch animation data
-			const Ogre::Any& any = node->getUserAny();
 			if(!any.isEmpty()){
-				DynamicObject::DYNAMIC_OBJECT_DATA* data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 				m_objects.back()->setupAnimation(data);
 				//delete data;
 
@@ -90,7 +89,6 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
 			// Find the dynamic object it should be linked to
-			const Ogre::Any& any = node->getUserAny();
 			if(!any.isEmpty()){
 				Ogre::String name = Ogre::any_cast<Ogre::String>(any); // get the string
 
@@ -128,22 +126,24 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 							m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
 
 							// Set the trigger data
-							const Ogre::Any& any = node->getUserAny();
-							DynamicObject::DYNAMIC_OBJECT_DATA* data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+							if(!any.isEmpty()){
+								data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 
-							m_objects.back()->setTriggerData(data);
-							this->registerTriggerAction(data);
+								m_objects.back()->setTriggerData(data);
+								this->registerTriggerAction(data);
+							}
 						}
 						// LookAt trigger
 						else if(strUtil.match(tokens[2], "LookAt", true)){
 							m_objects.push_back(new TriggerLookAt());
 							m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
 
-							const Ogre::Any& any = node->getUserAny();
-							DynamicObject::DYNAMIC_OBJECT_DATA* data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+							if(!any.isEmpty()){
+								data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 
-							m_objects.back()->setTriggerData(data);
-							this->registerTriggerAction(data);
+								m_objects.back()->setTriggerData(data);
+								this->registerTriggerAction(data);
+							}
 						}
 
 					}

@@ -29,8 +29,8 @@ public:
 			int		textureSize;
 		} shadows;
 
-		bool useSkyX;
-		bool useHydraX;
+		int sky;
+		int water;
 	} graphics;
 
 	// Audio
@@ -46,6 +46,14 @@ public:
 
 		} sound;
 	} audio;
+
+	enum{
+		LOW = 0,
+		MEDIUM,
+		HIGH,
+		ULTRA
+	};
+
 private:
 
 };

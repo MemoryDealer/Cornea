@@ -587,6 +587,11 @@ G: -8.80
 -For some reason the debug directory for lib files was in the release configuration. I think this caused the release build to link against the debug library for SkyX
 	and caused the errors. Thus, it would be wise to name all debug .lib files with a "_d" at the end. 
 
+#2/13/13
+-Added Hydrax support. I compiled the .lib files and .dll files with the Cmake projects. The debug build was linking against OgreMain.dll instead of OgreMain_d.dll
+	and triggered a "OgreMain.dll" not found when running the game. I had to rebuild the debug files for Hydrax and fix the linker. 
+-Hydrax has a bug where the edges of the water plane are clipped when using a scene node heiarchy for the camera. 
+
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 
 -Add a "profile" singleton which is loaded as a save game upon entering the game state and saved when exiting. This will include the inventory and stuff. 
