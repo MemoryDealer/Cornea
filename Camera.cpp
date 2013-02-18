@@ -79,6 +79,7 @@ void Camera::init(Physics* physics)
 	m_pCamera->setFarClipDistance(m_farClipDistance);
 
 	m_pCameraRollNode->attachObject(m_pCamera);
+	//m_pCameraNode->attachObject(m_pCamera);
 
 	// set the initial position
 	m_pCameraNode->setPosition(0, 200, 0);
@@ -485,7 +486,7 @@ void Camera::moveSpectator(double timeSinceLastFrame)
 
 void Camera::pitch(Ogre::Degree x)
 {
-	Ogre::Radian amount(x * -m_rotateSpeed);
+	Ogre::Radian amount(x * -m_rotateSpeed); // * Profile::sensitivity * Profile::inverted
 
 	m_pCameraPitchNode->pitch(amount);
 
@@ -504,6 +505,7 @@ void Camera::yaw(Ogre::Degree y)
 	m_pCameraYawNode->yaw(amount);
 
 	//m_pCamera->yaw(amount);
+	//m_pCameraNode->yaw(amount, Ogre::Node::TS_PARENT);
 
 	//m_pCameraYawNode->yaw(-amount);
 	//m_pCameraNode->setOrientation(m_pCamera->getOrientationForViewUpdate());

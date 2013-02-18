@@ -592,6 +592,11 @@ G: -8.80
 	and triggered a "OgreMain.dll" not found when running the game. I had to rebuild the debug files for Hydrax and fix the linker. 
 -Hydrax has a bug where the edges of the water plane are clipped when using a scene node heiarchy for the camera. 
 
+#2/18/13
+-Fixed the Hydrax clipping error. Had to create another Ogre camera to pass into the Hydrax constructor and set its position and orientation manually based on the main
+	camera, before Hydrax is updated each frame. This author of Hydrax stated that cameras attached to a scene node do not work with Hydrax 0.3 and up--so you have to 
+	update the camera directly. This hack saved me from having to restructure the entire camera class. 
+
 #TODO
 -Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 
 -Add a "profile" singleton which is loaded as a save game upon entering the game state and saved when exiting. This will include the inventory and stuff. 

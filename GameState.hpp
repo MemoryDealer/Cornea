@@ -100,6 +100,7 @@ protected:
 	// Hydrax
 	Hydrax::Hydrax*			m_hydrax;
 	bool					m_hydraxInitialised;
+	Ogre::Camera*			m_hydraxCamera;
 
 	// GUI elements
 	GUILayer*				m_GUIHudLayer;

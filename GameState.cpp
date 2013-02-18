@@ -184,8 +184,20 @@ void GameState::createScene(void)
 				underPlaneNode->translate(0.0, -100.0, 0.0);
 			}
 			else if(settings.graphics.water >= Settings::HIGH){
+
+				m_hydraxCamera = m_pSceneMgr->createCamera("HydraxCamera");
+				//Ogre::SceneNode* hydraxCamNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("HydraxCameraNode");
+				//Ogre::SceneNode* hydraxCamNode = m_player->getCamera()->getRollNode()->createChildSceneNode("HydraxCameraNode");
+				
+				//m_hydraxCamera->setAutoAspectRatio(true);
+				m_hydraxCamera->setNearClipDistance(1);
+				m_hydraxCamera->setFarClipDistance(60000);
+				m_hydraxCamera->setAspectRatio(Ogre::Real(Base::getSingletonPtr()->m_pViewport->getActualWidth()) / 
+					Ogre::Real(Base::getSingletonPtr()->m_pViewport->getActualHeight()));
+				//Base::getSingletonPtr()->m_pViewport->setCamera(m_hydraxCamera);
+
 				// Init Hydrax
-				m_hydrax = new Hydrax::Hydrax(m_pSceneMgr, m_player->getCamera()->getOgreCamera(), Base::getSingletonPtr()->m_pViewport);
+				m_hydrax = new Hydrax::Hydrax(m_pSceneMgr, m_hydraxCamera, Base::getSingletonPtr()->m_pViewport);
 
 				// Create projected grid module
 				Hydrax::Module::ProjectedGrid* module
@@ -711,7 +723,7 @@ bool GameState::mouseMoved(const OIS::MouseEvent& arg)
 		return false;
 	}
 
-	m_player->getCamera()->pitch(Ogre::Degree(arg.state.Y.rel)); // * Profile::sensitivity
+	m_player->getCamera()->pitch(Ogre::Degree(arg.state.Y.rel)); 
 	m_player->getCamera()->yaw(Ogre::Degree(arg.state.X.rel));
 	return true;
 }
@@ -764,14 +776,30 @@ void GameState::update(double timeSinceLastFrame)
 		m_player->update(timeSinceLastFrame);
 
 		// skyx...
-		if(m_skyXInitialised)
-			m_pSunlight->setDirection(-m_skyXController->getSunDirection());
-		//m_skyXController->getTime();
+		if(m_skyXInitialised){
+			Ogre::Real time = m_skyXController->getTime().x;
+
+			if(time > 21.30 || time < 7.30){
+				m_pSunlight->setVisible(false);
+			}
+			else{
+				m_pSunlight->setVisible(true);
+				m_pSunlight->setDirection(-m_skyXController->getSunDirection());
+			}
+		}
 
 		// Hydrax
 		if(m_hydraxInitialised){
+			m_hydraxCamera->setPosition(m_player->getPosition());
+			m_hydraxCamera->setOrientation(m_player->getCamera()->getYawNode()->getOrientation() * m_player->getCamera()->getPitchNode()->getOrientation());
+
 			m_hydrax->update(timeSinceLastFrame / 1024.0);
 			m_hydrax->setSunPosition(m_skyXController->getSunDirection());
+
+			if(m_skyXInitialised){
+				printf("Time %.2f\n", m_skyXController->getTime().x);
+				// 21:30 = sunset
+			}
 		}
 
 		// Update events
