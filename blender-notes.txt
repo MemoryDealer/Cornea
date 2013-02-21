@@ -14,3 +14,28 @@
 -CHANGE CLIPPING DISTANCE
 
 -For proper normals I must do all scaling directly to the mesh by using edit mode. 
+
+*** Level Design Log:
+#2/18/13
+-In the properties, the Object name is the name of the scene node that's created, and the Object Data name is the name of the .mesh file that's created.
+-I had to recalculate the normals on a block to get the lighting in Ogre to work on it, not sure why this was needed. 
+-I'm not sure if I can devise a way to export materials to inherit the diffuse_template. 
+
+#2/20/13
+-Had problems with getting the exported mesh to texture properly. The solution is here: http://www.ogre3d.org/forums/viewtopic.php?f=2&t=46929&start=0&hilit=blender+texture
+	Be in Blender. Create an object/mesh, a cube.
+	Select that object.
+	Press TAB to enter edit mode.
+	Select all vertices/faces, if not already selected.
+	Press U and select, for instance, UV Cube projection.
+	Now, open the UV Editor window.
+	You should hopefully see the uv map in this 2D view.
+	Open an image (open image, browse) and select one.
+
+	Image is now under the UV map.
+	Go back to the 3D view window.
+	Turn on textured render mode.
+	Press TAB to exit edit mode.
+	What do you see?
+	A textured cube, hopefully.
+	It is ready for exporting. 

@@ -12,8 +12,10 @@ namespace Sparks
 Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 {
 	m_mode = MODE_FIRST_PERSON;
-	m_moveSpeed = 70.0;
-	m_maxVelocity = 10.0;
+	m_moveSpeed = 15.0;
+	m_maxVelocity = 7.0;
+	m_specMoveSpeed = 70.0;
+	m_maxSpecVelocity = 10.0;
 	m_rotateSpeed = 0.06;
 	m_translateVector = Ogre::Vector3::ZERO;
 	m_velocityVector = Ogre::Vector3::ZERO;
@@ -245,7 +247,6 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 	}
 
 	m_translateVector = (m_pCameraYawNode->getOrientation() * m_pCameraPitchNode->getOrientation() * m_translateVector);
-	//m_translateVector = (m_pCamera->getOrientationForViewUpdate() * m_translateVector);
 
 	// Calculate the forwards vector and use it to keep the camera going the same speed, despite the pitch
 	// Note: this may allow wall climbing where not conceivable
@@ -388,14 +389,14 @@ void Camera::moveSpectator(double timeSinceLastFrame)
 
 	// forwards
 	if(m_moveForwardsPressed){
-		if(m_velocityVector.z < m_maxVelocity){
+		if(m_velocityVector.z < m_maxSpecVelocity){
 			m_velocityVector.z += m_acceleration;
 		}
-		else if(m_velocityVector.z > m_maxVelocity){
+		else if(m_velocityVector.z > m_maxSpecVelocity){
 			m_velocityVector.z -= m_acceleration;
 		}
 
-		m_translateVector.z = -(m_moveSpeed * m_velocityVector.z);
+		m_translateVector.z = -(m_specMoveSpeed * m_velocityVector.z);
 	}
 	else if(!m_moveBackwardsPressed && m_translateVector.z < 0){
 		if(m_velocityVector.z > 0){
@@ -405,19 +406,19 @@ void Camera::moveSpectator(double timeSinceLastFrame)
 			}
 		}
 
-		m_translateVector.z = -(m_moveSpeed * m_velocityVector.z);
+		m_translateVector.z = -(m_specMoveSpeed * m_velocityVector.z);
 	}
 
 	// backwards
 	if(m_moveBackwardsPressed){
-		if(m_velocityVector.z < m_maxVelocity){
+		if(m_velocityVector.z < m_maxSpecVelocity){
 			m_velocityVector.z += m_acceleration;
 		}
-		else if(m_velocityVector.z > m_maxVelocity){
+		else if(m_velocityVector.z > m_maxSpecVelocity){
 			m_velocityVector.z -= m_acceleration;
 		}
 
-		m_translateVector.z = (m_moveSpeed * m_velocityVector.z);
+		m_translateVector.z = (m_specMoveSpeed * m_velocityVector.z);
 	}
 	else if(!m_moveForwardsPressed && m_translateVector.z > 0){
 		if(m_velocityVector.z > 0){
@@ -427,19 +428,19 @@ void Camera::moveSpectator(double timeSinceLastFrame)
 			}
 		}
 
-		m_translateVector.z = (m_moveSpeed * m_velocityVector.z);
+		m_translateVector.z = (m_specMoveSpeed * m_velocityVector.z);
 	}
 
 	// left
 	if(m_moveLeftPressed){
-		if(m_velocityVector.x < m_maxVelocity){
+		if(m_velocityVector.x < m_maxSpecVelocity){
 			m_velocityVector.x += m_acceleration;
 		}
-		else if(m_velocityVector.x > m_maxVelocity){
+		else if(m_velocityVector.x > m_maxSpecVelocity){
 			m_velocityVector.x -= m_acceleration;
 		}
 
-		m_translateVector.x = -(m_moveSpeed * m_velocityVector.x / 2); // make left/right movement slower for realism
+		m_translateVector.x = -(m_specMoveSpeed * m_velocityVector.x / 2); // make left/right movement slower for realism
 	}
 	else if(!m_moveRightPressed && m_translateVector.x < 0){
 		if(m_velocityVector.x > 0){
@@ -449,19 +450,19 @@ void Camera::moveSpectator(double timeSinceLastFrame)
 			}
 		}
 
-		m_translateVector.x = -(m_moveSpeed * m_velocityVector.x / 2);
+		m_translateVector.x = -(m_specMoveSpeed * m_velocityVector.x / 2);
 	}
 
 	// right
 	if(m_moveRightPressed){
-		if(m_velocityVector.x < m_maxVelocity){
+		if(m_velocityVector.x < m_maxSpecVelocity){
 			m_velocityVector.x += m_acceleration;
 		}
-		else if(m_velocityVector.x > m_maxVelocity){
+		else if(m_velocityVector.x > m_maxSpecVelocity){
 			m_velocityVector.x -= m_acceleration;
 		}
 
-		m_translateVector.x = (m_moveSpeed * m_velocityVector.x / 2);
+		m_translateVector.x = (m_specMoveSpeed * m_velocityVector.x / 2);
 	}
 	else if(!m_moveLeftPressed && m_translateVector.x > 0){
 		if(m_velocityVector.x > 0){
@@ -471,7 +472,7 @@ void Camera::moveSpectator(double timeSinceLastFrame)
 			}
 		}
 
-		m_translateVector.x = (m_moveSpeed * m_velocityVector.x / 2);
+		m_translateVector.x = (m_specMoveSpeed * m_velocityVector.x / 2);
 	}
 
 	// translate the camera node

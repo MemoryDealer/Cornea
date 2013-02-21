@@ -10,6 +10,7 @@ GameState::GameState(void)
 	m_bQuit = false;
 	m_GUIEventId = 0;
 	m_skyXInitialised = false;
+	m_hydraxInitialised = false;
 }
 
 //================================================//
@@ -121,7 +122,7 @@ void GameState::createScene(void)
 	case Profile::STAGE::OIL_RIG:
 		{
 			// Skybox
-			if(settings.graphics.sky == Settings::MEDIUM){
+			if(settings.graphics.sky >= Settings::MEDIUM){
 				m_skyXController = new SkyX::BasicController();
 				m_skyX = new SkyX::SkyX(m_pSceneMgr, m_skyXController);
 				m_skyX->create();
@@ -149,7 +150,7 @@ void GameState::createScene(void)
 			}
 
 			// DEBUG
-			settings.graphics.water = Settings::HIGH;
+			settings.graphics.water = Settings::LOW;
 
 			// Water
 			if(settings.graphics.water == Settings::LOW){
@@ -163,7 +164,7 @@ void GameState::createScene(void)
 					p, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
 				e = m_pSceneMgr->createEntity("Floor", "FloorPlane");
 				e->setMaterialName("Examples/Water2");
-				Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("$WaterPlane");
+				Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("WaterPlane");
 				node->attachObject(e);
 				//e->getMesh()->buildEdgeList();
 				//e->setCastShadows(false);
@@ -179,22 +180,19 @@ void GameState::createScene(void)
 					p2, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
 				underPlane = m_pSceneMgr->createEntity("Under", "UnderPlane");
 				underPlane->setMaterialName("blue");
-				Ogre::SceneNode* underPlaneNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("$UnderPlane");
+				Ogre::SceneNode* underPlaneNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("UnderPlane");
 				underPlaneNode->attachObject(underPlane);
 				underPlaneNode->translate(0.0, -100.0, 0.0);
 			}
 			else if(settings.graphics.water >= Settings::HIGH){
 
 				m_hydraxCamera = m_pSceneMgr->createCamera("HydraxCamera");
-				//Ogre::SceneNode* hydraxCamNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("HydraxCameraNode");
-				//Ogre::SceneNode* hydraxCamNode = m_player->getCamera()->getRollNode()->createChildSceneNode("HydraxCameraNode");
 				
-				//m_hydraxCamera->setAutoAspectRatio(true);
-				m_hydraxCamera->setNearClipDistance(1);
-				m_hydraxCamera->setFarClipDistance(60000);
+				m_hydraxCamera->setAutoAspectRatio(true);
+				m_hydraxCamera->setNearClipDistance(m_player->getCamera()->getOgreCamera()->getNearClipDistance());
+				m_hydraxCamera->setFarClipDistance(m_player->getCamera()->getOgreCamera()->getFarClipDistance());
 				m_hydraxCamera->setAspectRatio(Ogre::Real(Base::getSingletonPtr()->m_pViewport->getActualWidth()) / 
 					Ogre::Real(Base::getSingletonPtr()->m_pViewport->getActualHeight()));
-				//Base::getSingletonPtr()->m_pViewport->setCamera(m_hydraxCamera);
 
 				// Init Hydrax
 				m_hydrax = new Hydrax::Hydrax(m_pSceneMgr, m_hydraxCamera, Base::getSingletonPtr()->m_pViewport);
@@ -216,9 +214,10 @@ void GameState::createScene(void)
 			
 			//underPlane->setCastShadows(false);
 
-			loader->parseDotScene("level-test6.scene", "General", m_pSceneMgr, scene);
+			loader->parseDotScene("Apartment.scene", "General", m_pSceneMgr, scene);
 
 			// Scale scene node and all child nodes
+			scene->translate(0, 200.0, 0);
 			scene->setInheritScale(true);
 			scene->scale(20.0, 20.0, 20.0);
 
@@ -794,7 +793,7 @@ void GameState::update(double timeSinceLastFrame)
 			m_hydraxCamera->setOrientation(m_player->getCamera()->getYawNode()->getOrientation() * m_player->getCamera()->getPitchNode()->getOrientation());
 
 			m_hydrax->update(timeSinceLastFrame / 1024.0);
-			m_hydrax->setSunPosition(m_skyXController->getSunDirection());
+			m_hydrax->setSunPosition(m_player->getPosition() + m_skyXController->getSunDirection() * m_skyX->getMeshManager()->getSkydomeRadius(m_hydraxCamera) * 0.5);
 
 			if(m_skyXInitialised){
 				printf("Time %.2f\n", m_skyXController->getTime().x);

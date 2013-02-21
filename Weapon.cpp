@@ -48,7 +48,7 @@ void Weapon::init(Ogre::SceneNode* parentNode)
 
 	// Load the mesh and create the child scene node
 	m_pEntity = m_pSceneMgr->createEntity(m_filename);
-	m_pSceneNode = parentNode->createChildSceneNode("$PlayerWeapon");
+	m_pSceneNode = parentNode->createChildSceneNode("PlayerWeapon");
 	m_pSceneNode->attachObject(m_pEntity);
 
 	m_pSceneNode->translate(m_offset);

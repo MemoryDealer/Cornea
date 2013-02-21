@@ -596,17 +596,102 @@ G: -8.80
 -Fixed the Hydrax clipping error. Had to create another Ogre camera to pass into the Hydrax constructor and set its position and orientation manually based on the main
 	camera, before Hydrax is updated each frame. This author of Hydrax stated that cameras attached to a scene node do not work with Hydrax 0.3 and up--so you have to 
 	update the camera directly. This hack saved me from having to restructure the entire camera class. 
+-Changed the BtOgre registerAllEntitiesAsColliders function to only add nodes that start with a '$' since this simplifies having to sort out collision objects in 
+	large scene files. 
+-I've tried modifying materials that inherit the diffuse_template (required for shadows and spotlights) and any new technique I introduce breaks the material. I may
+	make a forum post eventually if I cannot figure it out. 
 
-#TODO
--Add inventory system. Includes other weapons and health potions etc. Also crystals, coins and stuff. 
--Add a "profile" singleton which is loaded as a save game upon entering the game state and saved when exiting. This will include the inventory and stuff. 
-	This should be saved as a binary file and have protection from editing and run-time hacking. 
+#2/20/13
+-Fixed mesh texture mapping when exporting from Blender, see blender-notes.txt.
+-For implementing an inherited material from diffuse_template, I need to use the name technique lighting to access that technique, otherwise the material gets broken if
+	I don't use the name. 
+-I can bypass having to use set_texture_alias and just get the technique passes manually. I can set the ambient_tex to a different one than the diffuse_tex, set ambient 
+	lighting to max, and then use the flashlight to reveal the hidden diffuse texture. 
+-Texture functions such as scrolling do not work in the inherited script as of now. This may be due to the shaders: http://www.ogre3d.org/forums/viewtopic.php?f=2&t=56317
+-I can use the texture functions if I add another pass and a new texture_unit, however this does not follow the diffuse lighting. 
+-So texture animations in materials do not work with the programmable pipeline, I have to use the texture_matrix auto param somewhere in the shader files for shadows.
+*Fixed the texture animation issue. I had to add an extra parameter in the shader diffuse.cg (in SSAO folder from nullsquared), call texMat. I pass the texture_matrix
+	into the shader in the diffuse.program file under vertex_program diffuse_vs cg{} under the default_params. I can then modify the texture_unit attributes and the 
+	shader updates it ^_^. 
+	This thread helped: http://www.ogre3d.org/forums/viewtopic.php?f=2&t=56317
+--Here is the modified code for future reference:
+-diffuse.cg
+	VOut diffuse_vs(VIn IN,
+		uniform float4x4 wMat,
+		uniform float4x4 wvpMat,
+		uniform float4x4 tvpMat,
+		uniform float4x4 texMat,
+		uniform float4 spotlightDir
+	)
+	{
+		VOut OUT;
+		OUT.wp = mul(wMat, IN.p);
+		OUT.p = mul(wvpMat, IN.p);
+
+		OUT.uv = mul(texMat, float4(IN.uv, 0, 1)).xy; // Proper updating of texture here
+
+		OUT.n = mul(wMat, float4(IN.n, 0)).xyz; // world-space normal
+		OUT.sdir = mul(wMat, spotlightDir).xyz; // spotlight dir in world space
+
+		OUT.lp = mul(tvpMat, OUT.wp);
+
+		return OUT;
+	}
+
+-diffuse.program
+	vertex_program diffuse_vs cg
+	{
+		source diffuse.cg
+		profiles vs_1_1 arbvp1
+		entry_point diffuse_vs
+
+		default_params
+		{
+			param_named_auto wMat world_matrix
+			param_named_auto wvpMat worldviewproj_matrix
+			param_named_auto tvpMat texture_viewproj_matrix 0
+			param_named_auto texMat texture_matrix 0 // someone said they needed this in the vertex_program_ref in the .material file instead.
+			param_named_auto spotlightDir light_direction_object_space 0
+		}
+	}
+-Example material
+	material LivingRoomFloorMat : diffuse_template
+	{
+		//set_texture_alias ambient_tex wood2A.jpg
+		//set_texture_alias diffuse_tex wood2A.jpg
+
+		technique lighting
+		{
+			pass
+			{
+				cull_hardware clockwise
+			
+				texture_unit ambient_tex
+				{
+					texture wood2A.jpg
+				}
+			}
+		
+			pass
+			{
+				texture_unit diffuse_tex
+				{
+					texture wood2A.jpg
+					scroll_anim 0.5 0.5
+				}
+			}
+		}
+	}
+
+#
+
+#TODO  
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  
 -Make bvhtri mesh update with animated NPCs (not trivial at all)
 -Figure out how to make a proper point light that won't interfere with soft shadows. 
 -Change the resource group loading...only load what's necessary for the current state. 
 -Ladder climbing--use ground trigger or forward ray. 
 -Fix weapon switching fire rate glitch. 
--Make dynamic object manager automatically activate idle objects if they get in their defined range.
 -"Glasses" feature.
 -For vectors that may become large, implement sorting and binary searching.  http://en.cppreference.com/w/cpp/algorithm/binary_search http://www.cplusplus.com/reference/algorithm/sort/
+-SCALE MATERIALS

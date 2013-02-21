@@ -145,7 +145,7 @@ void registerEntityAsCollider(Entity* entity, btCollisionWorld* colWorld)
     colWorld->addCollisionObject(btObj, 2, 1);
 
 	// DEBUG
-	entity->setMaterialName("green");
+	//entity->setMaterialName("blue");
 	entity->setCastShadows(true);
 }
 
@@ -168,7 +168,10 @@ void registerAllEntitiesAsColliders(SceneManager* sceneMgr, btCollisionWorld* co
 		printf("%s: <%.2f, %.2f, %.2f>\n", entity->getName().c_str(), entity->getParentSceneNode()->_getDerivedPosition().x, entity->getParentSceneNode()->_getDerivedPosition().y, entity->getParentSceneNode()->_getDerivedPosition().z);
 
 		Ogre::StringUtil strUtil;
-		if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "Placeholder_", false)){
+		if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
+			registerEntityAsCollider(entity, colWorld);
+		}
+		else if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "Placeholder_", false)){
 			// This is just a placeholder used in Blender to determine the target of a moving object
 			// so it will just be removed from the world
 
@@ -177,19 +180,6 @@ void registerAllEntitiesAsColliders(SceneManager* sceneMgr, btCollisionWorld* co
 
 			continue;
 		}
-		// Any node that starts with a '$' won't be added to the physics world
-		else if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
-			continue;
-		}
-		// Prevent SkyX objects from being added
-		else if(strUtil.startsWith(entity->getName(), "SkyX", false)){
-			continue;
-		}
-		else if(strUtil.startsWith(entity->getName(), "Hydrax", false)){
-			continue;
-		}
-		
-        registerEntityAsCollider(entity, colWorld);
     }
 }
 

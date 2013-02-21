@@ -109,8 +109,10 @@ private:
 	Ogre::Vector3			m_translateVector;
 	Ogre::Vector3			m_velocityVector;
 	Ogre::Real				m_maxVelocity;
+	Ogre::Real				m_maxSpecVelocity;
 	Ogre::Real				m_acceleration;
 	Ogre::Real				m_moveSpeed;
+	Ogre::Real				m_specMoveSpeed;
 	Ogre::Degree			m_rotateSpeed;
 	unsigned				m_mode;
 	Ogre::Real				m_cameraHeight;
