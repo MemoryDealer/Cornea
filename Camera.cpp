@@ -12,7 +12,7 @@ namespace Sparks
 Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 {
 	m_mode = MODE_FIRST_PERSON;
-	m_moveSpeed = 15.0;
+	m_moveSpeed = 8.0;
 	m_maxVelocity = 7.0;
 	m_specMoveSpeed = 70.0;
 	m_maxSpecVelocity = 10.0;
@@ -111,7 +111,7 @@ void Camera::createRigidBody(void)
 
 	// set up rigid body
 	btDefaultMotionState* motionState = new btDefaultMotionState(transform);
-	btCollisionShape* shape = new btCapsuleShape(7.0, 30.0); // need changes
+	btCollisionShape* shape = new btCapsuleShape(7.0, 60.0); // need changes
 	btVector3 localInertia;
 	shape->calculateLocalInertia(mass, localInertia);
 
@@ -275,8 +275,11 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 	}
 
 	// Limit the maximum velocity by magnitude
-	if(m_btCamera->getLinearVelocity().length() > m_maxVelocity){
-		return;
+	btVector3 velocity = m_btCamera->getLinearVelocity();
+	if(velocity.length() > m_maxVelocity){
+		// Set the magnitude while maintaing the translation data
+		m_translateVector.normalise();
+		m_translateVector *= (m_maxVelocity - 5.1); 
 	}
 
 	// Stop if the user is not moving
@@ -288,7 +291,7 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 	btVector3 btTranslate(m_translateVector.x, 0.0, m_translateVector.z);
 	
 	m_btCamera->activate();
-	m_btCamera->applyCentralImpulse(btTranslate);
+	m_btCamera->applyCentralImpulse(btTranslate * timeSinceLastFrame);
 }
 
 //================================================//

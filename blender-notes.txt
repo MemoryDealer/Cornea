@@ -13,7 +13,7 @@
 
 -CHANGE CLIPPING DISTANCE
 
--For proper normals I must do all scaling directly to the mesh by using edit mode. 
+-For proper normals I must do all scaling directly to the mesh by	 using edit mode. 
 
 *** Level Design Log:
 #2/18/13
@@ -39,3 +39,6 @@
 	What do you see?
 	A textured cube, hopefully.
 	It is ready for exporting. 
+
+#2/21/13
+-I've had pretty good luck with vertex snapping when forming a room. 

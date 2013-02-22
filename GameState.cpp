@@ -219,7 +219,7 @@ void GameState::createScene(void)
 			// Scale scene node and all child nodes
 			scene->translate(0, 200.0, 0);
 			scene->setInheritScale(true);
-			scene->scale(20.0, 20.0, 20.0);
+			scene->scale(7.0, 7.0, 7.0);
 
 			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 		}
