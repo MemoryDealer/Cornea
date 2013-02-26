@@ -31,7 +31,9 @@
 namespace BtOgre
 {
 
-void registerEntityAsCollider(Ogre::Entity* entity, btCollisionWorld* colWorld);
+void registerEntityMesh(Ogre::Entity* entity, btCollisionWorld* colWorld);
+void registerEntityAABB(Ogre::Entity* entity, btCollisionWorld* colWorld);
+void registerEntityCylinder(Ogre::Entity* entity, btCollisionWorld* colWorld);
 void registerAllEntitiesAsColliders(Ogre::SceneManager* sceneMgr, btCollisionWorld* colWorld);
 
 typedef std::vector<Ogre::Vector3> Vector3Array;

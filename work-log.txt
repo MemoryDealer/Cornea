@@ -687,13 +687,26 @@ G: -8.80
 -Started adding objects to apartment scene, such as couch and bar stools. Had to remap the UV textures on the objects to get them to work
 	with diffuse lighting. It will be tricky to do this to objects with multiple textures, perhaps I can UV map the parts separately or split
 	the object into multiple objects. 
--Fixed a frame rate independence issue with camera movement. In the Camera::MoveFirstPerson() function I multiply the translation vector
+-Fixed a frame rate independence iss
+ue with camera movement. In the Camera::MoveFirstPerson() function I multiply the translation vector
 	by timeSinceLastFrame and before that, instead of returning when the linear velocity is over the max, I reset the magnitude by normalizing
-	the vector and multiplying it by the max velocity minus a constant of 5.1 (it could be a bit less), which I don't know why it had to be 5.1, I'd expect 0.1 to work. 
+	the vector and multiplying it by the max velocity minus a const
+	ant of 5.1 (it could be a bit less), which I don't know why it had to be 5.1, I'd expect 0.1 to work. 
 	The Bullet physics update loop is using the time step so it doesn't make much sense that I have to do this. Bullet physics doesn't make much sense.  
 
+#2/22/13
+-Changed the physics collision adder to create complete meshes for objects that start with "$$" and a cylinder for "$@" and just the bounding box for "$". 
+-Assert errors such as a "list is not dereferencable" can sometimes mean an error in the .material files, always check the Ogre log file.
+
+#2/24/13
+-See blender-notes.txt
+Also applied the shader code changes to ambient.cg and ambient.program so the ambient_tex unit applies attributes. 
+
+#2/25/13
+-Made a createSceneManager function for GameState since the type of scene manager needed may vary for each stage. 
+
 #TODO  
--Make physics objects that start with "$$" add the aabb instead of the entire mesh, for performance reasons. 
+-TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  
 -Make bvhtri mesh update with animated NPCs (not trivial at all)
 -Figure out how to make a proper point light that won't interfere with soft shadows. 

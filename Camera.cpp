@@ -12,8 +12,8 @@ namespace Sparks
 Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 {
 	m_mode = MODE_FIRST_PERSON;
-	m_moveSpeed = 8.0;
-	m_maxVelocity = 7.0;
+	m_moveSpeed = 5.0;
+	m_maxVelocity = 5.0;
 	m_specMoveSpeed = 70.0;
 	m_maxSpecVelocity = 10.0;
 	m_rotateSpeed = 0.06;
@@ -110,8 +110,10 @@ void Camera::createRigidBody(void)
 	transform.setOrigin(btVector3(camPos.x, camPos.y, camPos.z));
 
 	// set up rigid body
+	const Ogre::Real capsuleHeight = 30.0;
+	m_capsuleHeightOffset = capsuleHeight / 1.7;
 	btDefaultMotionState* motionState = new btDefaultMotionState(transform);
-	btCollisionShape* shape = new btCapsuleShape(7.0, 60.0); // need changes
+	btCollisionShape* shape = new btCapsuleShape(7.0, capsuleHeight); // need changes
 	btVector3 localInertia;
 	shape->calculateLocalInertia(mass, localInertia);
 
@@ -319,7 +321,7 @@ void Camera::updateJump(double timeSinceLastFrame)
 				allowAir = false;
 
 			// Save the height at which the player jumped
-			jmpHeight = m_pCameraNode->getPosition().y;
+			jmpHeight = m_pCameraNode->getPosition().y - m_capsuleHeightOffset;
 
 			// modify this variable if needed
 			switch(Boots::getSingletonPtr()->getEquippedType()){
@@ -356,7 +358,7 @@ void Camera::updateJump(double timeSinceLastFrame)
 			m_translateVector.z * Boots::getSingletonPtr()->getZAirMultiplier() * Ogre::Real(allowAir)); 
 
 		//! OPTIMIZE! slow down movement after player has fallen below original jump height
-		if(m_pCameraNode->getPosition().y <= jmpHeight){
+		if((m_pCameraNode->getPosition().y - m_capsuleHeightOffset) <= jmpHeight){
 			jmp /= 1.5;
 			
 			// decrement the gravity until it's normal
@@ -559,7 +561,7 @@ void Camera::updateRays(void)
 
 	// Negative Y
 	this->getRayhit(Ogre::Vector3(m_pCameraNode->getPosition().x, -5000.0, m_pCameraNode->getPosition().z), m_negativeYRayhit);
-	m_negativeYRayhit->distance = (m_negativeYRayhit->distance - m_cameraHeight);
+	m_negativeYRayhit->distance = (m_negativeYRayhit->distance - m_cameraHeight - m_capsuleHeightOffset);
 
 	// Negative Z															Varies
 	this->getRayhit((m_pCameraNode->getPosition() + (this->getDirection() * 10000.0)), m_negativeZRayhit);

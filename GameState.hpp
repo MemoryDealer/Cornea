@@ -21,6 +21,10 @@
 
 //================================================//
 
+#define SCENE_MGR_NAME "GameSceneMgr"
+
+//================================================//
+
 class GameState : public AppState
 {
 public:
@@ -32,11 +36,14 @@ public:
 	virtual void exit(void);
 	virtual bool pause(void);
 	virtual void resume(void);
+	void createSceneManager(void);
 	virtual void createScene(void);
 	virtual void destroyScene(void);
 	virtual void createGUI(void);
 	void createLoadingGUI(void);
 	virtual void destroyGUI(void);
+
+	void loadStage(void);
 
 	virtual void preloadMeshData(void);
 

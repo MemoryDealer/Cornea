@@ -40,7 +40,7 @@ namespace BtOgre {
 
 //================================================//
 
-void registerEntityAsCollider(Entity* entity, btCollisionWorld* colWorld)
+void registerEntityMesh(Entity* entity, btCollisionWorld* colWorld)
 {
     // if you wish to do instancing you will have to share one
     // btTriangleMesh amongst multiple btBvhTriangleMeshShape
@@ -151,6 +151,72 @@ void registerEntityAsCollider(Entity* entity, btCollisionWorld* colWorld)
 
 //================================================//
 
+void registerEntityAABB(Ogre::Entity* entity, btCollisionWorld* colWorld)
+{
+	Ogre::Vector3 size = Ogre::Vector3::ZERO;
+	Ogre::AxisAlignedBox aabb = entity->getBoundingBox();
+	Vector3 pos = entity->getWorldBoundingBox().getCenter(); // This will compenstate for origin offsets in the actual mesh file
+    Quaternion orient = entity->getParentSceneNode()->_getDerivedOrientation();
+    Vector3 scale = entity->getParentSceneNode()->_getDerivedScale();
+
+	size = aabb.getHalfSize() * 0.98f; // Ogre AABB slightly larger than Bullet's
+
+	// Setup collision shape
+	btVector3 halfExtents(size.x, size.y, size.z);
+	btCollisionShape* box = new btBoxShape(halfExtents);
+
+	box->setLocalScaling(btVector3(scale[0], scale[1], scale[2]));
+	box->setMargin(0.0);
+
+	// Setup collision object
+	btCollisionObject* obj = new btCollisionObject();
+	obj->setCollisionShape(box);
+	obj->setUserPointer((void*)entity->getParentSceneNode());
+
+	btTransform btTrans;
+    btTrans.setIdentity();
+    btTrans.setOrigin(btVector3(pos[0], pos[1], pos[2]));
+    btTrans.setRotation(btQuaternion(orient[1], orient[2], orient[3], orient[0]));
+    obj->setWorldTransform(btTrans);
+
+	colWorld->addCollisionObject(obj, 2, 1);
+}
+
+//================================================//
+
+void registerEntityCylinder(Ogre::Entity* entity, btCollisionWorld* colWorld)
+{
+	Ogre::Vector3 size = Ogre::Vector3::ZERO;
+	Ogre::AxisAlignedBox aabb = entity->getBoundingBox();
+	Vector3 pos = entity->getWorldBoundingBox().getCenter(); // This will compenstate for origin offsets in the actual mesh file
+    Quaternion orient = entity->getParentSceneNode()->_getDerivedOrientation();
+    Vector3 scale = entity->getParentSceneNode()->_getDerivedScale();
+
+	size = aabb.getHalfSize() * 0.95f;
+
+	// Setup collision shape
+	btVector3 halfExtents(size.x, size.y, size.z);
+	btCollisionShape* cyl = new btCylinderShape(halfExtents);
+
+	cyl->setLocalScaling(btVector3(scale[0], scale[1], scale[2]));
+	cyl->setMargin(0.0);
+
+	// Setup collision object
+	btCollisionObject* obj = new btCollisionObject();
+	obj->setCollisionShape(cyl);
+	obj->setUserPointer((void*)entity->getParentSceneNode());
+
+	btTransform btTrans;
+    btTrans.setIdentity();
+    btTrans.setOrigin(btVector3(pos[0], pos[1], pos[2]));
+    btTrans.setRotation(btQuaternion(orient[1], orient[2], orient[3], orient[0]));
+    obj->setWorldTransform(btTrans);
+
+	colWorld->addCollisionObject(obj, 2, 1);
+}
+
+//================================================//
+
 //
 // This method will take every entity in your scene and register it as
 // a mesh in the btCollisionWorld. NOTE: Be sure to call this function after
@@ -165,20 +231,37 @@ void registerAllEntitiesAsColliders(SceneManager* sceneMgr, btCollisionWorld* co
     while(i.hasMoreElements()) {
         Entity* entity = static_cast<Entity*>(i.getNext());
 
-		printf("%s: <%.2f, %.2f, %.2f>\n", entity->getName().c_str(), entity->getParentSceneNode()->_getDerivedPosition().x, entity->getParentSceneNode()->_getDerivedPosition().y, entity->getParentSceneNode()->_getDerivedPosition().z);
-
 		Ogre::StringUtil strUtil;
+		//if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$$", false)){
+		//	// Two '$' means to use the full mesh
+		//	registerEntityMesh(entity, colWorld);
+		//}
+		//else if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
+		//	// And one '$' means to use the bounding box as a collider
+		//	registerEntityAABB(entity, colWorld);
+		//}
 		if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
-			registerEntityAsCollider(entity, colWorld);
+			switch(entity->getParentSceneNode()->getName()[1]){
+			// Add complete mesh
+			case '$':
+				registerEntityMesh(entity, colWorld);
+				break;
+
+			// Add a cylinder shape
+			case '@':
+				registerEntityCylinder(entity, colWorld);
+				break;
+
+			// Add a box shape
+			default:
+				registerEntityAABB(entity, colWorld);
+				break;
+			}
 		}
 		else if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "Placeholder_", false)){
-			// This is just a placeholder used in Blender to determine the target of a moving object
-			// so it will just be removed from the world
-
+			// This is just a placeholder used in Blender so it will just be removed from the world
 			Ogre::SceneNode* node = entity->getParentSceneNode();
 			node->getCreator()->destroySceneNode(node);
-
-			continue;
 		}
     }
 }

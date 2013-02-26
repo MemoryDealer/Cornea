@@ -67,6 +67,7 @@ public:
 	Ogre::SceneNode*	getRollNode(void) const;
 	Ogre::Vector3		getDirection(void) const;
 	btRigidBody*		getRigidBody(void) const;
+	Ogre::Real			getCapsuleHeightOffset(void) const;
 	const Ogre::Vector3 getTranslateVector(void) const;
 	const unsigned		getMode(void) const;
 	Physics*			getPhysics(void) const;
@@ -116,6 +117,7 @@ private:
 	Ogre::Degree			m_rotateSpeed;
 	unsigned				m_mode;
 	Ogre::Real				m_cameraHeight;
+	Ogre::Real				m_capsuleHeightOffset;
 
 	Physics*				m_physics;
 	btRigidBody*			m_btCamera;
@@ -153,6 +155,9 @@ inline Ogre::Vector3 Camera::getDirection(void) const
 
 inline btRigidBody* Camera::getRigidBody(void) const
 { return m_btCamera; }
+
+inline Ogre::Real Camera::getCapsuleHeightOffset(void) const
+{ return m_capsuleHeightOffset; }
 
 inline const Ogre::Vector3 Camera::getTranslateVector(void) const
 { return m_translateVector; }

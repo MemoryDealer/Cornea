@@ -42,3 +42,20 @@
 
 #2/21/13
 -I've had pretty good luck with vertex snapping when forming a room. 
+
+#2/22/13
+-For imported meshes go to transform -> origin to geometry in object mode, otherwise the origin could be offset and cause problems. 
+*To fix the strange orientation problems when exporting a mesh from blender: In object mode go to object -> apply -> rotation, etc. 
+	This can be checked by going to transform -> align to transform orientation. If it moves, the aabb orientation will be messed up in Ogre, specifically for cylinders.
+http://www.ogre3d.org/forums/viewtopic.php?f=8&t=55336
+
+#2/24/13
+-A working solution to applying textures to certain areas of the mesh is to split the mesh into multiple meshes by going into edit mode -> mesh -> separate. It seems
+	there should be a way to do this using tex_coord_set in the .material files but I have tried with no success, and there is little info online. This will work for 
+	most objects I think.
+
+#2/25/13
+
+-It seems impossible to set two different objects to use the same material, as it will change the material name when you try. There may be a setting to fix this. 
+-Snapping is actually very easy in edge mode (object mode), you just begin translating the object and place the cursor over the edge to snap to and an orange circle
+	will appear over it snapping it.
