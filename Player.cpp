@@ -37,7 +37,7 @@ void Player::action(EventManager* eventManager)
 	Rayhit* rayhit = m_pCamera->getNegativeZRayhit();
 
 	if(rayhit->hasHit){
-		//printf("Object hit %s\nDistance: %.2f\n", rayhit->node->getName().c_str(), rayhit->distance);
+		printf("Object hit %s\nDistance: %.2f\n", rayhit->node->getName().c_str(), rayhit->distance);
 
 		// Iterate through dynamic objects
 		std::vector<DynamicObject*> objects = eventManager->getDynamicObjectManager()->getObjects();

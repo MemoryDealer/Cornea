@@ -56,6 +56,17 @@ public:
 		ARG_OVERRIDE
 	};
 
+	enum{
+		TYPE_MOVING_OBJECT = 0,
+		TYPE_MOVING_KINEMATIC_OBJECT,
+		TYPE_ELEVATOR,
+		TYPE_DOOR,
+		TYPE_SWITCH,
+		TYPE_NPC,
+
+		END
+	};
+
 	// --- //
 
 	DynamicObject(void);
@@ -138,7 +149,7 @@ public:
 	virtual void update(double timeSinceLastFrame);
 
 protected:
-	Ogre::AnimationState*		m_animState;
+	Ogre::AnimationState*		m_pAnimState;
 	bool						m_loop;
 };
 
@@ -161,7 +172,8 @@ protected:
 //================================================//
 //================================================//
 
-class Elevator : public MovingObject{
+class Elevator : public MovingObject
+{
 public:
 	Elevator(void);
 
@@ -176,9 +188,34 @@ protected:
 //================================================//
 //================================================//
 
+/* A simple rotating door */
+class Door : public MovingObject
+{
+public:
+	Door(void);
+
+	void init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* node, btCollisionObject* colObj);
+
+	unsigned send(unsigned arg);
+
+	void update(double timeSinceLastFrame);
+
+protected:
+	static const Ogre::Real		OPENING_LENGTH;
+	static const Ogre::Real		CLOSING_LENGTH;
+
+	Ogre::AnimationState*	m_pOpeningState;
+	Ogre::AnimationState*	m_pClosingState;
+	bool					m_opening;
+};
+
+//================================================//
+//================================================//
+
 /* Switch that can be turned on or off */
 
-class Switch : public DynamicObject{
+class Switch : public DynamicObject
+{
 public:
 	Switch(void);
 

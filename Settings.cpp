@@ -34,3 +34,27 @@ Settings::~Settings(void)
 }
 
 //================================================//
+
+void Settings::setPreset(int preset)
+{
+	switch(preset){
+	case LOW:
+		graphics.sky = graphics.water = LOW;
+		break;
+
+	default:
+	case MEDIUM:
+
+		break;
+
+	case HIGH:
+
+		break;
+
+	case ULTRA:
+
+		break;
+	}
+}
+
+//================================================//

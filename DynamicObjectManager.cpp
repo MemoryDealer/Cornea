@@ -30,18 +30,40 @@ DynamicObjectManager::~DynamicObjectManager(void)
 
 //================================================//
 
+int DynamicObjectManager::findType(Ogre::SceneNode* node)
+{
+	const char* name = node->getName().c_str();
+
+	if(strstr(name, "_MovingObject_"))
+		return DynamicObject::TYPE_MOVING_OBJECT;
+	if(strstr(name, "_MovingKinematicObject_"))
+		return DynamicObject::TYPE_MOVING_KINEMATIC_OBJECT;
+	if(strstr(name, "_Elevator_"))
+		return DynamicObject::TYPE_ELEVATOR;
+	if(strstr(name, "_Door_"))
+		return DynamicObject::TYPE_DOOR;
+	if(strstr(name, "_Switch_"))
+		return DynamicObject::TYPE_SWITCH;
+	if(strstr(name, "_NPC_"))
+		return DynamicObject::TYPE_NPC;
+
+	return -1;
+}
+
+//================================================//
+
 bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* obj, int tier)
 {
-	Ogre::String name = node->getName();
 	const Ogre::Any& any = node->getUserAny();
 	DynamicObject::DYNAMIC_OBJECT_DATA* data = nullptr;
 
-	// Determine the type of dynamic object
-	Ogre::StringUtil strUtil;
-
 	switch(tier){
 	case 1:
-		if(strUtil.startsWith(name, "MovingObject_", false)){
+		switch(this->findType(node)){
+		default:
+			return false;
+
+		case DynamicObject::TYPE_MOVING_OBJECT:
 			m_objects.push_back(new MovingObject());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
@@ -50,41 +72,50 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 				m_objects.back()->setupAnimation(data);
 				//delete data; // you no longer need those <-- (Palpatine quote)
-
-				return true;
 			}
-		}
-		else if(strUtil.startsWith(name, "MovingKinematicObject_", false)){
+			return true;
+			
+		case DynamicObject::TYPE_MOVING_KINEMATIC_OBJECT:
 			m_objects.push_back(new MovingKinematicObject());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
-			// Fetch animation data
 			if(!any.isEmpty()){
 				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 				m_objects.back()->setupAnimation(data);
 				//delete data;
-
-				return true;
 			}
-		}
-		else if(strUtil.startsWith(name, "Elevator_", false)){
+			return true;
+			
+		case DynamicObject::TYPE_ELEVATOR:
 			m_objects.push_back(new Elevator());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
 
-			// Fetch animation data
 			if(!any.isEmpty()){
 				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 				m_objects.back()->setupAnimation(data);
 				//delete data;
-
-				return true;
 			}
+			return true;
+
+		case DynamicObject::TYPE_DOOR:
+			m_objects.push_back(new Door());
+			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
+			m_objects.back()->setState(DynamicObject::STATE_IDLE);
+
+			if(!any.isEmpty()){
+				// ...
+			}
+			return true;
 		}
 		break;
 
 	case 2:
-		if(strUtil.startsWith(name, "Switch_", false)){
+		switch(this->findType(node)){
+		default:
+			return false;
+
+		case DynamicObject::TYPE_SWITCH:
 			m_objects.push_back(new Switch());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
@@ -99,8 +130,9 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 					link->attachSwitch(static_cast<Switch*>(m_objects.back()));
 				}
 			}
-		}
-		else if(strUtil.startsWith(name, "NPC_", false)){
+			return true;
+		
+		case DynamicObject::TYPE_NPC:
 			m_pNPCManager->addNPC(node, obj);
 			return true;
 		}
@@ -110,8 +142,8 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 	case 3:
 		{
 			// A trigger string should look like "ObjectName.Trigger.Condition"
-
-			Ogre::StringVector tokens = strUtil.split(name, ".");
+			Ogre::StringUtil strUtil;
+			Ogre::StringVector tokens = strUtil.split(node->getName(), ".");
 
 			if(tokens.size() > 1){
 

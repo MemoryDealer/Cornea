@@ -146,7 +146,7 @@ void registerEntityMesh(Entity* entity, btCollisionWorld* colWorld)
 
 	// DEBUG
 	//entity->setMaterialName("blue");
-	entity->setCastShadows(true);
+	//entity->setCastShadows(true);
 }
 
 //================================================//

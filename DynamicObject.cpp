@@ -160,8 +160,8 @@ void MovingObject::setupAnimation(DYNAMIC_OBJECT_DATA* data)
 	m_pSceneNode->setInitialState();
 
 	// Set up animation state for updating
-	m_animState = m_pSceneMgr->createAnimationState(m_pSceneNode->getName() + "_Animation");
-	m_animState->setEnabled(true);
+	m_pAnimState = m_pSceneMgr->createAnimationState(m_pSceneNode->getName() + "_Animation");
+	m_pAnimState->setEnabled(true);
 }
 
 //================================================//
@@ -171,7 +171,7 @@ void MovingObject::update(double timeSinceLastFrame)
 	if(m_state == STATE_ACTIVATED){
 		DynamicObject::update(timeSinceLastFrame);
 
-		m_animState->addTime(timeSinceLastFrame);
+		m_pAnimState->addTime(timeSinceLastFrame);
 	}
 }
 
@@ -246,7 +246,7 @@ void MovingKinematicObject::update(double timeSinceLastFrame)
 		trans.setOrigin(btVector3(pos.x, pos.y, pos.z));
 		motion->setWorldTransform(trans);
 
-		m_animState->addTime(timeSinceLastFrame);
+		m_pAnimState->addTime(timeSinceLastFrame);
 
 		/*m_rigidBody->setInterpolationWorldTransform(m_rigidBody->getWorldTransform());
 		m_rigidBody->setInterpolationLinearVelocity(btVector3(0, 0, 0));
@@ -286,6 +286,120 @@ unsigned Elevator::send(unsigned arg)
 void Elevator::update(double timeSinceLastFrame)
 {
 	MovingObject::update(timeSinceLastFrame);
+}
+
+//================================================//
+//================================================//
+
+const Ogre::Real Door::OPENING_LENGTH = 1000.0;
+const Ogre::Real Door::CLOSING_LENGTH = 1000.0;
+
+//================================================//
+
+Door::Door(void) : MovingObject()
+{
+	m_opening = true;
+}
+
+//================================================//
+
+void Door::init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* node, btCollisionObject* colObj)
+{
+	DynamicObject::init(mgr, physics, node, colObj);
+
+	//m_pSceneNode->translate(0.0, 0.0, -((m_pSceneNode->getAttachedObject(0)->getBoundingBox().getSize().z * 0.95f) / 2.0));
+
+	// Setup animations
+	// Opening
+	Ogre::Animation* anim = m_pSceneMgr->createAnimation(m_pSceneNode->getName() + "_OpeningAnimation", OPENING_LENGTH);
+	anim->setInterpolationMode(Ogre::Animation::IM_SPLINE);
+
+	// Track
+	Ogre::NodeAnimationTrack* track = anim->createNodeTrack(0, m_pSceneNode);
+	track->createNodeKeyFrame(0.0)->setRotation(Ogre::Quaternion::IDENTITY);
+	track->createNodeKeyFrame(OPENING_LENGTH)->setRotation(Ogre::Quaternion(Ogre::Math::Sqrt(0.5), 0.0, -Ogre::Math::Sqrt(0.5), 0.0));
+
+	m_pOpeningState = m_pSceneMgr->createAnimationState(m_pSceneNode->getName() + "_OpeningAnimation");
+	m_pOpeningState->setEnabled(true);
+	m_pOpeningState->setLoop(false);
+
+	// Closing
+	anim = m_pSceneMgr->createAnimation(m_pSceneNode->getName() + "_ClosingAnimation", CLOSING_LENGTH);
+	anim->setInterpolationMode(Ogre::Animation::IM_SPLINE);
+
+	// Track
+	track = anim->createNodeTrack(0, m_pSceneNode);
+	track->createNodeKeyFrame(0.0)->setRotation(Ogre::Quaternion(Ogre::Math::Sqrt(0.5), 0.0, -Ogre::Math::Sqrt(0.5), 0.0));
+	track->createNodeKeyFrame(CLOSING_LENGTH)->setRotation(Ogre::Quaternion::IDENTITY);
+
+	m_pClosingState = m_pSceneMgr->createAnimationState(m_pSceneNode->getName() + "_ClosingAnimation");
+	m_pClosingState->setEnabled(false);
+	m_pClosingState->setLoop(false);
+
+	m_pSceneNode->setInitialState();
+}
+
+//================================================//
+
+unsigned Door::send(unsigned arg)
+{
+	switch(arg){
+	default:
+	case ARG_ACTION:
+		// This overcomplicated!!!
+		if(m_state == STATE_IDLE){
+			m_state = STATE_ACTIVATED;
+
+			if(m_pOpeningState->hasEnded()){
+				m_pOpeningState->setEnabled(false);
+				m_pClosingState->setEnabled(true);
+				m_pOpeningState->setTimePosition(0.0);
+				m_opening = false;
+			}
+			else if(m_pClosingState->hasEnded()){
+				m_pClosingState->setEnabled(false);
+				m_pOpeningState->setEnabled(true);
+				m_pClosingState->setTimePosition(0.0);
+				m_opening = true;
+			}
+		}
+		break;
+	}
+
+	return 0;
+}
+
+//================================================//
+
+void Door::update(double timeSinceLastFrame)
+{
+	if(m_state == STATE_ACTIVATED){
+		// Update Bullet transform (must use world bounding box if origin is not at center)
+		btTransform transform(btQuaternion(	m_pSceneNode->_getDerivedOrientation().x, 
+											m_pSceneNode->_getDerivedOrientation().y, 
+											m_pSceneNode->_getDerivedOrientation().z,
+											m_pSceneNode->_getDerivedOrientation().w),
+			btVector3(	m_pSceneNode->getAttachedObject(0)->getWorldBoundingBox().getCenter().x, 
+						m_pSceneNode->getAttachedObject(0)->getWorldBoundingBox().getCenter().y, 
+						m_pSceneNode->getAttachedObject(0)->getWorldBoundingBox().getCenter().z));
+		m_collisionObject->setWorldTransform(transform);
+
+		// Open/Close logic
+		if(m_opening){
+			m_pOpeningState->addTime(timeSinceLastFrame);
+			
+			if(m_pOpeningState->hasEnded()){
+				m_state = STATE_IDLE;
+			}
+		}
+		else{
+			m_pClosingState->addTime(timeSinceLastFrame);
+
+			if(m_pClosingState->hasEnded()){
+				m_state = STATE_IDLE;
+			}
+		}
+	}
 }
 
 //================================================//

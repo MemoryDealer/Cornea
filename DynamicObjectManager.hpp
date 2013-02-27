@@ -18,6 +18,9 @@ public:
 	DynamicObjectManager(Ogre::SceneManager* mgr, Sparks::Camera* camera);
 	~DynamicObjectManager(void);
 
+	// Find the type of object
+	int findType(Ogre::SceneNode* node);
+
 	bool addObject(Ogre::SceneNode* node, btCollisionObject* obj, int tier);
 	void registerAllObjectsInScene(void);
 	void registerTriggerAction(DynamicObject::DYNAMIC_OBJECT_DATA* data);

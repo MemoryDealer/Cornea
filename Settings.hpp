@@ -16,7 +16,7 @@ public:
 	Settings(void);
 	~Settings(void);
 
-	// Most of these settings can be public--hacking these won't affect gameplay
+	void setPreset(int preset);
 
 	// Graphics
 	struct graphics_t{

@@ -55,7 +55,9 @@ http://www.ogre3d.org/forums/viewtopic.php?f=8&t=55336
 	most objects I think.
 
 #2/25/13
-
 -It seems impossible to set two different objects to use the same material, as it will change the material name when you try. There may be a setting to fix this. 
 -Snapping is actually very easy in edge mode (object mode), you just begin translating the object and place the cursor over the edge to snap to and an orange circle
 	will appear over it snapping it.
+
+#2/26/13
+-To move the origin of an object (the pivot point), go into edit mode and then translate the mesh. This can be used for creating revolving doors. 

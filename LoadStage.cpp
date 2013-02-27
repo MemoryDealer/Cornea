@@ -23,6 +23,8 @@ void GameState::loadStage(void)
 	// Oil Rig
 	case Profile::STAGE::OIL_RIG:
 		{
+			settings.graphics.sky = Settings::LOW;
+
 			// Skybox
 			if(settings.graphics.sky >= Settings::MEDIUM){
 				m_skyXController = new SkyX::BasicController();
@@ -48,8 +50,39 @@ void GameState::loadStage(void)
 
 			}
 			else{
-				m_pSceneMgr->setSkyBox(true, "Examples/CloudyNoonSkyBox");
+				//m_pSceneMgr->setSkyBox(true, "Examples/CloudyNoonSkyBox");
 			}
+
+			Ogre::Entity* e;
+			Ogre::Plane p;
+			p.normal = Ogre::Vector3(1, 0, 0);
+			p.d = 0;
+
+			Ogre::MeshManager::getSingleton().createPlane("CityPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+				p, 19200, 10800, 50, 50, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
+			e = m_pSceneMgr->createEntity("City", "CityPlane");
+			e->setMaterialName("2A/HotelCity");
+			Ogre::SceneNode* plane = m_pSceneMgr->getRootSceneNode()->createChildSceneNode();
+			plane->attachObject(e);
+			plane->translate(-10000.0, 0.0, 0.0);
+
+			loader->parseDotScene("Apartment.scene", "General", m_pSceneMgr, scene);
+
+			// Scale scene node and all child nodes
+			scene->translate(0, 200.0, 0);
+			scene->setInheritScale(true);
+			scene->scale(7.0, 7.0, 7.0);
+
+			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
+		}
+		break;
+
+	// ======== //
+
+	// Test Stage
+	case Profile::STAGE::TEST_STAGE:
+		{
+			m_pSceneMgr->setSkyBox(true, "Examples/TrippySkyBox");
 
 			// DEBUG
 			settings.graphics.water = Settings::LOW;
@@ -114,40 +147,6 @@ void GameState::loadStage(void)
 				m_hydrax->create();
 				m_hydraxInitialised = true;
 			} // end water
-
-			loader->parseDotScene("Apartment.scene", "General", m_pSceneMgr, scene);
-
-			// Scale scene node and all child nodes
-			scene->translate(0, 200.0, 0);
-			scene->setInheritScale(true);
-			scene->scale(7.0, 7.0, 7.0);
-
-			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
-		}
-		break;
-
-	// ======== //
-
-	// Test Stage
-	case Profile::STAGE::TEST_STAGE:
-		{
-			m_pSceneMgr->setSkyBox(true, "Examples/TrippySkyBox");
-
-			// Plane
-			Ogre::Entity* e;
-			Ogre::Plane p;
-
-			p.normal = Ogre::Vector3(0, 1, 0); 
-			p.d = 0;
-
-			Ogre::MeshManager::getSingleton().createPlane("FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-				p, 200000, 200000, 50, 50, true, 1, 200, 200, Ogre::Vector3::UNIT_Z);
-			e = m_pSceneMgr->createEntity("Floor", "FloorPlane");
-			e->setMaterialName("metal");
-			Ogre::SceneNode* node = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("MofoPlane");
-			node->attachObject(e);
-			//e->getMesh()->buildEdgeList();
-			e->setCastShadows(false);
 
 			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 		}

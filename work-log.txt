@@ -704,6 +704,12 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 
 #2/25/13
 -Made a createSceneManager function for GameState since the type of scene manager needed may vary for each stage. 
+-Moved the stage loading code into LoadStage.cpp since it's going to take quite a bit of space.
+
+#2/26/13
+-Created a door dynamic object, the animation is hard-coded and somewhat messy, but it works. The origin of the door must be at the edge of it to rotate properly,
+	and the mesh and scene exported from Blender when this is changed. 
+-Added a findType() function to DynamicObjectManager to simplify the adding process. 
 
 #TODO  
 -TREASURE.
