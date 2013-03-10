@@ -41,6 +41,10 @@ public:
 			Ogre::Real		range;
 		} trigger;
 
+		Ogre::Vector3		offset;
+		Ogre::Quaternion	rotationOffset;
+		unsigned int		buffer;
+
 	} DYNAMIC_OBJECT_DATA, *PDYNAMIC_OBJECT_DATA;
 
 	enum{
@@ -60,7 +64,8 @@ public:
 		TYPE_MOVING_OBJECT = 0,
 		TYPE_MOVING_KINEMATIC_OBJECT,
 		TYPE_ELEVATOR,
-		TYPE_DOOR,
+		TYPE_ROTATING_DOOR,
+		TYPE_SLIDING_DOOR,
 		TYPE_SWITCH,
 		TYPE_NPC,
 
@@ -183,30 +188,6 @@ public:
 
 protected:
 
-};
-
-//================================================//
-//================================================//
-
-/* A simple rotating door */
-class Door : public MovingObject
-{
-public:
-	Door(void);
-
-	void init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* node, btCollisionObject* colObj);
-
-	unsigned send(unsigned arg);
-
-	void update(double timeSinceLastFrame);
-
-protected:
-	static const Ogre::Real		OPENING_LENGTH;
-	static const Ogre::Real		CLOSING_LENGTH;
-
-	Ogre::AnimationState*	m_pOpeningState;
-	Ogre::AnimationState*	m_pClosingState;
-	bool					m_opening;
 };
 
 //================================================//

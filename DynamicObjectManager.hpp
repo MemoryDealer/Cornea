@@ -7,13 +7,15 @@
 
 #include "stdafx.h"
 #include "DynamicObject.hpp"
+#include "Doors.hpp"
 #include "Trigger.hpp"
 #include "NPCManager.hpp" 
 #include "Base.hpp"
 
 //================================================//
 
-class DynamicObjectManager{
+class DynamicObjectManager
+{
 public:
 	DynamicObjectManager(Ogre::SceneManager* mgr, Sparks::Camera* camera);
 	~DynamicObjectManager(void);

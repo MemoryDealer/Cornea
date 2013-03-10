@@ -49,11 +49,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(OGRE_SDK)\include;$(OGRE_SDK)\include\OGRE;$(OGRE_SDK)\include\OIS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OGRE_SDK)\lib\debug;$(OGRE_SDK)\lib\release;$(OGRE_SDK)\boost\lib;$(OGRE_SDK)\lib\debug\opt;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain_d.lib;OgreTerrain_d.lib;OIS_d.lib;MyGUIEngine_d.lib;MyGUI.OgrePlatform_d.lib;BulletDynamics_debug.lib;BulletCollision_debug.lib;ConvexDecomposition_debug.lib;LinearMath_debug.lib;SkyX.lib;fmodexL_vc.lib;Plugin_OctreeSceneManager_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OgreMain_d.lib;OgreTerrain_d.lib;OIS_d.lib;MyGUIEngine_d.lib;MyGUI.OgrePlatform_d.lib;BulletDynamics_debug.lib;BulletCollision_debug.lib;ConvexDecomposition_debug.lib;LinearMath_debug.lib;SkyX_d.lib;Hydrax_d.lib;fmodexL_vc.lib;Plugin_OctreeSceneManager_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_SDK)\Bin\$(Configuration)"</Command>
@@ -66,13 +67,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(OGRE_SDK)\include;$(OGRE_SDK)\include\OGRE;$(OGRE_SDK)\include\OIS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_ITERATOR_DEBUG_LEVEL=0;NDEBUG;_SECURE_SCL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(OGRE_SDK)\lib\debug;$(OGRE_SDK)\lib\release;$(OGRE_SDK)\boost\lib;$(OGRE_SDK)\lib\debug\opt;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain.lib;OgreTerrain.lib;OIS.lib;MyGUIEngine.lib;MyGUI.OgrePlatform.lib;BulletDynamics.lib;BulletCollision.lib;ConvexDecomposition.lib;LinearMath.lib;SkyX.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OGRE_SDK)\lib\release;$(OGRE_SDK)\boost\lib;$(OGRE_SDK)\lib\release\opt;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OgreMain.lib;OgreTerrain.lib;OIS.lib;MyGUIEngine.lib;MyGUI.OgrePlatform.lib;BulletDynamics.lib;BulletCollision.lib;ConvexDecomposition.lib;LinearMath.lib;SkyX.lib;Hydrax.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_SDK)\Bin\$(Configuration)"</Command>
@@ -90,12 +92,18 @@
     <ClInclude Include="BtOgrePG.h" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Compositor.hpp" />
+    <ClInclude Include="Doors.hpp" />
     <ClInclude Include="DotSceneLoader.hpp" />
     <ClInclude Include="DynamicObjectManager.hpp" />
     <ClInclude Include="Effect.hpp" />
     <ClInclude Include="EffectManager.hpp" />
     <ClInclude Include="EventManager.hpp" />
+    <ClInclude Include="Flashlight.hpp" />
     <ClInclude Include="GameState.hpp" />
+    <ClInclude Include="GUILayer.hpp" />
+    <ClInclude Include="GUILayerGameState.hpp" />
+    <ClInclude Include="GUILayerMenuState.hpp" />
+    <ClInclude Include="HelperLogic.hpp" />
     <ClInclude Include="Inventory.hpp" />
     <ClInclude Include="MeleeWeapons.hpp" />
     <ClInclude Include="MenuState.hpp" />
@@ -103,11 +111,13 @@
     <ClInclude Include="NPC-Robot.hpp" />
     <ClInclude Include="NPC.hpp" />
     <ClInclude Include="NPCManager.hpp" />
+    <ClInclude Include="Physics.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Profile.hpp" />
     <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="rapidxml.hpp" />
     <ClInclude Include="Settings.hpp" />
+    <ClInclude Include="SharedData.hpp" />
     <ClInclude Include="SkyX\AtmosphereManager.h" />
     <ClInclude Include="SkyX\BasicController.h" />
     <ClInclude Include="SkyX\CloudsManager.h" />
@@ -145,24 +155,33 @@
     <ClCompile Include="BtOgre.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Compositor.cpp" />
+    <ClCompile Include="Doors.cpp" />
     <ClCompile Include="DotSceneLoader.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="DynamicObjectManager.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="Flashlight.cpp" />
     <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="GUILayer.cpp" />
+    <ClCompile Include="GUILayerGameState.cpp" />
+    <ClCompile Include="GUILayerMenuState.cpp" />
+    <ClCompile Include="HelperLogic.cpp" />
     <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="LoadStage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeleeWeapons.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="MLP.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="NPCManager.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Profile.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="SharedData.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sparks.cpp" />
     <ClCompile Include="stdafx.cpp" />
@@ -174,6 +193,8 @@
   <ItemGroup>
     <None Include="blender-notes.txt" />
     <None Include="bug-log.txt" />
+    <None Include="CREDITS.TXT" />
+    <None Include="Design.txt" />
     <None Include="work-log.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

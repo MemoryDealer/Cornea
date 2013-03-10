@@ -711,6 +711,18 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 	and the mesh and scene exported from Blender when this is changed. 
 -Added a findType() function to DynamicObjectManager to simplify the adding process. 
 
+#3/1/13
+-Got compositors organized and working. Testing gaussian blur and radial blur which will be good for the "glasses off" effect. I still need to figure out how to 
+	change the intensity of the blur at run-time for more efficient in-game experience.
+-For some reason the door update had to be reverted back to the DynamicObject function for the origin of the bounding box to be set correctly. Not sure why this happened
+	but I believe it was after I exported the .scene again. 
+
+#3/9/13
+-Made the Door class abstract and now have RotatingDoor and SlidingDoor which initialize their animations as needed. 
+-Made a loader for the doors which allows you to define in what direction it will translate. The math for this is good I think. This is done in Door::calculateOffset().
+-Created a simple mechanism to use a switch with a door. The switch will send the override command and unlock the door, then send an action command which will
+	open/close the door; that function returns and the door is locked again.
+
 #TODO  
 -TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  

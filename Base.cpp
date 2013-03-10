@@ -158,7 +158,7 @@ bool Base::init(OIS::KeyListener* pKeyListener, OIS::MouseListener* pMouseListen
 	//m_pRoot->setFrameSmoothingPeriod(4.0);
 
 	m_pRoot->showConfigDialog();
-	m_pRenderWindow = m_pRoot->initialise(true, "Sparks Framework!");
+	m_pRenderWindow = m_pRoot->initialise(true, "Engine2A");
 
 	m_pViewport = m_pRenderWindow->addViewport(0);
 	m_pViewport->setBackgroundColour(Ogre::ColourValue(1.0f, 1.0f, 1.0f));

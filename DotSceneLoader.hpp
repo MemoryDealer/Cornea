@@ -96,6 +96,7 @@
         Ogre::Vector3 parseVector3(rapidxml::xml_node<>* XMLNode);
         Ogre::Quaternion parseQuaternion(rapidxml::xml_node<>* XMLNode);
         Ogre::ColourValue parseColour(rapidxml::xml_node<>* XMLNode);
+		DynamicObject::DYNAMIC_OBJECT_DATA* getData(Ogre::SceneNode* node);
  
  
         Ogre::SceneManager *mSceneMgr;

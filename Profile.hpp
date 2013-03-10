@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "Inventory.hpp"
 
-
 //================================================//
 
 /* This functions as a "saved game" that can be loaded and created from the main menu. 

@@ -10,7 +10,7 @@ Player::Player(Ogre::SceneManager* mgr)
 	m_pSceneMgr = mgr;
 
 	// Create the camera
-	m_pCamera = new Sparks::Camera(m_pSceneMgr, 60000);
+	m_pCamera = new Sparks::Camera(m_pSceneMgr, 90000);
 	m_pCamera->setMode(Sparks::Camera::MODE_FIRST_PERSON);
 
 	// Set weapon to NULL for now

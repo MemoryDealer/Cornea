@@ -6,30 +6,31 @@
 //================================================//
 
 #include "stdafx.h"
+#include "HelperLogic.hpp"
 
 //================================================//
 
-#define COMPOSITOR_MOTION_BLUR		"Motion Blur"
+#define COMPOSITOR_MOTION_BLUR		"MotionBlur"
 #define COMPOSITOR_INVERT			"Invert"
-#define COMPOSITOR_NIGHT_VISION		"Night Vision"
+#define COMPOSITOR_NIGHT_VISION		"NightVision"
 #define COMPOSITOR_BLOOM			"Bloom"
 #define COMPOSITOR_GLASS			"Glass"
 #define COMPOSITOR_OLD_TV			"Old TV"
 #define COMPOSITOR_BW				"B&W"
 #define COMPOSITOR_EMBOSSED			"Embossed"
-#define COMPOSITOR_SHARPEN_EDGES	"Sharpen Edges"
+#define COMPOSITOR_SHARPEN_EDGES	"SharpenEdges"
 #define COMPOSITOR_POSTERIZE		"Posterize"
 #define COMPOSITOR_LAPLACE			"Laplace"
 #define COMPOSITOR_TILING			"Tiling"
 #define COMPOSITOR_OLD_MOVIE		"Old Movie"
 #define COMPOSITOR_HDR				"HDR"
-#define COMPOSITOR_GAUSSIAN_BLUR	"Gaussian Blur"
+#define COMPOSITOR_GAUSSIAN_BLUR	"GaussianBlur"
 #define COMPOSITOR_TESTMRT			"TestMRT"
 #define COMPOSITOR_RADIAL_BLUR		"Radial Blur"
 #define COMPOSITOR_ASCII			"ASCII"
 #define COMPOSITOR_HALFTONE			"Halftone"
 #define COMPOSITOR_DITHER			"Dither"
-#define COMPOSITOR_HEAT_VISION		"Heat Vision"
+#define COMPOSITOR_HEAT_VISION		"HeatVision"
 
 //================================================//
 

@@ -40,8 +40,10 @@ int DynamicObjectManager::findType(Ogre::SceneNode* node)
 		return DynamicObject::TYPE_MOVING_KINEMATIC_OBJECT;
 	if(strstr(name, "_Elevator_"))
 		return DynamicObject::TYPE_ELEVATOR;
-	if(strstr(name, "_Door_"))
-		return DynamicObject::TYPE_DOOR;
+	if(strstr(name, "_RDoor_") || strstr(name, "_Door_"))
+		return DynamicObject::TYPE_ROTATING_DOOR;
+	if(strstr(name, "_SDoor_"))
+		return DynamicObject::TYPE_SLIDING_DOOR;
 	if(strstr(name, "_Switch_"))
 		return DynamicObject::TYPE_SWITCH;
 	if(strstr(name, "_NPC_"))
@@ -69,6 +71,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 
 			// Fetch animation data
 			if(!any.isEmpty()){
+				//!! This can be simplified by retrieving the any data inside setupAnimation()
 				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
 				m_objects.back()->setupAnimation(data);
 				//delete data; // you no longer need those <-- (Palpatine quote)
@@ -98,8 +101,18 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			}
 			return true;
 
-		case DynamicObject::TYPE_DOOR:
-			m_objects.push_back(new Door());
+		case DynamicObject::TYPE_ROTATING_DOOR:
+			m_objects.push_back(new RotatingDoor());
+			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
+			m_objects.back()->setState(DynamicObject::STATE_IDLE);
+
+			if(!any.isEmpty()){
+				// ...
+			}
+			return true;
+
+		case DynamicObject::TYPE_SLIDING_DOOR:
+			m_objects.push_back(new SlidingDoor());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
 

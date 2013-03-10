@@ -85,6 +85,24 @@
     <Filter Include="Source Files\Game\WorldObjects\Trigger">
       <UniqueIdentifier>{7d44c4e9-39d6-4462-8f2e-1cc307de9088}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Items">
+      <UniqueIdentifier>{48ca4995-d402-4d06-8ea4-c901b55309be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Items">
+      <UniqueIdentifier>{b74abbee-3d69-4978-a695-5541a6caee65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{910e5559-23d6-42da-8acb-f889365131f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{129fb130-6868-4c2d-b492-bf9a46ce07bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Compositor">
+      <UniqueIdentifier>{628ac9c9-71c3-4ecf-8233-51cc2416b0f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Compositor">
+      <UniqueIdentifier>{ad56397c-8965-44b1-ac86-c26bda20132d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -171,9 +189,6 @@
     <ClInclude Include="Sparks.hpp">
       <Filter>Header Files\Sparks</Filter>
     </ClInclude>
-    <ClInclude Include="Compositor.hpp">
-      <Filter>Header Files\Sparks</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.hpp">
       <Filter>Header Files\Sparks</Filter>
     </ClInclude>
@@ -258,6 +273,33 @@
     <ClInclude Include="TriggerCode.hpp">
       <Filter>Header Files\Game\WorldObjects\Trigger</Filter>
     </ClInclude>
+    <ClInclude Include="Flashlight.hpp">
+      <Filter>Header Files\Game\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="GUILayer.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUILayerMenuState.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUILayerGameState.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.hpp">
+      <Filter>Header Files\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedData.hpp">
+      <Filter>Header Files\Sparks</Filter>
+    </ClInclude>
+    <ClInclude Include="Compositor.hpp">
+      <Filter>Header Files\Compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="HelperLogic.hpp">
+      <Filter>Header Files\Compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="Doors.hpp">
+      <Filter>Header Files\Game\WorldObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -280,9 +322,6 @@
     </ClCompile>
     <ClCompile Include="MenuState.cpp">
       <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="Compositor.cpp">
-      <Filter>Source Files\Sparks</Filter>
     </ClCompile>
     <ClCompile Include="Sparks.cpp">
       <Filter>Source Files\Sparks</Filter>
@@ -356,6 +395,36 @@
     <ClCompile Include="Trigger.cpp">
       <Filter>Source Files\Game\WorldObjects\Trigger</Filter>
     </ClCompile>
+    <ClCompile Include="Flashlight.cpp">
+      <Filter>Source Files\Game\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="GUILayer.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUILayerMenuState.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUILayerGameState.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source Files\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedData.cpp">
+      <Filter>Source Files\Sparks</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadStage.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Compositor.cpp">
+      <Filter>Source Files\Compositor</Filter>
+    </ClCompile>
+    <ClCompile Include="HelperLogic.cpp">
+      <Filter>Source Files\Compositor</Filter>
+    </ClCompile>
+    <ClCompile Include="Doors.cpp">
+      <Filter>Source Files\Game\WorldObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="work-log.txt">
@@ -365,6 +434,12 @@
       <Filter>Header Files\Sparks</Filter>
     </None>
     <None Include="blender-notes.txt">
+      <Filter>Header Files\Sparks</Filter>
+    </None>
+    <None Include="Design.txt">
+      <Filter>Header Files\Sparks</Filter>
+    </None>
+    <None Include="CREDITS.TXT">
       <Filter>Header Files\Sparks</Filter>
     </None>
   </ItemGroup>

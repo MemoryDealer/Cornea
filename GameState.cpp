@@ -33,6 +33,8 @@ void GameState::enter(void)
 
 	this->createSceneManager();
 
+	m_pCompositor = new Sparks::Compositor(m_pSceneMgr, Base::getSingletonPtr()->m_pViewport);
+
 	// Allow update loop to load the game
 	m_state = STATE_LOADING_FIRST_ENTRY;
 	m_loadingStep = STEP_FIRST;
@@ -51,6 +53,8 @@ void GameState::exit(void)
 	delete m_profile;
 
 	this->destroyScene();
+
+	delete m_pCompositor;
 
 	//Ogre::MeshManager::getSingleton().removeAll();
 	//Ogre::ResourceGroupManager::getSingleton().destroyResourceGroup("Popular");
@@ -622,6 +626,9 @@ void GameState::update(double timeSinceLastFrame)
 	case STATE_ACTIVE:
 		// Update player
 		m_player->update(timeSinceLastFrame);
+
+		// Update plane
+		//m_pSceneMgr->getSceneNode("City")->setPosition(m_player->getPosition().x - 50000, 0.0, 0.0);
 
 		// skyx...
 		if(m_skyXInitialised){

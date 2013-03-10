@@ -59,12 +59,12 @@ void GameState::loadStage(void)
 			p.d = 0;
 
 			Ogre::MeshManager::getSingleton().createPlane("CityPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-				p, 19200, 10800, 50, 50, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
+				p, 192000, 108000, 50, 50, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
 			e = m_pSceneMgr->createEntity("City", "CityPlane");
 			e->setMaterialName("2A/HotelCity");
-			Ogre::SceneNode* plane = m_pSceneMgr->getRootSceneNode()->createChildSceneNode();
+			Ogre::SceneNode* plane = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("City");
 			plane->attachObject(e);
-			plane->translate(-10000.0, 0.0, 0.0);
+			plane->setPosition(-50000.0, -9000.0, 0.0);
 
 			loader->parseDotScene("Apartment.scene", "General", m_pSceneMgr, scene);
 

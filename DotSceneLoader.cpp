@@ -496,7 +496,33 @@ void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode 
         pNode->setInitialState();
     }
 // # EDITED
-	// User Data
+	// Offset for misc. uses
+	pElement = XMLNode->first_node("offset");
+	if(pElement)
+	{
+		DynamicObject::DYNAMIC_OBJECT_DATA* data = this->getData(pNode);
+
+		data->offset = this->parseVector3(pElement);
+		
+		// Since this can be used for a door, might as well include the locked value too
+		data->buffer = static_cast<unsigned>(getAttribReal(pElement, "locked"));
+
+		pNode->setUserAny(Ogre::Any(data));
+	}
+
+	// Rotation for misc. uses
+	pElement = XMLNode->first_node("rotationOffset");
+	if(pElement)
+	{
+		DynamicObject::DYNAMIC_OBJECT_DATA* data = this->getData(pNode);
+
+		data->rotationOffset = this->parseQuaternion(pElement);
+		data->buffer = static_cast<unsigned>(getAttribReal(pElement, "locked"));
+
+		pNode->setUserAny(Ogre::Any(data));
+	}
+
+	// Animation
 	pElement = XMLNode->first_node("animation");
 	if(pElement)
 	{
@@ -912,10 +938,8 @@ void DotSceneLoader::processAnimation(rapidxml::xml_node<>* XMLNode, Ogre::Scene
 {
 	// Parse data for animating the node
 	int numPos = 0;
-	DynamicObject::DYNAMIC_OBJECT_DATA* data = new DynamicObject::DYNAMIC_OBJECT_DATA();
+	DynamicObject::DYNAMIC_OBJECT_DATA* data = this->getData(pParent);
 	//memset(data, 0, sizeof(DynamicObject::DYNAMIC_OBJECT_DATA));  // caused debug assertion
-
-	//printf("Parsing animation data on %s...\n", pParent->getName().c_str());
 		
 	data->animation.length =		getAttribReal(XMLNode, "length");
 	data->animation.step =			getAttribReal(XMLNode, "step");
@@ -940,13 +964,7 @@ void DotSceneLoader::processAnimation(rapidxml::xml_node<>* XMLNode, Ogre::Scene
 void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
 	// Retrieve the data pointer, set the trigger values and set the pointer again
-	const Ogre::Any& any = pParent->getUserAny();
-	DynamicObject::DYNAMIC_OBJECT_DATA* data = 0;
-
-	if(any.isEmpty())
-		data = new DynamicObject::DYNAMIC_OBJECT_DATA();
-	else
-		data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+	DynamicObject::DYNAMIC_OBJECT_DATA* data = this->getData(pParent);
 
 	// Load trigger data
 	data->trigger.actionCode	= getAttribReal(XMLNode, "action");
@@ -1118,4 +1136,17 @@ void DotSceneLoader::processUserDataReference(rapidxml::xml_node<>* XMLNode, Ogr
 {
     Ogre::String str = XMLNode->first_attribute("id")->value();
     pEntity->setUserAny(Ogre::Any(str));
+}
+
+DynamicObject::DYNAMIC_OBJECT_DATA* DotSceneLoader::getData(Ogre::SceneNode* node)
+{
+	const Ogre::Any& any = node->getUserAny();
+	DynamicObject::DYNAMIC_OBJECT_DATA* data = nullptr;
+
+	if(any.isEmpty())
+		data = new DynamicObject::DYNAMIC_OBJECT_DATA();
+	else
+		data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+
+	return data;
 }

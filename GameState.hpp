@@ -8,6 +8,7 @@
 #include "AppState.hpp"
 #include "Camera.hpp"
 #include "Sparks.hpp"
+#include "Compositor.hpp"
 #include "DotSceneLoader.hpp"
 #include "Physics.hpp"
 #include "GUILayerGameState.hpp"
@@ -91,6 +92,9 @@ protected:
 	// Environment
 	EventManager*			m_pEventManager;
 	Ogre::Light*			m_pSunlight;
+
+	// Effects
+	Sparks::Compositor*		m_pCompositor;
 	
 	// Player 
 	Player*					m_player;
