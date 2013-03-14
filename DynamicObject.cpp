@@ -10,6 +10,8 @@ DynamicObject::DynamicObject(void)
 	m_state = STATE_IDLE;
 	m_needsUpdate = true;
 	m_updateRange = 20000.0;
+	
+	m_hasSound = false;
 }
 
 //================================================//
@@ -41,6 +43,8 @@ void DynamicObject::init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneN
 
 	// Set position vector
 	m_position = m_pSceneNode->getPosition();
+
+	// Init
 }
 
 //================================================//
@@ -56,6 +60,8 @@ void DynamicObject::initSound(const char* file, bool loop)
 	FMOD_VECTOR vel;
 	memset(&vel, 0, sizeof(vel));
 	m_soundChannel->set3DAttributes(&pos, &vel);
+
+	m_hasSound = true;
 }
 
 //================================================//
@@ -106,6 +112,32 @@ bool DynamicObject::needsUpdate(void)
 
 //================================================//
 
+DynamicObjectData* DynamicObject::getData(void) const
+{
+	const Ogre::Any& any = m_pSceneNode->getUserAny();
+	DynamicObjectData* data = nullptr;
+
+	if(!any.isEmpty()){
+		data = Ogre::any_cast<DynamicObjectData*>(any);
+	}
+
+	return data;
+}
+
+//================================================//
+
+void DynamicObject::deleteData(void)
+{
+	const Ogre::Any& any = m_pSceneNode->getUserAny();
+
+	if(!any.isEmpty()){
+		delete Ogre::any_cast<DynamicObjectData*>(any);
+		printf("%s data deleted\n", m_pSceneNode->getName().c_str());
+	}
+}
+
+//================================================//
+
 void DynamicObject::update(double timeSinceLastFrame)
 {
 	// Update the world transform for the Bullet collision object
@@ -137,8 +169,12 @@ MovingObject::~MovingObject(void)
 
 //================================================//
 
-void MovingObject::setupAnimation(DYNAMIC_OBJECT_DATA* data)
+void MovingObject::setupAnimation(void)
 {
+	DynamicObjectData* data = this->getData();
+	if(data == nullptr)
+		return;
+
 	m_loop = data->animation.loop;
 
 	// Create animation
@@ -181,14 +217,19 @@ void MovingObject::update(double timeSinceLastFrame)
 /* Moving Kinematic Object */
 
 MovingKinematicObject::MovingKinematicObject(void)
+	: MovingObject()
 {
 
 }
 
 //================================================//
 
-void MovingKinematicObject::setupAnimation(DYNAMIC_OBJECT_DATA* data)
+void MovingKinematicObject::setupAnimation(void)
 {
+	DynamicObjectData* data = this->getData();
+	if(data == nullptr)
+		return;
+
 	// Remove the collision object
 	m_physics->getWorld()->removeCollisionObject(m_collisionObject);
 
@@ -227,7 +268,7 @@ void MovingKinematicObject::setupAnimation(DYNAMIC_OBJECT_DATA* data)
 	m_physics->getWorld()->addRigidBody(m_rigidBody);
 
 	// Now set the animation track
-	MovingObject::setupAnimation(data);
+	MovingObject::setupAnimation();
 }
 
 //================================================//
@@ -305,7 +346,7 @@ void Switch::init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* no
 {
 	DynamicObject::init(mgr, physics, node, colObj);
 
-	DynamicObject::initSound("C:/test.wav");
+	//DynamicObject::initSound("C:/test.wav");
 
 	m_linked = false;
 }
@@ -317,10 +358,19 @@ unsigned Switch::send(unsigned arg)
 	if(m_linked){
 		m_linkedObject->send(ARG_OVERRIDE); 
 
-		Base::getSingletonPtr()->m_soundSystem->playSound(FMOD_CHANNEL_FREE, m_sound, false, &m_soundChannel);
+		if(m_hasSound)
+			Base::getSingletonPtr()->m_soundSystem->playSound(FMOD_CHANNEL_FREE, m_sound, false, &m_soundChannel);
 	}
 
 	return 0;
+}
+
+//================================================//
+
+void Switch::deleteData(void)
+{
+	// no data on the heap here
+	return;
 }
 
 //================================================//
@@ -331,4 +381,62 @@ void Switch::update(double timeSinceLastFrame)
 }
 
 //================================================//
+//================================================//
+
+Light::Light(void)
+	: DynamicObject()
+{
+
+}
+
+//================================================//
+
+void Light::initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node)
+{
+	m_pSceneMgr = mgr;
+	m_pSceneNode = node;
+	//m_pSceneNode->setVisible(false);
+
+	const Ogre::Any& any = m_pSceneNode->getUserAny();
+	LightData* data = Ogre::any_cast<LightData*>(any);
+
+	m_pLight = m_pSceneMgr->createLight("Dyn_" + m_pSceneNode->getName());
+	m_pLight->setType((data->type == TYPE_SPOT) ? Ogre::Light::LT_SPOTLIGHT : Ogre::Light::LT_POINT);
+	m_pLight->setPosition(m_pSceneNode->_getDerivedPosition());
+	
+	Ogre::Vector3 dir = m_pSceneNode->_getDerivedOrientation() * Ogre::Vector3::UNIT_Y;
+	m_pLight->setDirection(dir);
+	
+	// parse these...
+	m_pLight->setDiffuseColour(1.0, 1.0, 1.0);
+	m_pLight->setSpecularColour(0.8, 0.8, 0.8);
+	
+	if(data->type == TYPE_SPOT){
+		m_pLight->setAttenuation(data->range, 0.5, 0.0, 0.0);
+
+		m_pLight->setSpotlightInnerAngle(Ogre::Radian(data->inner));
+		m_pLight->setSpotlightOuterAngle(Ogre::Radian(data->outer));
+
+		m_pLight->setSpotlightFalloff(5.0);
+
+		m_pLight->setCastShadows(Settings::getSingletonPtr()->graphics.shadows.enabled);
+	}
+}
+
+//================================================//
+
+void Light::deleteData(void)
+{
+	const Ogre::Any& any = m_pSceneNode->getUserAny();
+	if(!any.isEmpty())
+		delete Ogre::any_cast<LightData*>(any);
+}
+
+//================================================//
+
+void Light::update(double timeSinceLastFrame)
+{
+	// useful for flickering etc.
+}
+
 //================================================//

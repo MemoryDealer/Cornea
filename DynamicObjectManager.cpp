@@ -10,22 +10,19 @@ DynamicObjectManager::DynamicObjectManager(Ogre::SceneManager* mgr, Sparks::Came
 	m_pCamera = camera;
 
 	m_physics = m_pCamera->getPhysics();
-
-	// Register object hierarchy
-	firstTierObjects.push_back("MovingObject_");
-	firstTierObjects.push_back("MovingKinematicObject_");
-	firstTierObjects.push_back("Elevator_");
-
-	secondTierObjects.push_back("Switch_");
-
-	thirdTierObjects.push_back("_Trigger");
 }
 
 //================================================//
 
 DynamicObjectManager::~DynamicObjectManager(void)
 {
+	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
+		itr != m_objects.end();){
+		// Delete dynamic object data stored on the heap
+		(*itr)->deleteData();
 
+		++itr;
+	}
 }
 
 //================================================//
@@ -49,6 +46,9 @@ int DynamicObjectManager::findType(Ogre::SceneNode* node)
 	if(strstr(name, "_NPC_"))
 		return DynamicObject::TYPE_NPC;
 
+	if(strstr(name, "_Light_"))
+		return DynamicObject::TYPE_LIGHT;
+
 	return -1;
 }
 
@@ -57,7 +57,6 @@ int DynamicObjectManager::findType(Ogre::SceneNode* node)
 bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* obj, int tier)
 {
 	const Ogre::Any& any = node->getUserAny();
-	DynamicObject::DYNAMIC_OBJECT_DATA* data = nullptr;
 
 	switch(tier){
 	case 1:
@@ -69,24 +68,16 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.push_back(new MovingObject());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
-			// Fetch animation data
-			if(!any.isEmpty()){
-				//!! This can be simplified by retrieving the any data inside setupAnimation()
-				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
-				m_objects.back()->setupAnimation(data);
-				//delete data; // you no longer need those <-- (Palpatine quote)
-			}
+			m_objects.back()->setupAnimation();
+
 			return true;
 			
 		case DynamicObject::TYPE_MOVING_KINEMATIC_OBJECT:
 			m_objects.push_back(new MovingKinematicObject());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 
-			if(!any.isEmpty()){
-				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
-				m_objects.back()->setupAnimation(data);
-				//delete data;
-			}
+			m_objects.back()->setupAnimation();
+
 			return true;
 			
 		case DynamicObject::TYPE_ELEVATOR:
@@ -94,11 +85,8 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
 
-			if(!any.isEmpty()){
-				data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
-				m_objects.back()->setupAnimation(data);
-				//delete data;
-			}
+			m_objects.back()->setupAnimation();
+
 			return true;
 
 		case DynamicObject::TYPE_ROTATING_DOOR:
@@ -106,9 +94,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
 
-			if(!any.isEmpty()){
-				// ...
-			}
+			
 			return true;
 
 		case DynamicObject::TYPE_SLIDING_DOOR:
@@ -116,9 +102,13 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
 
-			if(!any.isEmpty()){
-				// ...
-			}
+			
+			return true;
+
+		case DynamicObject::TYPE_LIGHT:
+			m_objects.push_back(new Light());
+			m_objects.back()->initLight(m_pSceneMgr, node);
+
 			return true;
 		}
 		break;
@@ -172,7 +162,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 
 							// Set the trigger data
 							if(!any.isEmpty()){
-								data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+								DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
 
 								m_objects.back()->setTriggerData(data);
 								this->registerTriggerAction(data);
@@ -184,7 +174,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 							m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
 
 							if(!any.isEmpty()){
-								data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+								DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
 
 								m_objects.back()->setTriggerData(data);
 								this->registerTriggerAction(data);
@@ -212,6 +202,7 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 	int tier = 1;
 	const int MAX_TIER = 3;
 
+	// Perhaps use an entity iterator through the scene if some dynamic objects aren't collision objects
 	// Iterate through collision world objects and add them to the manager based on tier
 	for(;tier<=MAX_TIER; ++tier){
 		btCollisionObjectArray& objects = m_physics->getWorld()->getCollisionObjectArray();
@@ -224,15 +215,6 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 			else{
 				printf("Skipped object: %s\n", static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer())->getName().c_str());
 			}
-
-			////! Redundant!
-			//Ogre::Entity* entity = static_cast<Ogre::Entity*>(objects.at(i)->getUserPointer());
-			//Ogre::StringUtil strUtil;
-			//
-			//if(!strUtil.startsWith(static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer())->getName(), "MofoPlane", false)){
-			//	entity->setMaterialName("blue");
-			//	entity->setCastShadows(true);
-			//}
 		}
 	}
 
@@ -241,7 +223,7 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 
 //================================================//
 
-void DynamicObjectManager::registerTriggerAction(DynamicObject::DYNAMIC_OBJECT_DATA* data)
+void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
 {
 	switch(data->trigger.actionCode){
 	default:

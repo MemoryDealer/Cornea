@@ -1,7 +1,7 @@
 //================================================//
 
-#ifndef __WORLDOBJECT_HPP__
-#define __WORLDOBJECT_HPP__
+#ifndef __DYNAMICOBJECT_HPP__
+#define __DYNAMICOBJECT_HPP__
 
 #define USE_KINEMATIC_GROUND 1
 
@@ -47,6 +47,12 @@ public:
 
 	} DYNAMIC_OBJECT_DATA, *PDYNAMIC_OBJECT_DATA;
 
+	typedef struct{
+		short type;
+		Ogre::Real range;
+		Ogre::Real inner, outer;
+	} LIGHT_DATA, *PLIGHT_DATA;
+
 	enum{
 		STATE_IDLE = 0,
 		STATE_ACTIVATED = 1
@@ -69,6 +75,8 @@ public:
 		TYPE_SWITCH,
 		TYPE_NPC,
 
+		TYPE_LIGHT,
+
 		END
 	};
 
@@ -80,14 +88,20 @@ public:
 	virtual void init(Ogre::SceneNode* node, btCollisionObject* colObj);
 	virtual void init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneNode* node, btCollisionObject* colObj);
 	virtual void initTrigger(Ogre::SceneManager* mgr, Ogre::SceneNode* node, Sparks::Camera* camera){} 
+	virtual void initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node){}
+
 	virtual void initSound(const char* file, bool loop = false);
 
 	virtual unsigned send(unsigned arg);		// send a command
 	virtual unsigned recv(void);
 	virtual unsigned recv(unsigned arg);
 
+	// Data
+	DYNAMIC_OBJECT_DATA* getData(void) const;
+	virtual void deleteData(void);
+
 	// Some virtual functions to be used by children
-	virtual void setupAnimation(DYNAMIC_OBJECT_DATA* data){}
+	virtual void setupAnimation(void){}
 	virtual void setTriggerData(DYNAMIC_OBJECT_DATA* data){}
 	virtual void setLinkedObject(DynamicObject* obj){}
 	virtual void setLinkedObject(void* obj){}
@@ -118,9 +132,15 @@ protected:
 	
 	FMOD::Sound*		m_sound;
 	FMOD::Channel*		m_soundChannel;
+	bool				m_hasSound;
 
 	Physics*			m_physics;
 };
+
+//================================================//
+
+typedef DynamicObject::DYNAMIC_OBJECT_DATA	DynamicObjectData;
+typedef DynamicObject::LIGHT_DATA			LightData;
 
 //================================================//
 
@@ -149,7 +169,7 @@ public:
 	MovingObject(void);
 	virtual ~MovingObject(void);
 
-	virtual void setupAnimation(DYNAMIC_OBJECT_DATA* data);
+	virtual void setupAnimation(void);
 
 	virtual void update(double timeSinceLastFrame);
 
@@ -166,7 +186,7 @@ class MovingKinematicObject : public MovingObject{
 public:
 	MovingKinematicObject(void);
 
-	void setupAnimation(DYNAMIC_OBJECT_DATA* data);
+	void setupAnimation(void);
 
 	void update(double timeSinceLastFrame);
 
@@ -205,6 +225,8 @@ public:
 	unsigned send(unsigned arg);
 	void setLinkedObject(DynamicObject* obj);
 
+	void deleteData(void);
+
 	void update(double timeSinceLastFrame);
 
 protected:
@@ -218,6 +240,27 @@ inline void Switch::setLinkedObject(DynamicObject* obj)
 { m_linkedObject = obj; m_linked = true; }
 
 //================================================//
+//================================================//
+
+class Light : public DynamicObject
+{
+public:
+	Light(void);
+
+	void initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node);
+	void deleteData(void);
+
+	enum{
+		TYPE_SPOT = 0,
+		TYPE_POINT
+	};
+
+	void update(double timeSinceLastFrame); 
+
+protected:
+	Ogre::Light*	m_pLight;
+};
+
 //================================================//
 
 #endif

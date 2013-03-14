@@ -46,7 +46,7 @@ public:
 	};
 
 	enum STAGE{
-		OIL_RIG = 0,
+		DEV = 0,
 		TEST_STAGE,
 		END
 	};

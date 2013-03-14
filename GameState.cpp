@@ -96,7 +96,7 @@ void GameState::createSceneManager(void)
 {
 	// Determine the proper scene manager by the stage
 	switch(m_profile->getStage()){
-	case Profile::STAGE::OIL_RIG:
+	case Profile::STAGE::DEV:
 	default:
 		m_pSceneMgr = Base::getSingletonPtr()->m_pRoot->createSceneManager(Ogre::ST_INTERIOR, SCENE_MGR_NAME);
 	}

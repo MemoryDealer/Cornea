@@ -723,6 +723,17 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -Created a simple mechanism to use a switch with a door. The switch will send the override command and unlock the door, then send an action command which will
 	open/close the door; that function returns and the door is locked again.
 
+#3/11/13
+-Added deleteData() function to DynamicObject, which frees the data pointer for each object if it exists. Polymorphism takes care of deleting certain types of data in
+	the any pointer for the scene node. 
+
+#3/13/13
+-A billion compile errors could mean you forgot a semicolon at the end of a class definition because VC++ is retarded.
+-Added Light which is a child of DynamicObject. This will be used for lights added to the scene (or I could use the Blender light objects). These Light objects can 
+	be attached to a switch, set to flicker, etc.
+-Still need to work out how to export it from blender. As of now I just use a cone as a placeholder. To get the direction I have to transform the orientation of the cone
+	by the negative unit Y vector, which doesn't seem right (should be negative unit Z).
+
 #TODO  
 -TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  

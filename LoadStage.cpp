@@ -21,7 +21,7 @@ void GameState::loadStage(void)
 	// ======== //
 
 	// Oil Rig
-	case Profile::STAGE::OIL_RIG:
+	case Profile::STAGE::DEV:
 		{
 			settings.graphics.sky = Settings::LOW;
 
@@ -65,6 +65,27 @@ void GameState::loadStage(void)
 			Ogre::SceneNode* plane = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("City");
 			plane->attachObject(e);
 			plane->setPosition(-50000.0, -9000.0, 0.0);
+
+			Ogre::Light* city = m_pSceneMgr->createLight("CityLight");
+			city->setType(Ogre::Light::LT_SPOTLIGHT);
+			city->setSpotlightInnerAngle(Ogre::Radian(5.0));
+			city->setSpotlightOuterAngle(Ogre::Radian(100.0));
+			city->setAttenuation(100500.0, 1.0, 0.0, 0.0);
+			city->setPosition(-5000.0, 0.0, 0.0);
+			city->setDirection(Ogre::Vector3(1.0, 0.0, 0.0));
+
+			/*city = m_pSceneMgr->createLight("WindowLight");
+			city->setType(Ogre::Light::LT_SPOTLIGHT);
+			city->setSpotlightInnerAngle(Ogre::Radian(5.0));
+			city->setSpotlightOuterAngle(Ogre::Radian(21.0));
+			city->setDiffuseColour(Ogre::ColourValue(1.0, 1.0, 1.0));
+			city->setSpecularColour(Ogre::ColourValue(0.8, 0.8, 0.8));
+			city->setCastShadows(false);
+			city->setAttenuation(1000.0, 0.5, 0.0, 0.0);
+			city->setPosition(-120.0, 0.0, -5.0);
+			city->setSpotlightFalloff(5.0);
+			city->setDirection(Ogre::Vector3(-1.0, 0.0, 0.0));*/
+
 
 			loader->parseDotScene("Apartment.scene", "General", m_pSceneMgr, scene);
 

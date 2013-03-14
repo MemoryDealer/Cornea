@@ -1,5 +1,9 @@
+//================================================//
+
 #ifndef DOT_SCENELOADER_H
 #define DOT_SCENELOADER_H
+
+//================================================//
  
 // Includes
 #include <OgreString.h>
@@ -13,6 +17,8 @@
 #include "DynamicObject.hpp"
 #include "NPC.hpp"
 #include "TriggerCode.hpp"
+
+//================================================//
  
     // Forward declarations
     namespace Ogre
@@ -22,6 +28,8 @@
         class TerrainGroup;
         class TerrainGlobalOptions;
     }
+
+//================================================//
  
     class nodeProperty
     {
@@ -34,6 +42,8 @@
         nodeProperty(const Ogre::String &node, const Ogre::String &propertyName, const Ogre::String &value, const Ogre::String &type)
             : nodeName(node), propertyNm(propertyName), valueName(value), typeName(type) {}
     };
+
+//================================================//
  
     class DotSceneLoader
     {
@@ -96,7 +106,7 @@
         Ogre::Vector3 parseVector3(rapidxml::xml_node<>* XMLNode);
         Ogre::Quaternion parseQuaternion(rapidxml::xml_node<>* XMLNode);
         Ogre::ColourValue parseColour(rapidxml::xml_node<>* XMLNode);
-		DynamicObject::DYNAMIC_OBJECT_DATA* getData(Ogre::SceneNode* node);
+		DynamicObjectData* getData(Ogre::SceneNode* node);
  
  
         Ogre::SceneManager *mSceneMgr;
@@ -107,5 +117,9 @@
         Ogre::Vector3 mTerrainPosition;
         Ogre::Vector3 mLightDirection;
     };
+
+//================================================//
  
 #endif // DOT_SCENELOADER_H
+
+//================================================//

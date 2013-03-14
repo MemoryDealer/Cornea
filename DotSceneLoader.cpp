@@ -1,18 +1,24 @@
+//================================================//
+
 #include "DotSceneLoader.hpp"
 #include <Ogre.h>
 #include <Terrain/OgreTerrain.h>
 #include <Terrain/OgreTerrainGroup.h>
 #include <Terrain/OgreTerrainMaterialGeneratorA.h>
+
+//================================================//
  
 #pragma warning(disable:4390)
 #pragma warning(disable:4305)
  
- 
+//================================================//
+
 DotSceneLoader::DotSceneLoader() : mSceneMgr(0), mTerrainGroup(0) 
 {
     mTerrainGlobalOptions = OGRE_NEW Ogre::TerrainGlobalOptions();
 }
  
+//================================================//
  
 DotSceneLoader::~DotSceneLoader()
 {
@@ -23,6 +29,8 @@ DotSceneLoader::~DotSceneLoader()
  
     OGRE_DELETE mTerrainGlobalOptions;
 }
+
+//================================================//
  
 void DotSceneLoader::parseDotScene(const Ogre::String &SceneName, const Ogre::String &groupName, Ogre::SceneManager *yourSceneMgr, Ogre::SceneNode *pAttachNode, const Ogre::String &sPrependNode)
 {
@@ -62,6 +70,8 @@ void DotSceneLoader::parseDotScene(const Ogre::String &SceneName, const Ogre::St
  
     delete scene;
 }
+
+//================================================//
  
 void DotSceneLoader::processScene(rapidxml::xml_node<>* XMLRoot)
 {
@@ -122,6 +132,8 @@ void DotSceneLoader::processScene(rapidxml::xml_node<>* XMLRoot)
     if(pElement)
         processTerrain(pElement);
 }
+
+//================================================//
  
 void DotSceneLoader::processNodes(rapidxml::xml_node<>* XMLNode)
 {
@@ -159,11 +171,15 @@ void DotSceneLoader::processNodes(rapidxml::xml_node<>* XMLNode)
         mAttachNode->setInitialState();
     }
 }
+
+//================================================//
  
 void DotSceneLoader::processExternals(rapidxml::xml_node<>* XMLNode)
 {
     //! @todo Implement this
 }
+
+//================================================//
  
 void DotSceneLoader::processEnvironment(rapidxml::xml_node<>* XMLNode)
 {
@@ -215,6 +231,8 @@ void DotSceneLoader::processEnvironment(rapidxml::xml_node<>* XMLNode)
     if(pElement)
         processUserDataReference(pElement);
 }
+
+//================================================//
  
 void DotSceneLoader::processTerrain(rapidxml::xml_node<>* XMLNode)
 {
@@ -264,6 +282,8 @@ void DotSceneLoader::processTerrain(rapidxml::xml_node<>* XMLNode)
     mTerrainGroup->freeTemporaryResources();
     //mTerrain->setPosition(mTerrainPosition);
 }
+
+//================================================//
  
 void DotSceneLoader::processTerrainPage(rapidxml::xml_node<>* XMLNode)
 {
@@ -276,6 +296,8 @@ void DotSceneLoader::processTerrainPage(rapidxml::xml_node<>* XMLNode)
         mTerrainGroup->defineTerrain(pageX, pageY, name);
     }
 }
+
+//================================================//
  
 void DotSceneLoader::processUserDataReference(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -283,11 +305,15 @@ void DotSceneLoader::processUserDataReference(rapidxml::xml_node<>* XMLNode, Ogr
 
 
 }
+
+//================================================//
  
 void DotSceneLoader::processOctree(rapidxml::xml_node<>* XMLNode)
 {
     //! @todo Implement this
 }
+
+//================================================//
  
 void DotSceneLoader::processLight(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -359,6 +385,8 @@ void DotSceneLoader::processLight(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode
     if(pElement)
         ;//processUserDataReference(pElement, pLight);
 }
+
+//================================================//
  
 void DotSceneLoader::processCamera(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -441,6 +469,8 @@ void DotSceneLoader::processCamera(rapidxml::xml_node<>* XMLNode, Ogre::SceneNod
         pNode->scale(1,1,1);
     }
 }
+
+//================================================//
  
 void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -500,7 +530,7 @@ void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode 
 	pElement = XMLNode->first_node("offset");
 	if(pElement)
 	{
-		DynamicObject::DYNAMIC_OBJECT_DATA* data = this->getData(pNode);
+		DynamicObjectData* data = this->getData(pNode);
 
 		data->offset = this->parseVector3(pElement);
 		
@@ -514,10 +544,27 @@ void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode 
 	pElement = XMLNode->first_node("rotationOffset");
 	if(pElement)
 	{
-		DynamicObject::DYNAMIC_OBJECT_DATA* data = this->getData(pNode);
+		DynamicObjectData* data = this->getData(pNode);
 
 		data->rotationOffset = this->parseQuaternion(pElement);
 		data->buffer = static_cast<unsigned>(getAttribReal(pElement, "locked"));
+
+		pNode->setUserAny(Ogre::Any(data));
+	}
+	 
+	// Lights
+	pElement = XMLNode->first_node("light");
+	if(pElement)
+	{
+		LightData* data = new LightData();
+		
+		data->type = static_cast<short>(this->getAttribReal(pElement, "type"));
+		data->range = this->getAttribReal(pElement, "range");
+		
+		if(data->type == 0){
+			data->inner = this->getAttribReal(pElement, "innerRange");
+			data->outer = this->getAttribReal(pElement, "outerRange");
+		}
 
 		pNode->setUserAny(Ogre::Any(data));
 	}
@@ -621,6 +668,8 @@ void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode 
     if(pElement)
         processUserDataReference(pElement, pNode);
 }
+
+//================================================//
  
 void DotSceneLoader::processLookTarget(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -668,6 +717,8 @@ void DotSceneLoader::processLookTarget(rapidxml::xml_node<>* XMLNode, Ogre::Scen
         Ogre::LogManager::getSingleton().logMessage("[DotSceneLoader] Error processing a look target!");
     }
 }
+
+//================================================//
  
 void DotSceneLoader::processTrackTarget(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -699,6 +750,8 @@ void DotSceneLoader::processTrackTarget(rapidxml::xml_node<>* XMLNode, Ogre::Sce
         Ogre::LogManager::getSingleton().logMessage("[DotSceneLoader] Error processing a track target!");
     }
 }
+
+//================================================//
  
 void DotSceneLoader::processEntity(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -752,6 +805,8 @@ void DotSceneLoader::processEntity(rapidxml::xml_node<>* XMLNode, Ogre::SceneNod
  
  
 }
+
+//================================================//
  
 void DotSceneLoader::processParticleSystem(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -771,11 +826,15 @@ void DotSceneLoader::processParticleSystem(rapidxml::xml_node<>* XMLNode, Ogre::
         Ogre::LogManager::getSingleton().logMessage("[DotSceneLoader] Error creating a particle system!");
     }
 }
+
+//================================================//
  
 void DotSceneLoader::processBillboardSet(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
     //! @todo Implement this
 }
+
+//================================================//
  
 void DotSceneLoader::processPlane(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode *pParent)
 {
@@ -803,6 +862,8 @@ void DotSceneLoader::processPlane(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode
  
     pParent->attachObject(ent);
 }
+
+//================================================//
  
 void DotSceneLoader::processFog(rapidxml::xml_node<>* XMLNode)
 {
@@ -835,6 +896,8 @@ void DotSceneLoader::processFog(rapidxml::xml_node<>* XMLNode)
     // Setup the fog
     mSceneMgr->setFog(mode, colourDiffuse, expDensity, linearStart, linearEnd);
 }
+
+//================================================//
  
 void DotSceneLoader::processSkyBox(rapidxml::xml_node<>* XMLNode)
 {
@@ -857,6 +920,8 @@ void DotSceneLoader::processSkyBox(rapidxml::xml_node<>* XMLNode)
     // Setup the sky box
     mSceneMgr->setSkyBox(true, material, distance, drawFirst, rotation, m_sGroupName);
 }
+
+//================================================//
  
 void DotSceneLoader::processSkyDome(rapidxml::xml_node<>* XMLNode)
 {
@@ -881,6 +946,8 @@ void DotSceneLoader::processSkyDome(rapidxml::xml_node<>* XMLNode)
     // Setup the sky dome
     mSceneMgr->setSkyDome(true, material, curvature, tiling, distance, drawFirst, rotation, 16, 16, -1, m_sGroupName);
 }
+
+//================================================//
  
 void DotSceneLoader::processSkyPlane(rapidxml::xml_node<>* XMLNode)
 {
@@ -901,6 +968,8 @@ void DotSceneLoader::processSkyPlane(rapidxml::xml_node<>* XMLNode)
     plane.d = planeD;
     mSceneMgr->setSkyPlane(true, plane, material, scale, tiling, drawFirst, bow, 1, 1, m_sGroupName);
 }
+
+//================================================//
  
 void DotSceneLoader::processClipping(rapidxml::xml_node<>* XMLNode)
 {
@@ -910,6 +979,8 @@ void DotSceneLoader::processClipping(rapidxml::xml_node<>* XMLNode)
     Ogre::Real fNear = getAttribReal(XMLNode, "near", 0);
     Ogre::Real fFar = getAttribReal(XMLNode, "far", 1);
 }
+
+//================================================//
  
 void DotSceneLoader::processLightRange(rapidxml::xml_node<>* XMLNode, Ogre::Light *pLight)
 {
@@ -921,6 +992,8 @@ void DotSceneLoader::processLightRange(rapidxml::xml_node<>* XMLNode, Ogre::Ligh
     // Setup the light range
     pLight->setSpotlightRange(Ogre::Angle(inner), Ogre::Angle(outer), falloff);
 }
+
+//================================================//
  
 void DotSceneLoader::processLightAttenuation(rapidxml::xml_node<>* XMLNode, Ogre::Light *pLight)
 {
@@ -934,12 +1007,14 @@ void DotSceneLoader::processLightAttenuation(rapidxml::xml_node<>* XMLNode, Ogre
     pLight->setAttenuation(range, constant, linear, quadratic);
 }
 
+//================================================//
+
 void DotSceneLoader::processAnimation(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
 	// Parse data for animating the node
 	int numPos = 0;
-	DynamicObject::DYNAMIC_OBJECT_DATA* data = this->getData(pParent);
-	//memset(data, 0, sizeof(DynamicObject::DYNAMIC_OBJECT_DATA));  // caused debug assertion
+	DynamicObjectData* data = this->getData(pParent);
+	//memset(data, 0, sizeof(DynamicObjectData));  // caused debug assertion
 		
 	data->animation.length =		getAttribReal(XMLNode, "length");
 	data->animation.step =			getAttribReal(XMLNode, "step");
@@ -961,10 +1036,12 @@ void DotSceneLoader::processAnimation(rapidxml::xml_node<>* XMLNode, Ogre::Scene
 	pParent->setUserAny(Ogre::Any(data));
 }
 
+//================================================//
+
 void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
 	// Retrieve the data pointer, set the trigger values and set the pointer again
-	DynamicObject::DYNAMIC_OBJECT_DATA* data = this->getData(pParent);
+	DynamicObjectData* data = this->getData(pParent);
 
 	// Load trigger data
 	data->trigger.actionCode	= getAttribReal(XMLNode, "action");
@@ -990,6 +1067,8 @@ void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNo
 	pParent->setUserAny(Ogre::Any(data));
 }
 
+//================================================//
+
 void DotSceneLoader::processNPC(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
 	NPC::NPC_DATA* data = new NPC::NPC_DATA();
@@ -1007,6 +1086,8 @@ void DotSceneLoader::processNPC(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* 
 	pParent->setUserAny(Ogre::Any(data));
 }
 
+//================================================//
+
 void DotSceneLoader::processSwitch(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
 	// Get string of node to link
@@ -1015,7 +1096,8 @@ void DotSceneLoader::processSwitch(rapidxml::xml_node<>* XMLNode, Ogre::SceneNod
 	// Set the user data
 	pParent->setUserAny(Ogre::Any(link));
 }
- 
+
+//================================================//
  
 Ogre::String DotSceneLoader::getAttrib(rapidxml::xml_node<>* XMLNode, const Ogre::String &attrib, const Ogre::String &defaultValue)
 {
@@ -1024,6 +1106,8 @@ Ogre::String DotSceneLoader::getAttrib(rapidxml::xml_node<>* XMLNode, const Ogre
     else
         return defaultValue;
 }
+
+//================================================//
  
 Ogre::Real DotSceneLoader::getAttribReal(rapidxml::xml_node<>* XMLNode, const Ogre::String &attrib, Ogre::Real defaultValue)
 {
@@ -1032,6 +1116,8 @@ Ogre::Real DotSceneLoader::getAttribReal(rapidxml::xml_node<>* XMLNode, const Og
     else
         return defaultValue;
 }
+
+//================================================//
  
 bool DotSceneLoader::getAttribBool(rapidxml::xml_node<>* XMLNode, const Ogre::String &attrib, bool defaultValue)
 {
@@ -1043,6 +1129,8 @@ bool DotSceneLoader::getAttribBool(rapidxml::xml_node<>* XMLNode, const Ogre::St
  
     return false;
 }
+
+//================================================//
  
 Ogre::Vector3 DotSceneLoader::parseVector3(rapidxml::xml_node<>* XMLNode)
 {
@@ -1052,6 +1140,8 @@ Ogre::Vector3 DotSceneLoader::parseVector3(rapidxml::xml_node<>* XMLNode)
         Ogre::StringConverter::parseReal(XMLNode->first_attribute("z")->value())
     );
 }
+
+//================================================//
  
 Ogre::Quaternion DotSceneLoader::parseQuaternion(rapidxml::xml_node<>* XMLNode)
 {
@@ -1108,6 +1198,8 @@ Ogre::Quaternion DotSceneLoader::parseQuaternion(rapidxml::xml_node<>* XMLNode)
  
     return orientation;
 }
+
+//================================================//
  
 Ogre::ColourValue DotSceneLoader::parseColour(rapidxml::xml_node<>* XMLNode)
 {
@@ -1118,7 +1210,9 @@ Ogre::ColourValue DotSceneLoader::parseColour(rapidxml::xml_node<>* XMLNode)
         XMLNode->first_attribute("a") != NULL ? Ogre::StringConverter::parseReal(XMLNode->first_attribute("a")->value()) : 1
     );
 }
- 
+
+//================================================//
+
 Ogre::String DotSceneLoader::getProperty(const Ogre::String &ndNm, const Ogre::String &prop)
 {
     for ( unsigned int i = 0 ; i < nodeProperties.size(); i++ )
@@ -1131,6 +1225,8 @@ Ogre::String DotSceneLoader::getProperty(const Ogre::String &ndNm, const Ogre::S
  
     return "";
 }
+
+//================================================//
  
 void DotSceneLoader::processUserDataReference(rapidxml::xml_node<>* XMLNode, Ogre::Entity *pEntity)
 {
@@ -1138,15 +1234,19 @@ void DotSceneLoader::processUserDataReference(rapidxml::xml_node<>* XMLNode, Ogr
     pEntity->setUserAny(Ogre::Any(str));
 }
 
-DynamicObject::DYNAMIC_OBJECT_DATA* DotSceneLoader::getData(Ogre::SceneNode* node)
+//================================================//
+
+DynamicObjectData* DotSceneLoader::getData(Ogre::SceneNode* node)
 {
 	const Ogre::Any& any = node->getUserAny();
-	DynamicObject::DYNAMIC_OBJECT_DATA* data = nullptr;
+	DynamicObjectData* data = nullptr;
 
 	if(any.isEmpty())
-		data = new DynamicObject::DYNAMIC_OBJECT_DATA();
+		data = new DynamicObjectData();
 	else
-		data = Ogre::any_cast<DynamicObject::DYNAMIC_OBJECT_DATA*>(any);
+		data = Ogre::any_cast<DynamicObjectData*>(any);
 
 	return data;
 }
+
+//================================================//
