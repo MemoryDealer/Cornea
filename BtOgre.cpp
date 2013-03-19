@@ -232,17 +232,9 @@ void registerAllEntitiesAsColliders(SceneManager* sceneMgr, btCollisionWorld* co
         Entity* entity = static_cast<Entity*>(i.getNext());
 
 		Ogre::StringUtil strUtil;
-		//if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$$", false)){
-		//	// Two '$' means to use the full mesh
-		//	registerEntityMesh(entity, colWorld);
-		//}
-		//else if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
-		//	// And one '$' means to use the bounding box as a collider
-		//	registerEntityAABB(entity, colWorld);
-		//}
 		if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
 			switch(entity->getParentSceneNode()->getName()[1]){
-			// Add complete mesh
+			// Add complete mesh when '$$' is present
 			case '$':
 				registerEntityMesh(entity, colWorld);
 				break;

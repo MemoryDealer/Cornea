@@ -29,10 +29,13 @@ public:
 			btScalar		friction;
 			bool			spline;
 			bool			loop;
+			bool			active;
 			std::vector<Ogre::Vector3> vectors;
 		} animation;
 
 		struct{
+			bool			enabled;
+			unsigned int	type;
 			unsigned int	actionCode;
 			bool			loop;
 			Ogre::Real		timeout;
@@ -48,7 +51,7 @@ public:
 	} DYNAMIC_OBJECT_DATA, *PDYNAMIC_OBJECT_DATA;
 
 	typedef struct{
-		short type;
+		int type;
 		Ogre::Real range;
 		Ogre::Real inner, outer;
 	} LIGHT_DATA, *PLIGHT_DATA;
@@ -111,6 +114,8 @@ public:
 	const bool isActive(void) const;
 	const unsigned getState(void) const;
 	Ogre::SceneNode* getSceneNode(void) const;
+
+	static int findType(Ogre::SceneNode* node);
 
 	// Setter functions
 	void setState(const unsigned state){ m_state = state; }

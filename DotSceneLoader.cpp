@@ -525,78 +525,7 @@ void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode 
         pNode->setScale(parseVector3(pElement));
         pNode->setInitialState();
     }
-// # EDITED
-	// Offset for misc. uses
-	pElement = XMLNode->first_node("offset");
-	if(pElement)
-	{
-		DynamicObjectData* data = this->getData(pNode);
 
-		data->offset = this->parseVector3(pElement);
-		
-		// Since this can be used for a door, might as well include the locked value too
-		data->buffer = static_cast<unsigned>(getAttribReal(pElement, "locked"));
-
-		pNode->setUserAny(Ogre::Any(data));
-	}
-
-	// Rotation for misc. uses
-	pElement = XMLNode->first_node("rotationOffset");
-	if(pElement)
-	{
-		DynamicObjectData* data = this->getData(pNode);
-
-		data->rotationOffset = this->parseQuaternion(pElement);
-		data->buffer = static_cast<unsigned>(getAttribReal(pElement, "locked"));
-
-		pNode->setUserAny(Ogre::Any(data));
-	}
-	 
-	// Lights
-	pElement = XMLNode->first_node("light");
-	if(pElement)
-	{
-		LightData* data = new LightData();
-		
-		data->type = static_cast<short>(this->getAttribReal(pElement, "type"));
-		data->range = this->getAttribReal(pElement, "range");
-		
-		if(data->type == 0){
-			data->inner = this->getAttribReal(pElement, "innerRange");
-			data->outer = this->getAttribReal(pElement, "outerRange");
-		}
-
-		pNode->setUserAny(Ogre::Any(data));
-	}
-
-	// Animation
-	pElement = XMLNode->first_node("animation");
-	if(pElement)
-	{
-		processAnimation(pElement, pNode);
-	}
-
-	// Trigger
-	pElement = XMLNode->first_node("trigger");
-	if(pElement)
-	{
-		processTrigger(pElement, pNode);
-	}
-
-	// NPC
-	pElement = XMLNode->first_node("NPC");
-	if(pElement)
-	{
-		processNPC(pElement, pNode);
-	}
-
-	// Switch
-	pElement = XMLNode->first_node("switch");
-	if(pElement)
-	{
-		processSwitch(pElement, pNode);
-	}
- 
     // Process lookTarget (?)
     pElement = XMLNode->first_node("lookTarget");
     if(pElement)
@@ -667,6 +596,9 @@ void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode 
     pElement = XMLNode->first_node("userDataReference");
     if(pElement)
         processUserDataReference(pElement, pNode);
+
+	// Process user data for the game engine
+	this->processData(XMLNode, pNode);
 }
 
 //================================================//
@@ -1009,30 +941,87 @@ void DotSceneLoader::processLightAttenuation(rapidxml::xml_node<>* XMLNode, Ogre
 
 //================================================//
 
+void DotSceneLoader::processData(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
+{
+	switch(DynamicObject::findType(pParent)){
+	default:
+		break;
+
+	case DynamicObject::TYPE_LIGHT:
+		this->processDynamicLight(XMLNode, pParent);
+		break;
+
+	case DynamicObject::TYPE_SLIDING_DOOR:
+	case DynamicObject::TYPE_ROTATING_DOOR:
+		{
+			DynamicObjectData* data = this->getData(pParent);
+
+			data->offset = this->parseVector3(this->parseNodeStrValue(XMLNode, "offset"));
+
+			//data->rotationOffset = this->parseQuaternion(pElement);
+
+			data->buffer = static_cast<unsigned>(this->parseNodeValue(XMLNode, "locked"));
+
+			pParent->setUserAny(Ogre::Any(data));
+		}
+		break;
+
+	case DynamicObject::TYPE_SWITCH:
+		pParent->setUserAny(Ogre::Any(this->parseNodeStrValue(XMLNode, "link")));
+		break;
+
+	}
+
+	// Animation
+	if(this->parseNodeBoolValue(XMLNode, "animation"))
+		this->processAnimation(XMLNode, pParent);
+
+	// Trigger
+	if(this->parseNodeBoolValue(XMLNode, "trigger"))
+		this->processTrigger(XMLNode, pParent);
+}
+
+//================================================//
+
+void DotSceneLoader::processDynamicLight(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
+{
+	LightData* data = new LightData();
+
+	data->type = this->parseNodeValue(XMLNode, "type");
+	data->range = this->parseNodeValue(XMLNode, "range");
+
+	// Spotlight
+	if(data->type == 0){
+		data->inner = this->parseNodeValue(XMLNode, "inner");
+		data->outer = this->parseNodeValue(XMLNode, "outer");
+	}
+
+	pParent->setUserAny(Ogre::Any(data));
+}
+
+//================================================//
+
 void DotSceneLoader::processAnimation(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
-	// Parse data for animating the node
-	int numPos = 0;
 	DynamicObjectData* data = this->getData(pParent);
-	//memset(data, 0, sizeof(DynamicObjectData));  // caused debug assertion
-		
-	data->animation.length =		getAttribReal(XMLNode, "length");
-	data->animation.step =			getAttribReal(XMLNode, "step");
-	data->animation.friction =		getAttribReal(XMLNode, "friction");
-	data->animation.spline =		getAttribBool(XMLNode, "spline");
-	data->animation.loop =			getAttribBool(XMLNode, "loop");
-	numPos =						getAttribReal(XMLNode, "numpos");
+	int numPos = 0;
 
-	// add each position vector3
+	data->animation.length		= this->parseNodeValue(XMLNode, "length");
+	data->animation.step		= this->parseNodeValue(XMLNode, "step");
+	data->animation.friction	= this->parseNodeValue(XMLNode, "friction");
+	data->animation.spline		= this->parseNodeBoolValue(XMLNode, "spline");
+	data->animation.loop		= this->parseNodeBoolValue(XMLNode, "loop");
+	data->animation.active		= this->parseNodeBoolValue(XMLNode, "active");
+	numPos						= this->parseNodeValue(XMLNode, "numpos");
+
 	for(int i=0; i<numPos; ++i){
 		Ogre::String posName = "pos" + Ogre::StringConverter::toString(i);
-		Ogre::String str = getAttrib(XMLNode, posName);
-
+		Ogre::String str = this->parseNodeStrValue(XMLNode, posName.c_str());
+		
 		Ogre::Vector3 pos = Ogre::StringConverter::parseVector3(str);
 		data->animation.vectors.push_back(pos);
 	}
 
-	// Set the user data
 	pParent->setUserAny(Ogre::Any(data));
 }
 
@@ -1043,12 +1032,16 @@ void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNo
 	// Retrieve the data pointer, set the trigger values and set the pointer again
 	DynamicObjectData* data = this->getData(pParent);
 
-	// Load trigger data
-	data->trigger.actionCode	= getAttribReal(XMLNode, "action");
-	data->trigger.loop			= getAttribBool(XMLNode, "loop");
-	data->trigger.timeout		= getAttribReal(XMLNode, "timeout");
-	data->trigger.range			= getAttribReal(XMLNode, "range");
+	data->trigger.enabled = true;
 
+	// Load trigger data
+	data->trigger.type			= this->parseNodeValue(XMLNode, "type");
+	data->trigger.actionCode	= this->parseNodeValue(XMLNode, "action");
+	data->trigger.loop			= this->parseNodeBoolValue(XMLNode, "triggerLoop");
+	data->trigger.timeout		= this->parseNodeValue(XMLNode, "triggerTimeout");
+	data->trigger.range			= this->parseNodeValue(XMLNode, "triggerRange");
+
+	// Parse additional data if needed
 	switch(data->trigger.actionCode){
 	default:
 		break;
@@ -1059,7 +1052,7 @@ void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNo
 
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_ACTIVATE:
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_DEACTIVATE:
-		data->trigger.buffer = getAttrib(XMLNode, "buffer");
+		data->trigger.buffer = this->parseNodeValue(XMLNode, "triggerObject");
 
 		break;
 	}
@@ -1084,17 +1077,6 @@ void DotSceneLoader::processNPC(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* 
 	data->forwards =			getAttribReal(XMLNode, "forwards");
 
 	pParent->setUserAny(Ogre::Any(data));
-}
-
-//================================================//
-
-void DotSceneLoader::processSwitch(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
-{
-	// Get string of node to link
-	Ogre::String link = getAttrib(XMLNode, "link");
-	
-	// Set the user data
-	pParent->setUserAny(Ogre::Any(link));
 }
 
 //================================================//
@@ -1139,6 +1121,23 @@ Ogre::Vector3 DotSceneLoader::parseVector3(rapidxml::xml_node<>* XMLNode)
         Ogre::StringConverter::parseReal(XMLNode->first_attribute("y")->value()),
         Ogre::StringConverter::parseReal(XMLNode->first_attribute("z")->value())
     );
+}
+
+//================================================//
+
+Ogre::Vector3 DotSceneLoader::parseVector3(Ogre::String str)
+{
+	// Format: "1.0,0.0,0.0"
+
+	Ogre::StringUtil strUtil;
+	Ogre::StringVector tokens = strUtil.split(str, ",");
+
+	if(tokens.size() == 3){
+		return Ogre::Vector3(
+			Ogre::StringConverter::parseReal(tokens[0]),
+			Ogre::StringConverter::parseReal(tokens[1]),
+			Ogre::StringConverter::parseReal(tokens[2]));
+	}
 }
 
 //================================================//
@@ -1241,12 +1240,48 @@ DynamicObjectData* DotSceneLoader::getData(Ogre::SceneNode* node)
 	const Ogre::Any& any = node->getUserAny();
 	DynamicObjectData* data = nullptr;
 
-	if(any.isEmpty())
+	if(any.isEmpty()){
 		data = new DynamicObjectData();
+		
+		data->trigger.enabled = false;
+	}
 	else
 		data = Ogre::any_cast<DynamicObjectData*>(any);
 
 	return data;
+}
+
+//================================================//
+
+Ogre::Real DotSceneLoader::parseNodeValue(rapidxml::xml_node<>* XMLNode, const char* name)
+{
+	rapidxml::xml_node<>* pElement = XMLNode->first_node(name);
+	if(pElement)
+		return this->getAttribReal(pElement, VALUE);
+
+	return 0.0;
+}
+
+//================================================//
+
+Ogre::String DotSceneLoader::parseNodeStrValue(rapidxml::xml_node<>* XMLNode, const char* name)
+{
+	rapidxml::xml_node<>* pElement = XMLNode->first_node(name);
+	if(pElement)
+		return this->getAttrib(pElement, VALUE);
+
+	return Ogre::String("");
+}
+
+//================================================//
+
+bool DotSceneLoader::parseNodeBoolValue(rapidxml::xml_node<>* XMLNode, const char* name)
+{
+	rapidxml::xml_node<>* pElement = XMLNode->first_node(name);
+	if(pElement)
+		return this->getAttribBool(pElement, VALUE);
+
+	return false;
 }
 
 //================================================//

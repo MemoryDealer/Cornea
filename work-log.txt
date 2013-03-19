@@ -734,6 +734,24 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -Still need to work out how to export it from blender. As of now I just use a cone as a placeholder. To get the direction I have to transform the orientation of the cone
 	by the negative unit Y vector, which doesn't seem right (should be negative unit Z).
 
+#3/16/13
+-The flickering of the flashlight when backing away only happens in debug mode AFAIK. 
+-I have a working light outside the hotel room window that lights the window and leaves little retarded looking stuff in the room. 
+	The light code is as follows: 
+	<position y="5.117672" x="-93.296890" z="-7.701633" />
+    <rotation qy="0.420888" qx="-0.570417" qz="0.417881" qw="0.568202" />
+    <scale y="1.000000" x="1.000000" z="1.000000" />
+	<light type="0" range="600" innerRange="5.0" outerRange="21.0" />
+
+#3/18/13
+-If Blender refuses to even show the option to export a .scene file, it could be a compile error in the python script. Run it from command line to see what the error is.
+-It appears that in some cases to change a custom property int/float value for an object in Blender you must first set it to a string value and then back to an int/float.
+-I have eliminated the need to manually edit the .scene files to add dynamic object data; it is all exported from Blender now. Under the object tab in Blender, the custom
+	properties are set which are then exported by the python script (I had to edit it a bit, so it would name the XML nodes by the custom property name). Since only one
+	value is allowed to be set per custom property, I simply use a single node for each piece of data needed.
+-The data loading process has also been simplified in DotSceneLoader. 
+-For some reason the base function for deleteData didn't work with the trigger, even though it's the same code.
+
 #TODO  
 -TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  

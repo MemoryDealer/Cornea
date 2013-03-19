@@ -27,40 +27,13 @@ DynamicObjectManager::~DynamicObjectManager(void)
 
 //================================================//
 
-int DynamicObjectManager::findType(Ogre::SceneNode* node)
-{
-	const char* name = node->getName().c_str();
-
-	if(strstr(name, "_MovingObject_"))
-		return DynamicObject::TYPE_MOVING_OBJECT;
-	if(strstr(name, "_MovingKinematicObject_"))
-		return DynamicObject::TYPE_MOVING_KINEMATIC_OBJECT;
-	if(strstr(name, "_Elevator_"))
-		return DynamicObject::TYPE_ELEVATOR;
-	if(strstr(name, "_RDoor_") || strstr(name, "_Door_"))
-		return DynamicObject::TYPE_ROTATING_DOOR;
-	if(strstr(name, "_SDoor_"))
-		return DynamicObject::TYPE_SLIDING_DOOR;
-	if(strstr(name, "_Switch_"))
-		return DynamicObject::TYPE_SWITCH;
-	if(strstr(name, "_NPC_"))
-		return DynamicObject::TYPE_NPC;
-
-	if(strstr(name, "_Light_"))
-		return DynamicObject::TYPE_LIGHT;
-
-	return -1;
-}
-
-//================================================//
-
 bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* obj, int tier)
 {
 	const Ogre::Any& any = node->getUserAny();
 
 	switch(tier){
 	case 1:
-		switch(this->findType(node)){
+		switch(DynamicObject::findType(node)){
 		default:
 			return false;
 
@@ -114,7 +87,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 		break;
 
 	case 2:
-		switch(this->findType(node)){
+		switch(DynamicObject::findType(node)){
 		default:
 			return false;
 
@@ -144,46 +117,34 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 	// Triggers
 	case 3:
 		{
-			// A trigger string should look like "ObjectName.Trigger.Condition"
-			Ogre::StringUtil strUtil;
-			Ogre::StringVector tokens = strUtil.split(node->getName(), ".");
+			if(!any.isEmpty()){
+				// A trigger must have DynamicObjectData*
+				printf("typeid: %s\n", any.getType().name());
+				if(any.getType() != typeid(DynamicObjectData*))
+					return false;
 
-			if(tokens.size() > 1){
+				DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
 
-				if(strUtil.match(tokens[1], "Trigger", true)){
+				if(data->trigger.enabled){
+					switch(data->trigger.type){
+					default:
 
-					if(tokens.size() > 2){
+						return false;
 
-						// WalkOver trigger
-						if(strUtil.match(tokens[2], "WalkOver", true)){
-							printf("Adding trigger %s\n", node->getName().c_str());
-							m_objects.push_back(new TriggerWalkOver());
-							m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
+					case Trigger::TRIGGER_WALK_OVER:
+						m_objects.push_back(new TriggerWalkOver());
+						break;
 
-							// Set the trigger data
-							if(!any.isEmpty()){
-								DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
-
-								m_objects.back()->setTriggerData(data);
-								this->registerTriggerAction(data);
-							}
-						}
-						// LookAt trigger
-						else if(strUtil.match(tokens[2], "LookAt", true)){
-							m_objects.push_back(new TriggerLookAt());
-							m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
-
-							if(!any.isEmpty()){
-								DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
-
-								m_objects.back()->setTriggerData(data);
-								this->registerTriggerAction(data);
-							}
-						}
-
+					case Trigger::TRIGGER_LOOK_AT:
+						m_objects.push_back(new TriggerLookAt());
+						break;
 					}
 
-				}
+					m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
+					this->registerTriggerAction(data);
+
+					return true;
+				} // trigger.enabled
 			}
 		}
 		break;
@@ -202,7 +163,6 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 	int tier = 1;
 	const int MAX_TIER = 3;
 
-	// Perhaps use an entity iterator through the scene if some dynamic objects aren't collision objects
 	// Iterate through collision world objects and add them to the manager based on tier
 	for(;tier<=MAX_TIER; ++tier){
 		btCollisionObjectArray& objects = m_physics->getWorld()->getCollisionObjectArray();
@@ -217,6 +177,8 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 			}
 		}
 	}
+	// I have no way of retrieving the Bullet collision object from the scene nodes when going through that iterator, so all dynamic
+	// objects will need to be collision objects as well. Exceptions can be made, of course.
 
 	// Then remove all extra garbage from the BtOgre function
 }
@@ -225,6 +187,8 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 
 void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
 {
+	// Since this class has access to almost everything, register this data here
+
 	switch(data->trigger.actionCode){
 	default:
 		break;

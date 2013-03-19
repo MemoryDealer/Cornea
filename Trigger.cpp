@@ -28,17 +28,18 @@ void Trigger::initTrigger(Ogre::SceneManager* mgr, Ogre::SceneNode* node, Sparks
 	m_pSceneNode = node;
 	m_pCamera = camera;
 
+	const Ogre::Any& any = m_pSceneNode->getUserAny();
+	if(!any.isEmpty()){
+		DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
+
+		// Trigger data
+		m_actionCode	= data->trigger.actionCode;
+		m_loop			= data->trigger.loop;
+		m_timeout		= data->trigger.timeout;
+		m_range			= data->trigger.range;
+	}
+
 	printf("Trigger %s initialised!\n", node->getName().c_str());
-}
-
-//================================================//
-
-void Trigger::setTriggerData(DynamicObject::DYNAMIC_OBJECT_DATA* data)
-{
-	m_actionCode	= data->trigger.actionCode;
-	m_loop			= data->trigger.loop;
-	m_timeout		= data->trigger.timeout;
-	m_range			= data->trigger.range;
 }
 
 //================================================//
@@ -84,6 +85,15 @@ void Trigger::reset(void)
 {
 	m_triggered = false;
 	m_pTimeout->reset();
+}
+
+//================================================//
+
+void Trigger::deleteData(void)
+{
+	const Ogre::Any& any = m_pSceneNode->getUserAny();
+	if(!any.isEmpty())
+		delete Ogre::any_cast<DynamicObjectData*>(any);
 }
 
 //================================================//

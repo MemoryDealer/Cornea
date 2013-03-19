@@ -138,6 +138,33 @@ void DynamicObject::deleteData(void)
 
 //================================================//
 
+int DynamicObject::findType(Ogre::SceneNode* node)
+{
+	const char* name = node->getName().c_str();
+
+	if(strstr(name, "_MovingObject_"))
+		return TYPE_MOVING_OBJECT;
+	if(strstr(name, "_MovingKinematicObject_"))
+		return TYPE_MOVING_KINEMATIC_OBJECT;
+	if(strstr(name, "_Elevator_"))
+		return TYPE_ELEVATOR;
+	if(strstr(name, "_RDoor_") || strstr(name, "_Door_"))
+		return TYPE_ROTATING_DOOR;
+	if(strstr(name, "_SDoor_"))
+		return TYPE_SLIDING_DOOR;
+	if(strstr(name, "_Switch_"))
+		return TYPE_SWITCH;
+	if(strstr(name, "_NPC_"))
+		return TYPE_NPC;
+
+	if(strstr(name, "_Light_"))
+		return TYPE_LIGHT;
+
+	return -1;
+}
+
+//================================================//
+
 void DynamicObject::update(double timeSinceLastFrame)
 {
 	// Update the world transform for the Bullet collision object
@@ -198,6 +225,9 @@ void MovingObject::setupAnimation(void)
 	// Set up animation state for updating
 	m_pAnimState = m_pSceneMgr->createAnimationState(m_pSceneNode->getName() + "_Animation");
 	m_pAnimState->setEnabled(true);
+
+	if(data->animation.active)
+		m_state = STATE_ACTIVATED;
 }
 
 //================================================//

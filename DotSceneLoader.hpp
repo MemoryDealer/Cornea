@@ -16,7 +16,11 @@
 
 #include "DynamicObject.hpp"
 #include "NPC.hpp"
-#include "TriggerCode.hpp"
+#include "Trigger.hpp"
+
+//================================================//
+
+#define VALUE "value"
 
 //================================================//
  
@@ -94,19 +98,27 @@
         void processLightRange(rapidxml::xml_node<>* XMLNode, Ogre::Light *pLight);
         void processLightAttenuation(rapidxml::xml_node<>* XMLNode, Ogre::Light *pLight);
 
+		// Engine data
+		void processData(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent);
+
+		void processDynamicLight(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent);
+
 		void processAnimation(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent);
 		void processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent);
 		void processNPC(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent);
-		void processSwitch(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent);
  
         Ogre::String getAttrib(rapidxml::xml_node<>* XMLNode, const Ogre::String &parameter, const Ogre::String &defaultValue = "");
         Ogre::Real getAttribReal(rapidxml::xml_node<>* XMLNode, const Ogre::String &parameter, Ogre::Real defaultValue = 0);
         bool getAttribBool(rapidxml::xml_node<>* XMLNode, const Ogre::String &parameter, bool defaultValue = false);
  
         Ogre::Vector3 parseVector3(rapidxml::xml_node<>* XMLNode);
+		Ogre::Vector3 parseVector3(Ogre::String str);
         Ogre::Quaternion parseQuaternion(rapidxml::xml_node<>* XMLNode);
         Ogre::ColourValue parseColour(rapidxml::xml_node<>* XMLNode);
 		DynamicObjectData* getData(Ogre::SceneNode* node);
+		Ogre::Real parseNodeValue(rapidxml::xml_node<>* XMLNode, const char* name);
+		Ogre::String parseNodeStrValue(rapidxml::xml_node<>* XMLNode, const char* name);
+		bool parseNodeBoolValue(rapidxml::xml_node<>* XMLNode, const char* name);
  
  
         Ogre::SceneManager *mSceneMgr;

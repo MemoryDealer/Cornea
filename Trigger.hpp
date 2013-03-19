@@ -1,5 +1,10 @@
 //================================================//
 
+#ifndef __TRIGGER_HPP__
+#define __TRIGGER_HPP__
+
+//================================================//
+
 #include "stdafx.h"
 #include "DynamicObject.hpp"
 #include "NPC.hpp"
@@ -14,11 +19,19 @@ public:
 	Trigger(void);
 	~Trigger(void);
 
+	enum{
+		TRIGGER_WALK_OVER = 0,
+		TRIGGER_LOOK_AT,
+
+		END
+	};
+
 	void initTrigger(Ogre::SceneManager* mgr, Ogre::SceneNode* node, Sparks::Camera* camera);
-	void setTriggerData(DynamicObject::DYNAMIC_OBJECT_DATA* data);
 	
 	virtual void trigger(void);
 	virtual void reset(void);
+
+	void deleteData(void);
 
 	// Setter functions
 	void setLinkedObject(DynamicObject* object);
@@ -33,9 +46,9 @@ protected:
 
 	Sparks::Camera*			m_pCamera;
 
-	bool					m_loop;		// keep triggering after triggered once
+	bool					m_loop;			// keep triggering after triggered once
 	bool					m_triggered;	// has it been triggered?
-	Ogre::Real				m_timeout;	// how long to wait before being triggered again
+	Ogre::Real				m_timeout;		// how long to wait before being triggered again
 	Ogre::Real				m_range;
 
 	// Actions
@@ -81,5 +94,9 @@ public:
 protected:
 
 };
+
+//================================================//
+
+#endif
 
 //================================================//

@@ -10,12 +10,12 @@ void GameState::loadStage(void)
 
 	// Init DotSceneLoader
 	DotSceneLoader* loader = new DotSceneLoader();
-	Ogre::SceneNode* scene = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("Scene");
+	Ogre::SceneNode* scene = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("MainScene");
 
 	// Create the scene based on current stage
 	switch(m_profile->getStage()){
 	default:
-
+		m_pSceneMgr->setSkyBox(true, "Examples/MorningSkybox");
 		break;
 
 	// ======== //

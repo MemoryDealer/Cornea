@@ -312,7 +312,7 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 			bb = !bb;
 
-			Ogre::SceneNode::ChildNodeIterator itr = m_pSceneMgr->getSceneNode("Scene")->getChildIterator();
+			Ogre::SceneNode::ChildNodeIterator itr = m_pSceneMgr->getSceneNode("MainScene")->getChildIterator();
 			for(;itr.hasMoreElements();){
 				Ogre::SceneNode* child = static_cast<Ogre::SceneNode*>(itr.getNext());
 				child->showBoundingBox(bb);
