@@ -737,7 +737,7 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 #3/16/13
 -The flickering of the flashlight when backing away only happens in debug mode AFAIK. 
 -I have a working light outside the hotel room window that lights the window and leaves little retarded looking stuff in the room. 
-	The light code is as follows: 
+	The light code is as follows (deprecated): 
 	<position y="5.117672" x="-93.296890" z="-7.701633" />
     <rotation qy="0.420888" qx="-0.570417" qz="0.417881" qw="0.568202" />
     <scale y="1.000000" x="1.000000" z="1.000000" />

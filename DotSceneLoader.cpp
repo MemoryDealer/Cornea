@@ -989,6 +989,7 @@ void DotSceneLoader::processDynamicLight(rapidxml::xml_node<>* XMLNode, Ogre::Sc
 
 	data->type = this->parseNodeValue(XMLNode, "type");
 	data->range = this->parseNodeValue(XMLNode, "range");
+	data->shadows = this->parseNodeBoolValue(XMLNode, "shadows");
 
 	// Spotlight
 	if(data->type == 0){

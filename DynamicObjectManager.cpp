@@ -97,13 +97,15 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 
 			// Find the dynamic object it should be linked to
 			if(!any.isEmpty()){
-				Ogre::String name = Ogre::any_cast<Ogre::String>(any); // get the string
+				if(any.getType() == typeid(Ogre::String)){
+					Ogre::String name = Ogre::any_cast<Ogre::String>(any); // get the string
 
-				// Acquire the link pointer
-				DynamicObject* link = this->getObject(name);
-				if(link != nullptr){
-					m_objects.back()->setLinkedObject(link);
-					link->attachSwitch(static_cast<Switch*>(m_objects.back()));
+					// Acquire the link pointer
+					DynamicObject* link = this->getObject(name);
+					if(link != nullptr){
+						m_objects.back()->setLinkedObject(link);
+						link->attachSwitch(static_cast<Switch*>(m_objects.back()));
+					}
 				}
 			}
 			return true;
@@ -119,7 +121,6 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 		{
 			if(!any.isEmpty()){
 				// A trigger must have DynamicObjectData*
-				printf("typeid: %s\n", any.getType().name());
 				if(any.getType() != typeid(DynamicObjectData*))
 					return false;
 

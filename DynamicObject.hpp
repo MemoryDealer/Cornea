@@ -54,6 +54,8 @@ public:
 		int type;
 		Ogre::Real range;
 		Ogre::Real inner, outer;
+		bool shadows;
+		bool hideNode;
 	} LIGHT_DATA, *PLIGHT_DATA;
 
 	enum{

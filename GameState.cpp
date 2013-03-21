@@ -306,6 +306,17 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 	// NOTE: Below are debugging keys only, delete later
 
+	case OIS::KC_G:
+		{
+			Text* text = new Text();
+
+			text->text = "Find your glasses.";
+			text->x -= 100;
+
+			TextRenderer::getSingletonPtr()->addText(text);
+		}
+		break;
+
 	case OIS::KC_B:
 		{
 			static bool bb = false;

@@ -30,6 +30,9 @@ void App::init(void)
 	// Declare the Settings singleton
 	new Settings();
 
+	// Declare the TextRenderer singleton
+	new TextRenderer();
+
 	// Declare shared data singleton
 	new SharedData();
 	

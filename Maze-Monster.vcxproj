@@ -140,6 +140,7 @@
     <ClInclude Include="Sound.hpp" />
     <ClInclude Include="Sparks.hpp" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TextRenderer.hpp" />
     <ClInclude Include="Trigger.hpp" />
     <ClInclude Include="TriggerCode.hpp" />
     <ClInclude Include="WarpGun.hpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Sparks.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Trigger.cpp" />
     <ClCompile Include="WarpGun.cpp" />
     <ClCompile Include="Weapon.cpp" />

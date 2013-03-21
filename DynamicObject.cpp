@@ -118,7 +118,8 @@ DynamicObjectData* DynamicObject::getData(void) const
 	DynamicObjectData* data = nullptr;
 
 	if(!any.isEmpty()){
-		data = Ogre::any_cast<DynamicObjectData*>(any);
+		if(any.getType() == typeid(DynamicObjectData*))
+			data = Ogre::any_cast<DynamicObjectData*>(any);
 	}
 
 	return data;
@@ -131,8 +132,10 @@ void DynamicObject::deleteData(void)
 	const Ogre::Any& any = m_pSceneNode->getUserAny();
 
 	if(!any.isEmpty()){
-		delete Ogre::any_cast<DynamicObjectData*>(any);
-		printf("%s data deleted\n", m_pSceneNode->getName().c_str());
+		if(any.getType() == typeid(DynamicObjectData*)){
+			delete Ogre::any_cast<DynamicObjectData*>(any);
+			printf("%s data deleted\n", m_pSceneNode->getName().c_str());
+		}
 	}
 }
 
@@ -425,10 +428,28 @@ void Light::initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node)
 {
 	m_pSceneMgr = mgr;
 	m_pSceneNode = node;
-	//m_pSceneNode->setVisible(false);
+
+	LightData* data = nullptr;
+	bool dataLoaded = false;
 
 	const Ogre::Any& any = m_pSceneNode->getUserAny();
-	LightData* data = Ogre::any_cast<LightData*>(any);
+	if(!any.isEmpty()){
+		if(any.getType() == typeid(LightData*)){
+			data = Ogre::any_cast<LightData*>(any);
+			dataLoaded = true;
+		}
+	}
+
+	if(!dataLoaded){
+		// Setup default light settings
+		printf("No light data found on %s\n", m_pSceneNode->getName().c_str());
+		data = new LightData();
+		data->type == TYPE_SPOT;
+		data->range = 600.0;
+		data->inner = 5.0;
+		data->outer = 21.0;
+		data->shadows = false;
+	}
 
 	m_pLight = m_pSceneMgr->createLight("Dyn_" + m_pSceneNode->getName());
 	m_pLight->setType((data->type == TYPE_SPOT) ? Ogre::Light::LT_SPOTLIGHT : Ogre::Light::LT_POINT);
@@ -448,9 +469,12 @@ void Light::initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node)
 		m_pLight->setSpotlightOuterAngle(Ogre::Radian(data->outer));
 
 		m_pLight->setSpotlightFalloff(5.0);
-
-		m_pLight->setCastShadows(Settings::getSingletonPtr()->graphics.shadows.enabled);
 	}
+
+	m_pLight->setCastShadows(data->shadows);
+
+	if(data->hideNode)
+		m_pSceneNode->setVisible(false);
 }
 
 //================================================//
@@ -458,8 +482,10 @@ void Light::initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node)
 void Light::deleteData(void)
 {
 	const Ogre::Any& any = m_pSceneNode->getUserAny();
-	if(!any.isEmpty())
-		delete Ogre::any_cast<LightData*>(any);
+	if(!any.isEmpty()){
+		if(any.getType() == typeid(LightData*))
+			delete Ogre::any_cast<LightData*>(any);
+	}
 }
 
 //================================================//

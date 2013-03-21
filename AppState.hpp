@@ -7,6 +7,7 @@
 
 #include "Base.hpp"
 #include "SharedData.hpp"
+#include "TextRenderer.hpp"
 
 //================================================//
 

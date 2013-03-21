@@ -103,6 +103,12 @@
     <Filter Include="Source Files\Compositor">
       <UniqueIdentifier>{ad56397c-8965-44b1-ac86-c26bda20132d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Text">
+      <UniqueIdentifier>{ec6b9fbc-1613-40c4-831e-987435a751fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Text">
+      <UniqueIdentifier>{70570165-41ff-46ed-a678-b9bfc8548fe7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -300,6 +306,9 @@
     <ClInclude Include="Doors.hpp">
       <Filter>Header Files\Game\WorldObjects</Filter>
     </ClInclude>
+    <ClInclude Include="TextRenderer.hpp">
+      <Filter>Header Files\Game\Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -424,6 +433,9 @@
     </ClCompile>
     <ClCompile Include="Doors.cpp">
       <Filter>Source Files\Game\WorldObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="TextRenderer.cpp">
+      <Filter>Source Files\Game\Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
