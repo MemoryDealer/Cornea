@@ -301,7 +301,7 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		break;
 
 	case OIS::KC_CAPITAL:
-		//m_pSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
+
 		break;
 
 	// NOTE: Below are debugging keys only, delete later
@@ -310,10 +310,10 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		{
 			Text* text = new Text();
 
-			text->text = "Find your glasses.";
-			text->x -= 100;
+			text->text = "Find a way out.";
+			text->style = Text::FADE_SINE;
 
-			TextRenderer::getSingletonPtr()->addText(text);
+			TextRenderer::getSingletonPtr()->setText(TextRenderer::UPPER, text);
 		}
 		break;
 
@@ -638,9 +638,6 @@ void GameState::update(double timeSinceLastFrame)
 		// Update player
 		m_player->update(timeSinceLastFrame);
 
-		// Update plane
-		//m_pSceneMgr->getSceneNode("City")->setPosition(m_player->getPosition().x - 50000, 0.0, 0.0);
-
 		// skyx...
 		if(m_skyXInitialised){
 			Ogre::Real time = m_skyXController->getTime().x;
@@ -676,6 +673,9 @@ void GameState::update(double timeSinceLastFrame)
 
 		// Update physics
 		updateBullet(timeSinceLastFrame);
+
+		// Update TextRenderere
+		TextRenderer::getSingletonPtr()->update(timeSinceLastFrame);
 
 		break;
 

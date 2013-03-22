@@ -20,18 +20,26 @@ public:
 	TextRenderer(void);
 	~TextRenderer(void);
 
-	void addText(Text* text);
-	void removeText(Text* text);
+	enum{
+		UPPER = 0,
+		LOWER,
 
-	void setText(const int index, const std::string& text);
+		FILLER
+	};
+
+	void setText(int position, Text* text);
+	void clearText(int position);
+
+	void update(double timeSinceLastFrame);
 
 private:
 	Ogre::OverlayManager*	m_pOverlayMgr;
 	Ogre::Overlay*			m_pOverlay;
 	Ogre::OverlayContainer* m_panel;
 
-	std::vector<Text*>		m_texts;
-	int						m_numTexts;
+	Text*					m_fillerText;
+	Text*					m_upperText;
+	Text*					m_lowerText;
 };
 
 //================================================//
@@ -46,15 +54,25 @@ public:
 	Text(void);
 	~Text(void);
 
+	enum{
+		STATIC = 0,
+		FADE_SINE
+	};
+
+	// --- //
+
 	std::string		text;
 	std::string		id;
 	std::string		font, size;
 	Ogre::Real		timeout;
-	Ogre::Real		x, y;
-	Ogre::Real		width, height;
 	Ogre::ColourValue colour;
+	int				style;
+	long double		sin;
 
 	Ogre::OverlayElement* element;
+	Ogre::Timer*			timer;
+
+	void update(double timeSinceLastFrame);
 
 private:
 	

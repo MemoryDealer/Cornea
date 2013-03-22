@@ -195,12 +195,17 @@ void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
 		break;
 
 	case TRIGGER_ACTION_CODE::ACTION_NPC_ENABLE:
-		m_objects.back()->setLinkedObject(m_pNPCManager->getNPC(data->trigger.buffer));
+		m_objects.back()->setLinkedObject(m_pNPCManager->getNPC(data->trigger.str));
 		break;
 
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_ACTIVATE:
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_DEACTIVATE:
-		m_objects.back()->setLinkedObject(this->getObject(data->trigger.buffer));
+		m_objects.back()->setLinkedObject(this->getObject(data->trigger.str));
+		break;
+
+	case TRIGGER_ACTION_CODE::ACTION_DISPLAY_TEXT:
+		m_objects.back()->setLinkedObject((void*)data->trigger.str.c_str());
+		m_objects.back()->setTimeout(data->trigger.timeout);	
 		break;
 	}
 }

@@ -749,8 +749,26 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -I have eliminated the need to manually edit the .scene files to add dynamic object data; it is all exported from Blender now. Under the object tab in Blender, the custom
 	properties are set which are then exported by the python script (I had to edit it a bit, so it would name the XML nodes by the custom property name). Since only one
 	value is allowed to be set per custom property, I simply use a single node for each piece of data needed.
+	In export script at line 3635
+	# Custom user props
+        for prop in ob.items():
+           propname, propvalue = prop
+           if not propname.startswith('_'):
+               user = doc.createElement(propname)
+               o.appendChild( user )
+               user.setAttribute( 'value', str(propvalue) )
+
 -The data loading process has also been simplified in DotSceneLoader. 
 -For some reason the base function for deleteData didn't work with the trigger, even though it's the same code.
+
+#3/20/13
+-Added a TextRenderer class which manages rendering of 2D text. The Text object defines what the text contains, the font, size, etc.
+-Multiple text objects can be added. I still need to optimize the renderer for cleaning up data and organize it into a trigger system.  
+
+#3/22/13
+-Made the Text be able to center perfectly on the screen. This will be how it's used most of the time.
+-Added ability to fade the text in and out using the absolute value of a sine wave. The TextRenderer singleton is updated each frame which then updates the Text objects.
+-Changed the TextRenderer to use predefined locations on the screen, this will make it simpler than managing a list of text items. 
 
 #TODO  
 -TREASURE.

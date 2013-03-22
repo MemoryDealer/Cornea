@@ -39,7 +39,8 @@ public:
 			unsigned int	actionCode;
 			bool			loop;
 			Ogre::Real		timeout;
-			Ogre::String	buffer;
+			Ogre::String	str;
+			int				x;
 
 			Ogre::Real		range;
 		} trigger;
@@ -110,6 +111,7 @@ public:
 	virtual void setTriggerData(DYNAMIC_OBJECT_DATA* data){}
 	virtual void setLinkedObject(DynamicObject* obj){}
 	virtual void setLinkedObject(void* obj){}
+	virtual void setTimeout(Ogre::Real timeout){}
 	virtual void attachSwitch(Switch* _switch){}
 
 	// Getter functions

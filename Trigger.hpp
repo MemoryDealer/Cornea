@@ -10,6 +10,7 @@
 #include "NPC.hpp"
 #include "Camera.hpp"
 #include "TriggerCode.hpp"
+#include "TextRenderer.hpp"
 
 //================================================//
 
@@ -36,6 +37,7 @@ public:
 	// Setter functions
 	void setLinkedObject(DynamicObject* object);
 	void setLinkedObject(void* object);
+	void setTimeout(Ogre::Real timeout);
 
 	void update(double timeSinceLastFrame);
 
@@ -64,6 +66,9 @@ inline void Trigger::setLinkedObject(DynamicObject* object)
 
 inline void Trigger::setLinkedObject(void* object)
 { m_pActionPointer = object; }
+
+inline void Trigger::setTimeout(Ogre::Real timeout)
+{ m_timeout = timeout; }
 
 //================================================//
 //================================================//

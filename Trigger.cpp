@@ -69,6 +69,16 @@ void Trigger::trigger(void)
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_DEACTIVATE:
 		static_cast<DynamicObject*>(m_pActionPointer)->DynamicObject::send(DynamicObject::ARG_DEACTIVATE);
 		break;
+
+	case TRIGGER_ACTION_CODE::ACTION_DISPLAY_TEXT:
+		{
+			Text* text = new Text();
+			text->text.assign(static_cast<const char*>(m_pActionPointer));
+			text->timeout = m_timeout;
+
+			// set text position
+		}
+		break;
 	}
 
 	// Set trigger to true for update loop
