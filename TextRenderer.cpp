@@ -22,12 +22,15 @@ TextRenderer::TextRenderer(void)
 	m_pOverlay->show();
 	m_panel->show();
 
-	m_upperText = m_lowerText = nullptr;
+	m_upperText = nullptr;
+	m_lowerText = nullptr;
+	m_fillerText = nullptr;
 
 	// This is just a hack, for some reason the first text item added to the overlay panel isn't showing up
 	Text* text = new Text();
 	text->text = "";
-	this->setText(FILLER, text);
+	text->pos = TextRenderer::FILLER;
+	this->setText(text);
 }
 
 //================================================//
@@ -39,9 +42,9 @@ TextRenderer::~TextRenderer(void)
 
 //================================================//
 
-void TextRenderer::setText(int position, Text* text)
+void TextRenderer::setText(Text* text)
 {
-	switch(position){
+	switch(text->pos){
 	default:
 	case UPPER:
 		text->id = "UpperText";
@@ -81,7 +84,7 @@ void TextRenderer::setText(int position, Text* text)
 	text->element->setCaption(text->text);
 
 	// Set alignment
-	switch(position){
+	switch(text->pos){
 	default:
 	case UPPER:
 		text->element->setPosition(0, 20);
@@ -103,7 +106,7 @@ void TextRenderer::setText(int position, Text* text)
 	m_panel->addChild(text->element);
 
 	// Start timer
-	if(position != FILLER)
+	if(text->pos != FILLER)
 		text->timer = new Ogre::Timer();
 }
 
@@ -111,27 +114,38 @@ void TextRenderer::setText(int position, Text* text)
 
 void TextRenderer::clearText(int position)
 {
-	Text* text = nullptr;
 	switch(position){
 	default:
 		return;
 
 	case UPPER:
-		text = m_upperText;
+		if(m_upperText == nullptr)
+			return;
+
+		m_panel->removeChild(m_upperText->id);
+		m_pOverlayMgr->destroyOverlayElement(m_upperText->id);
+		delete m_upperText;
+		m_upperText = nullptr;
 		break;
 
 	case LOWER:
-		text = m_lowerText;
+		if(m_lowerText == nullptr)
+			return;
+
+		m_panel->removeChild(m_lowerText->id);
+		m_pOverlayMgr->destroyOverlayElement(m_lowerText->id);
+		delete m_lowerText;
+		m_lowerText = nullptr;
 		break;
 	}
+}
 
-	if(text == nullptr)
-		return;
+//================================================//
 
-	m_panel->removeChild(text->id);
-	m_pOverlayMgr->destroyOverlayElement(text->id);
-	delete text;
-	text = nullptr;
+void TextRenderer::clearAll(void)
+{
+	this->clearText(UPPER);
+	this->clearText(LOWER);
 }
 
 //================================================//
@@ -139,10 +153,12 @@ void TextRenderer::clearText(int position)
 void TextRenderer::update(double timeSinceLastFrame)
 {
 	if(m_upperText != nullptr)
-		m_upperText->update(timeSinceLastFrame);
+		if(!m_upperText->update(timeSinceLastFrame))
+			this->clearText(UPPER);
 
 	if(m_lowerText != nullptr)
-		m_lowerText->update(timeSinceLastFrame);
+		if(!m_lowerText->update(timeSinceLastFrame))
+			this->clearText(LOWER);
 }
 
 //================================================//
@@ -151,26 +167,31 @@ void TextRenderer::update(double timeSinceLastFrame)
 Text::Text(void)
 {
 	text = "Default Text";
-	font = "Font2A";
+	font = "StarWars";
 	size = "32";
 	timeout = 20000.0;
 	colour = Ogre::ColourValue::White;
 	style = STATIC;
 	sin = 0.0;
+	timer = nullptr;
 }
 
 //================================================//
 
 Text::~Text(void)
 {
-	delete timer;
+	if(timer != nullptr)
+		delete timer;
 }
 
 //================================================//
 
-void Text::update(double timeSinceLastFrame)
+bool Text::update(double timeSinceLastFrame)
 {
 	// Update timer...
+	if(timer->getMillisecondsCPU() >= timeout){
+		return false;
+	}
 
 	switch(style){
 	default:
@@ -185,6 +206,8 @@ void Text::update(double timeSinceLastFrame)
 		}
 		break;
 	}
+
+	return true;
 }
 
 //================================================//

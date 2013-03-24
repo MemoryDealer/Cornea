@@ -18,7 +18,7 @@ DynamicObject::DynamicObject(void)
 
 DynamicObject::~DynamicObject(void)
 {
-
+	printf("Base Destructor called on %s\n", m_pSceneNode->getName().c_str());
 }
 
 //================================================//
@@ -137,6 +137,13 @@ void DynamicObject::deleteData(void)
 			printf("%s data deleted\n", m_pSceneNode->getName().c_str());
 		}
 	}
+}
+
+//================================================//
+
+void DynamicObject::setUserData(int n, void* data)
+{
+	m_userData.data[n] = data;
 }
 
 //================================================//

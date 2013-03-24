@@ -161,6 +161,8 @@ void GameState::destroyScene(void)
 	// ...
 	//m_pSceneMgr->destroyLight(m_pSunlight);
 
+	TextRenderer::getSingletonPtr()->clearAll();
+
 	m_pSceneMgr->clearScene();
 	m_pSceneMgr->destroyAllCameras();
 }
@@ -312,8 +314,11 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 			text->text = "Find a way out.";
 			text->style = Text::FADE_SINE;
+			text->font = "StarWars";
+			text->pos = TextRenderer::UPPER;
+			text->timeout = 5000;
 
-			TextRenderer::getSingletonPtr()->setText(TextRenderer::UPPER, text);
+			TextRenderer::getSingletonPtr()->setText(text);
 		}
 		break;
 

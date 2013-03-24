@@ -75,8 +75,10 @@ void Trigger::trigger(void)
 			Text* text = new Text();
 			text->text.assign(static_cast<const char*>(m_pActionPointer));
 			text->timeout = m_timeout;
+			text->pos = (*static_cast<int*>(m_userData.data[0]));
 
 			// set text position
+			TextRenderer::getSingletonPtr()->setText(text);
 		}
 		break;
 	}
@@ -105,6 +107,7 @@ void Trigger::deleteData(void)
 	if(!any.isEmpty())
 		delete Ogre::any_cast<DynamicObjectData*>(any);
 }
+
 
 //================================================//
 

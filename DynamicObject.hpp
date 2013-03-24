@@ -106,6 +106,8 @@ public:
 	DYNAMIC_OBJECT_DATA* getData(void) const;
 	virtual void deleteData(void);
 
+	void setUserData(int n, void* data);
+
 	// Some virtual functions to be used by children
 	virtual void setupAnimation(void){}
 	virtual void setTriggerData(DYNAMIC_OBJECT_DATA* data){}
@@ -130,6 +132,10 @@ public:
 	virtual void update(double timeSinceLastFrame) = 0;
 
 protected:
+	struct{
+		void* data[10];
+	} m_userData;
+
 	Ogre::SceneManager* m_pSceneMgr;
 	Ogre::SceneNode*	m_pSceneNode;
 	btCollisionObject*  m_collisionObject;

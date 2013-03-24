@@ -27,8 +27,9 @@ public:
 		FILLER
 	};
 
-	void setText(int position, Text* text);
+	void setText(Text* text);
 	void clearText(int position);
+	void clearAll(void);
 
 	void update(double timeSinceLastFrame);
 
@@ -67,12 +68,13 @@ public:
 	Ogre::Real		timeout;
 	Ogre::ColourValue colour;
 	int				style;
+	int				pos;
 	long double		sin;
 
 	Ogre::OverlayElement* element;
 	Ogre::Timer*			timer;
 
-	void update(double timeSinceLastFrame);
+	bool update(double timeSinceLastFrame);
 
 private:
 	

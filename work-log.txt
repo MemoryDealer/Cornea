@@ -770,6 +770,10 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -Added ability to fade the text in and out using the absolute value of a sine wave. The TextRenderer singleton is updated each frame which then updates the Text objects.
 -Changed the TextRenderer to use predefined locations on the screen, this will make it simpler than managing a list of text items. 
 
+#3/23/13
+-Fixed up some issues with the TextRenderer, mainly with the nullptrs and timeout. 
+-I believe the reason I have to load the filler text first is because the font must be loaded at least once for any others to work. Not sure why.
+
 #TODO  
 -TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  

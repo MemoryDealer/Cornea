@@ -206,6 +206,7 @@ void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
 	case TRIGGER_ACTION_CODE::ACTION_DISPLAY_TEXT:
 		m_objects.back()->setLinkedObject((void*)data->trigger.str.c_str());
 		m_objects.back()->setTimeout(data->trigger.timeout);	
+		m_objects.back()->setUserData(0, (void*)(new int(data->trigger.x)));
 		break;
 	}
 }
