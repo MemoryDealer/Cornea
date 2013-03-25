@@ -267,7 +267,7 @@ void GaussianListener::notifyViewportSize(int width, int height)
 	mVpHeight = height;
 	// Calculate gaussian texture offsets & weights
 	float deviation = 3.0f;
-	float texelSize = 1.0f / (float)std::min(mVpWidth, mVpHeight);
+	float texelSize = 1.0f / (float)std::min(mVpWidth, mVpHeight) * 1.5f; // this modifier changes the intensity of the blur
 
 	// central sample, no offset
 	mBloomTexOffsetsHorz[0][0] = 0.0f;

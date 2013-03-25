@@ -45,6 +45,7 @@ public:
 			Ogre::Real		range;
 		} trigger;
 
+		Ogre::ColourValue	colour;
 		Ogre::Vector3		offset;
 		Ogre::Quaternion	rotationOffset;
 		unsigned int		buffer;
@@ -107,6 +108,7 @@ public:
 	virtual void deleteData(void);
 
 	void setUserData(int n, void* data);
+	void freeUserData(void);
 
 	// Some virtual functions to be used by children
 	virtual void setupAnimation(void){}
@@ -132,8 +134,13 @@ public:
 	virtual void update(double timeSinceLastFrame) = 0;
 
 protected:
+
+#define USERDATA_SIZE 10
+
+	// This data is used for misc. values needed for certain dynamic objects
 	struct{
-		void* data[10];
+		void* data[USERDATA_SIZE];
+		bool flags[USERDATA_SIZE];
 	} m_userData;
 
 	Ogre::SceneManager* m_pSceneMgr;

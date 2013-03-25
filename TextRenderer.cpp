@@ -168,7 +168,7 @@ Text::Text(void)
 {
 	text = "Default Text";
 	font = "StarWars";
-	size = "32";
+	size = "24";
 	timeout = 20000.0;
 	colour = Ogre::ColourValue::White;
 	style = STATIC;

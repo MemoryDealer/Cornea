@@ -115,11 +115,11 @@
 		Ogre::Vector3 parseVector3(Ogre::String str);
         Ogre::Quaternion parseQuaternion(rapidxml::xml_node<>* XMLNode);
         Ogre::ColourValue parseColour(rapidxml::xml_node<>* XMLNode);
+		Ogre::ColourValue parseColour(Ogre::String str);
 		DynamicObjectData* getData(Ogre::SceneNode* node);
 		Ogre::Real parseNodeValue(rapidxml::xml_node<>* XMLNode, const char* name);
 		Ogre::String parseNodeStrValue(rapidxml::xml_node<>* XMLNode, const char* name);
 		bool parseNodeBoolValue(rapidxml::xml_node<>* XMLNode, const char* name);
- 
  
         Ogre::SceneManager *mSceneMgr;
         Ogre::SceneNode *mAttachNode;

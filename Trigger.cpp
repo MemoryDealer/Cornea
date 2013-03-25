@@ -5,6 +5,7 @@
 //================================================//
 
 Trigger::Trigger(void)
+	: DynamicObject()
 {
 	m_loop = false;
 	m_triggered = false;
@@ -76,6 +77,7 @@ void Trigger::trigger(void)
 			text->text.assign(static_cast<const char*>(m_pActionPointer));
 			text->timeout = m_timeout;
 			text->pos = (*static_cast<int*>(m_userData.data[0]));
+			text->colour = (*static_cast<Ogre::ColourValue*>(m_userData.data[1]));
 
 			// set text position
 			TextRenderer::getSingletonPtr()->setText(text);

@@ -309,6 +309,9 @@
     <ClInclude Include="TextRenderer.hpp">
       <Filter>Header Files\Game\Text</Filter>
     </ClInclude>
+    <ClInclude Include="Glasses.hpp">
+      <Filter>Header Files\Game\Items</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -436,6 +439,9 @@
     </ClCompile>
     <ClCompile Include="TextRenderer.cpp">
       <Filter>Source Files\Game\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Glasses.cpp">
+      <Filter>Source Files\Game\Items</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

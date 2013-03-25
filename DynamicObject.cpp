@@ -12,6 +12,11 @@ DynamicObject::DynamicObject(void)
 	m_updateRange = 20000.0;
 	
 	m_hasSound = false;
+
+	for(int i=0; i<USERDATA_SIZE; ++i){
+		m_userData.flags[i] = false;
+		m_userData.data[i] = nullptr;
+	}
 }
 
 //================================================//
@@ -144,6 +149,18 @@ void DynamicObject::deleteData(void)
 void DynamicObject::setUserData(int n, void* data)
 {
 	m_userData.data[n] = data;
+	m_userData.flags[n] = true;
+}
+
+//================================================//
+
+void DynamicObject::freeUserData(void)
+{
+	for(int i=0; i<USERDATA_SIZE; ++i){
+		if(m_userData.flags[i])
+			if(m_userData.data[i] != nullptr)
+				delete m_userData.data[i];
+	}
 }
 
 //================================================//
@@ -340,7 +357,8 @@ void MovingKinematicObject::update(double timeSinceLastFrame)
 
 /* Elevator */
 
-Elevator::Elevator(void)
+Elevator::Elevator(void) : 
+	MovingObject()
 {
 
 }

@@ -12,6 +12,9 @@ void GameState::loadStage(void)
 	DotSceneLoader* loader = new DotSceneLoader();
 	Ogre::SceneNode* scene = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("MainScene");
 
+	// Reset hydrax/skyx
+	m_hydraxInitialised = m_skyXInitialised = false;
+
 	// Create the scene based on current stage
 	switch(m_profile->getStage()){
 	default:
@@ -86,7 +89,6 @@ void GameState::loadStage(void)
 			city->setSpotlightFalloff(5.0);
 			city->setDirection(Ogre::Vector3(-1.0, 0.0, 0.0));*/
 
-
 			loader->parseDotScene("Apartment.scene", "General", m_pSceneMgr, scene);
 
 			// Scale scene node and all child nodes
@@ -106,7 +108,7 @@ void GameState::loadStage(void)
 			m_pSceneMgr->setSkyBox(true, "Examples/TrippySkyBox");
 
 			// DEBUG
-			settings.graphics.water = Settings::LOW;
+			settings.graphics.water = Settings::HIGH;
 
 			// Water
 

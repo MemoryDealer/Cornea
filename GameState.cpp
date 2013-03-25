@@ -31,9 +31,13 @@ void GameState::enter(void)
 		printf("%s loaded!\n", SharedData::getSingletonPtr()->buffer.c_str());
 	}
 
+	TextRenderer::getSingletonPtr()->clearAll();
+
 	this->createSceneManager();
 
 	m_pCompositor = new Sparks::Compositor(m_pSceneMgr, Base::getSingletonPtr()->m_pViewport);
+	//m_pCompositor->setEnabled(COMPOSITOR_RADIAL_BLUR, true);
+	//m_pCompositor->setEnabled(COMPOSITOR_MOTION_BLUR, true);
 
 	// Allow update loop to load the game
 	m_state = STATE_LOADING_FIRST_ENTRY;
@@ -144,10 +148,10 @@ void GameState::destroyScene(void)
 	m_physics->free();
 
 	// Clear SkyX
-	Base::getSingletonPtr()->m_pRoot->removeFrameListener(m_skyX);
-	Base::getSingletonPtr()->m_pRenderWindow->removeListener(m_skyX);
-
 	if(m_skyXInitialised){
+		Base::getSingletonPtr()->m_pRoot->removeFrameListener(m_skyX);
+		Base::getSingletonPtr()->m_pRenderWindow->removeListener(m_skyX);
+
 		if(m_skyXController->getDeleteBySkyX()){
 			//delete m_skyXController; ?
 			m_skyX->remove();
@@ -181,13 +185,6 @@ void GameState::createGUI(void)
 	/**/
 
 	MyGUI::PointerManager::getInstancePtr()->setVisible(false);
-
-	// Crosshair
-	/*const MyGUI::IntSize size(80, 26);
-	m_crosshairs = Base::getSingletonPtr()->m_GUI->createWidget<MyGUI::ImageBox>("ImageBox", (screenWidth / 2) - (size.width / 2), 
-		(screenHeight / 2) - (size.height / 2), size.width, size.height, MyGUI::Align::Default, "Main");
-	m_crosshairs->setImageTexture("D:/OgreSDK/media/materials/textures/Crosshairs.png");
-	m_crosshairs->setVisible(true);*/
 }
 
 //================================================//
@@ -219,6 +216,7 @@ void GameState::destroyGUI(void)
 void GameState::preloadMeshData(void)
 {
 	// Load certain mesh data before scene is created to avoid lag spikes during gameplay
+	// (once a mesh is loaded it's stored in memory and is retrieved when an entity uses it)
 	Ogre::Entity* temp;
 
 	// Load specific meshes
@@ -319,6 +317,12 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 			text->timeout = 5000;
 
 			TextRenderer::getSingletonPtr()->setText(text);
+		}
+		break;
+
+	case OIS::KC_C:
+		{
+			m_player->getGlasses()->flipState();
 		}
 		break;
 
@@ -679,7 +683,7 @@ void GameState::update(double timeSinceLastFrame)
 		// Update physics
 		updateBullet(timeSinceLastFrame);
 
-		// Update TextRenderere
+		// Update TextRenderer
 		TextRenderer::getSingletonPtr()->update(timeSinceLastFrame);
 
 		break;
@@ -697,8 +701,9 @@ void GameState::update(double timeSinceLastFrame)
 			// Init player so we can use the camera
 			m_player = new Player(m_pSceneMgr);
 
-			// Player flashlight
+			// Init player items
 			m_player->initFlashlight();
+			m_player->initGlasses(m_pCompositor);
 			break;
 
 		case STEP_CREATE_PHYSICS_WORLD:
@@ -748,7 +753,7 @@ void GameState::update(double timeSinceLastFrame)
 		}
 
 		// Increment loading step
-		m_loadingStep++;
+		++m_loadingStep;
 
 		// Update progress bar
 		m_GUILoadingLayer->incrementProgressBar(GUIGameState::GUILoadingLayer::PROGRESSBAR_STATUS, 100);
@@ -774,7 +779,10 @@ void GameState::update(double timeSinceLastFrame)
 			this->createLoadingGUI();
 
 			m_player = new Player(m_pSceneMgr);
+			
+			// Init player items
 			m_player->initFlashlight();
+			m_player->initGlasses(m_pCompositor);
 
 			m_GUILoadingLayer->setProgressBarPosition(GUIGameState::GUILoadingLayer::PROGRESSBAR_STATUS, 0);
 			break;
@@ -819,7 +827,7 @@ void GameState::update(double timeSinceLastFrame)
 		}
 
 		// Increment loading step
-		m_loadingStep++;
+		++m_loadingStep;
 
 		// Update progress bar
 		m_GUILoadingLayer->incrementProgressBar(GUIGameState::GUILoadingLayer::PROGRESSBAR_STATUS, 100);

@@ -100,6 +100,7 @@
     <ClInclude Include="EventManager.hpp" />
     <ClInclude Include="Flashlight.hpp" />
     <ClInclude Include="GameState.hpp" />
+    <ClInclude Include="Glasses.hpp" />
     <ClInclude Include="GUILayer.hpp" />
     <ClInclude Include="GUILayerGameState.hpp" />
     <ClInclude Include="GUILayerMenuState.hpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Flashlight.cpp" />
     <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="Glasses.cpp" />
     <ClCompile Include="GUILayer.cpp" />
     <ClCompile Include="GUILayerGameState.cpp" />
     <ClCompile Include="GUILayerMenuState.cpp" />

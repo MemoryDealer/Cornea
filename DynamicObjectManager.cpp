@@ -20,6 +20,7 @@ DynamicObjectManager::~DynamicObjectManager(void)
 		itr != m_objects.end();){
 		// Delete dynamic object data stored on the heap
 		(*itr)->deleteData();
+		(*itr)->freeUserData();
 
 		++itr;
 	}
@@ -207,6 +208,7 @@ void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
 		m_objects.back()->setLinkedObject((void*)data->trigger.str.c_str());
 		m_objects.back()->setTimeout(data->trigger.timeout);	
 		m_objects.back()->setUserData(0, (void*)(new int(data->trigger.x)));
+		m_objects.back()->setUserData(1, (void*)(new Ogre::ColourValue(data->colour)));
 		break;
 	}
 }

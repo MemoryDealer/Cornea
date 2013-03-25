@@ -1060,6 +1060,7 @@ void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNo
 	case TRIGGER_ACTION_CODE::ACTION_DISPLAY_TEXT:
 		data->trigger.str = this->parseNodeStrValue(XMLNode, "text");
 		data->trigger.x	= static_cast<int>(this->parseNodeValue(XMLNode, "textPos"));
+		data->colour = this->parseColour(this->parseNodeStrValue(XMLNode, "textColour"));
 		break;
 	}
 
@@ -1214,6 +1215,13 @@ Ogre::ColourValue DotSceneLoader::parseColour(rapidxml::xml_node<>* XMLNode)
         Ogre::StringConverter::parseReal(XMLNode->first_attribute("b")->value()),
         XMLNode->first_attribute("a") != NULL ? Ogre::StringConverter::parseReal(XMLNode->first_attribute("a")->value()) : 1
     );
+}
+
+//================================================//
+
+Ogre::ColourValue DotSceneLoader::parseColour(Ogre::String str)
+{
+	return Ogre::StringConverter::parseColourValue(str, Ogre::ColourValue::White);
 }
 
 //================================================//

@@ -774,6 +774,9 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -Fixed up some issues with the TextRenderer, mainly with the nullptrs and timeout. 
 -I believe the reason I have to load the filler text first is because the font must be loaded at least once for any others to work. Not sure why.
 
+#3/24/13
+-Added Glasses class which simply switches a gaussian blur compositor on and off, it is held by the Player class.
+
 #TODO  
 -TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  

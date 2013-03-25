@@ -65,6 +65,13 @@ void Player::initFlashlight(void)
 
 //================================================//
 
+void Player::initGlasses(Sparks::Compositor* compositor)
+{
+	m_pGlasses = new Glasses(compositor);
+}
+
+//================================================//
+
 void Player::setWeapon(unsigned weapon, EventManager* pEventManager)
 {
 	if(weapon != Weapon::NONE){

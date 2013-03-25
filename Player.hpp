@@ -22,6 +22,7 @@
 #include "MeleeWeapons.hpp"
 
 #include "Flashlight.hpp"
+#include "Glasses.hpp"
 
 //================================================//
 
@@ -36,12 +37,15 @@ public:
 	// Flashlight
 	void initFlashlight(void);
 
+	void initGlasses(Sparks::Compositor* compositor);
+
 	// Getter functions
 	Weapon* getWeapon(void) const;
 	const unsigned getWeaponValue(void) const;		
 	const Ogre::Vector3 getPosition(void) const;
 	Sparks::Camera* getCamera(void) const;
 	Flashlight* getFlashlight(void) const;
+	Glasses* getGlasses(void) const;
 
 	// Setter functions
 	void setWeapon(unsigned weapon, EventManager* pEventManager);
@@ -58,6 +62,7 @@ protected:
 	Sparks::Camera*			m_pCamera;
 
 	Flashlight*				m_pFlashlight;
+	Glasses*				m_pGlasses;
 
 	Weapon*					m_pWeapon;
 	unsigned				m_nWeapon;
@@ -81,6 +86,9 @@ inline Sparks::Camera* Player::getCamera(void) const
 
 inline Flashlight* Player::getFlashlight(void) const
 { return m_pFlashlight; }
+
+inline Glasses* Player::getGlasses(void) const
+{ return m_pGlasses; }
 
 //================================================//
 
