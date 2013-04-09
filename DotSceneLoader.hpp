@@ -120,6 +120,7 @@
 		Ogre::Real parseNodeValue(rapidxml::xml_node<>* XMLNode, const char* name);
 		Ogre::String parseNodeStrValue(rapidxml::xml_node<>* XMLNode, const char* name);
 		bool parseNodeBoolValue(rapidxml::xml_node<>* XMLNode, const char* name);
+		Ogre::ColourValue parseNodeColourValue(rapidxml::xml_node<>* XMLNode, const char* name);
  
         Ogre::SceneManager *mSceneMgr;
         Ogre::SceneNode *mAttachNode;

@@ -61,6 +61,11 @@ void Compositor::setup(void)
 		logicRegistered = true;
 	}
 
+	// SSAO
+	//m_pSSAO = compMgr.addCompositor(m_pViewport, COMPOSITOR_SSAO);
+	//m_pSSAO->setEnabled(true);
+	//m_pSSAO->addListener(&ssaoParamUpdater);
+
 	this->createEffects();
 	this->registerCompositors();
 }
@@ -69,7 +74,10 @@ void Compositor::setup(void)
 
 void Compositor::setEnabled(const Ogre::String& name, bool enabled)
 {
-	Ogre::CompositorManager::getSingleton().setCompositorEnabled(m_pViewport, name, enabled);
+	if(name == COMPOSITOR_SSAO)
+		m_pSSAO->setEnabled(enabled);
+	else
+		Ogre::CompositorManager::getSingleton().setCompositorEnabled(m_pViewport, name, enabled);
 }
 
 //================================================//

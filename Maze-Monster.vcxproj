@@ -106,6 +106,8 @@
     <ClInclude Include="GUILayerMenuState.hpp" />
     <ClInclude Include="HelperLogic.hpp" />
     <ClInclude Include="Inventory.hpp" />
+    <ClInclude Include="Light.hpp" />
+    <ClInclude Include="Listeners.hpp" />
     <ClInclude Include="MeleeWeapons.hpp" />
     <ClInclude Include="MenuState.hpp" />
     <ClInclude Include="MLP.hpp" />
@@ -172,6 +174,8 @@
     <ClCompile Include="GUILayerMenuState.cpp" />
     <ClCompile Include="HelperLogic.cpp" />
     <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Listeners.cpp" />
     <ClCompile Include="LoadStage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeleeWeapons.cpp" />

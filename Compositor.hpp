@@ -7,6 +7,7 @@
 
 #include "stdafx.h"
 #include "HelperLogic.hpp"
+#include "Listeners.hpp"
 
 //================================================//
 
@@ -31,6 +32,7 @@
 #define COMPOSITOR_HALFTONE			"Halftone"
 #define COMPOSITOR_DITHER			"Dither"
 #define COMPOSITOR_HEAT_VISION		"HeatVision"
+#define COMPOSITOR_SSAO				"Sparks/ssao"
 
 //================================================//
 
@@ -63,7 +65,7 @@ protected:
 	Ogre::StringVector m_compositorNames;
 
 private:
-
+	Ogre::CompositorInstance*	m_pSSAO;
 };
 
 //================================================//

@@ -109,6 +109,12 @@
     <Filter Include="Source Files\Game\Text">
       <UniqueIdentifier>{70570165-41ff-46ed-a678-b9bfc8548fe7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Listeners">
+      <UniqueIdentifier>{7a83435b-06c3-487f-abb6-733cfc82b330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Listeners">
+      <UniqueIdentifier>{d24f2c6c-b2e9-476e-9a1b-8b58dec2f853}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -312,6 +318,12 @@
     <ClInclude Include="Glasses.hpp">
       <Filter>Header Files\Game\Items</Filter>
     </ClInclude>
+    <ClInclude Include="Listeners.hpp">
+      <Filter>Header Files\Game\Listeners</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.hpp">
+      <Filter>Header Files\Game\WorldObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -442,6 +454,12 @@
     </ClCompile>
     <ClCompile Include="Glasses.cpp">
       <Filter>Source Files\Game\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Listeners.cpp">
+      <Filter>Source Files\Game\Listeners</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Game\WorldObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

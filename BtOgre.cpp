@@ -244,6 +244,11 @@ void registerAllEntitiesAsColliders(SceneManager* sceneMgr, btCollisionWorld* co
 				registerEntityCylinder(entity, colWorld);
 				break;
 
+			// Add a rigid body
+			case '*':
+
+				break;
+
 			// Add a box shape
 			default:
 				registerEntityAABB(entity, colWorld);

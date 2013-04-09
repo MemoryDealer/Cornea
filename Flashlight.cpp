@@ -45,15 +45,6 @@ Flashlight::~Flashlight(void)
 
 void Flashlight::switchState(void)
 {
-	//if(m_pLight->getVisible()){
-	//	m_state = STATE_TURNING_OFF;
-	//}
-	//else{
-	//	m_state = STATE_TURNING_ON;
-	//	//m_pLight->setAttenuation(0.0, 0.5, 0.0, 0.0);
-	//	m_pLight->setSpotlightRange(m_innerAngle, m_innerAngle + Ogre::Degree(1));
-	//	m_pLight->setVisible(true);
-	//}
 	m_pLight->setVisible(!m_pLight->isVisible());
 }
 
@@ -61,60 +52,7 @@ void Flashlight::switchState(void)
 
 void Flashlight::update(double timeSinceLastFrame)
 {
-	/*if(m_state == STATE_TURNING_ON){
-		Ogre::Degree outerAngle = m_pLight->getSpotlightOuterAngle();
-
-		if(outerAngle < m_outerAngle){
-			outerAngle += Ogre::Degree(0.2 * timeSinceLastFrame);
-		}
-		else{
-			outerAngle = m_outerAngle;
-			m_state = STATE_IDLE;
-		}
-
-		m_pLight->setSpotlightRange(m_innerAngle, outerAngle);
-	}
-	else if(m_state == STATE_TURNING_OFF){
-		Ogre::Degree outerAngle = m_pLight->getSpotlightOuterAngle();
-		Ogre::Degree innerAngle = m_innerAngle + Ogre::Degree(5);
-
-		if(outerAngle > innerAngle){
-			outerAngle -= Ogre::Degree(0.4 * timeSinceLastFrame);
-			if(outerAngle < innerAngle){
-				outerAngle = innerAngle;
-			}
-			m_pLight->setSpotlightRange(m_innerAngle, outerAngle);
-		}
-		else{
-			m_pLight->setVisible(false);
-			m_state = STATE_IDLE;
-		}
-	}*/
-
-	//// Fade light in and out
-	//if(m_state == STATE_TURNING_ON){
-	//	Ogre::Real range = m_pLight->getAttenuationRange();
-	//	if(range < m_attenuationRange){
-	//		range += (timeSinceLastFrame * 4.5);
-	//	}
-	//	else{
-	//		range = m_attenuationRange;
-	//		m_state = STATE_IDLE;
-	//	}
-
-	//	m_pLight->setAttenuation(range, 0.5, 0.0, 0.0);
-	//}
-	//else if(m_state == STATE_TURNING_OFF){
-	//	Ogre::Real range = m_pLight->getAttenuationRange();
-	//	if(range > 0.0){
-	//		range -= (timeSinceLastFrame * 4.5);
-	//		m_pLight->setAttenuation(range, 0.5, 0.0, 0.0);
-	//	}
-	//	else{
-	//		m_pLight->setVisible(false);
-	//		m_state = STATE_IDLE;
-	//	}
-	//}
+	
 }
 
 //================================================//

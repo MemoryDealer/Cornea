@@ -79,8 +79,14 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			
 			return true;
 
-		case DynamicObject::TYPE_LIGHT:
-			m_objects.push_back(new Light());
+		case DynamicObject::TYPE_STATIC_LIGHT:
+			m_objects.push_back(new StaticLight());
+			m_objects.back()->initLight(m_pSceneMgr, node);
+
+			return true;
+
+		case DynamicObject::TYPE_PULSE_LIGHT:
+			m_objects.push_back(new PulseLight());
 			m_objects.back()->initLight(m_pSceneMgr, node);
 
 			return true;

@@ -18,8 +18,8 @@ Settings::Settings(void)
 	
 	// Temp. settings
 	graphics.shadows.enabled = true;
-	graphics.shadows.fsaa = 4;
-	graphics.shadows.textureCount = 4;
+	graphics.shadows.fsaa = 0;
+	graphics.shadows.textureCount = 8;
 	graphics.shadows.textureSize = 256;
 
 	graphics.sky = MEDIUM;

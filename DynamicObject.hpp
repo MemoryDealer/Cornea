@@ -56,8 +56,10 @@ public:
 		int type;
 		Ogre::Real range;
 		Ogre::Real inner, outer;
+		Ogre::ColourValue colour;
 		bool shadows;
 		bool hideNode;
+		Ogre::Real buffer;
 	} LIGHT_DATA, *PLIGHT_DATA;
 
 	enum{
@@ -82,7 +84,9 @@ public:
 		TYPE_SWITCH,
 		TYPE_NPC,
 
-		TYPE_LIGHT,
+		TYPE_STATIC_LIGHT,
+		TYPE_PULSE_LIGHT,
+		TYPE_FLICKER_LIGHT,
 
 		END
 	};
@@ -260,28 +264,6 @@ protected:
 
 inline void Switch::setLinkedObject(DynamicObject* obj)
 { m_linkedObject = obj; m_linked = true; }
-
-//================================================//
-//================================================//
-
-class Light : public DynamicObject
-{
-public:
-	Light(void);
-
-	void initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node);
-	void deleteData(void);
-
-	enum{
-		TYPE_SPOT = 0,
-		TYPE_POINT
-	};
-
-	void update(double timeSinceLastFrame); 
-
-protected:
-	Ogre::Light*	m_pLight;
-};
 
 //================================================//
 

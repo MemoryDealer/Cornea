@@ -36,6 +36,8 @@ void GameState::enter(void)
 	this->createSceneManager();
 
 	m_pCompositor = new Sparks::Compositor(m_pSceneMgr, Base::getSingletonPtr()->m_pViewport);
+
+	//Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
 	//m_pCompositor->setEnabled(COMPOSITOR_RADIAL_BLUR, true);
 	//m_pCompositor->setEnabled(COMPOSITOR_MOTION_BLUR, true);
 
@@ -102,7 +104,7 @@ void GameState::createSceneManager(void)
 	switch(m_profile->getStage()){
 	case Profile::STAGE::DEV:
 	default:
-		m_pSceneMgr = Base::getSingletonPtr()->m_pRoot->createSceneManager(Ogre::ST_INTERIOR, SCENE_MGR_NAME);
+		m_pSceneMgr = Base::getSingletonPtr()->m_pRoot->createSceneManager(Ogre::ST_GENERIC, SCENE_MGR_NAME);
 	}
 }
 
@@ -123,7 +125,19 @@ void GameState::createScene(void)
 		m_pSceneMgr->setShadowCasterRenderBackFaces(false);
 		m_pSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
 		m_pSceneMgr->setShadowTextureFSAA(settings.graphics.shadows.fsaa);
+
+		const unsigned numShadowRTTs = m_pSceneMgr->getShadowTextureCount();
+		for(unsigned i=0; i<numShadowRTTs; ++i){
+			Ogre::TexturePtr tex = m_pSceneMgr->getShadowTexture(i);
+			Ogre::Viewport* vp = tex->getBuffer()->getRenderTarget()->getViewport(0);
+			vp->setBackgroundColour(Ogre::ColourValue::White);
+			vp->setClearEveryFrame(true);
+		}
+
+		m_pSceneMgr->addListener(&shadowCameraUpdater);
 	}
+
+	g_pListenerCamera = m_player->getCamera()->getOgreCamera();
 
 	// Load the physical contents of the scene
 	this->loadStage();
@@ -380,6 +394,44 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 	case OIS::KC_N:
 		m_profile->nextStage();
 		m_state = STATE_LOADING_NEXT_STAGE;
+		break;
+
+	case OIS::KC_O:
+		{
+			static bool ssao = false;
+
+			ssao = !ssao;
+
+			m_pCompositor->setEnabled(COMPOSITOR_SSAO, ssao);
+		}
+		break;
+
+	case OIS::KC_J:
+		{
+			static int index = 0;
+
+			std::string name = "light" + Ogre::StringConverter::toString(++index);
+            Ogre::Light *light = m_pSceneMgr->createLight(name);
+
+            light->setDiffuseColour(Ogre::ColourValue::White);//Ogre::ColourValue(r, g, b));
+            light->setSpecularColour(Ogre::ColourValue::White);//Ogre::ColourValue(r, g, b));
+
+            light->setDirection(Ogre::Vector3(0, 0, -1));
+
+            light->setType(Ogre::Light::LT_SPOTLIGHT);
+            light->setSpotlightInnerAngle(Ogre::Degree(5));
+            light->setSpotlightOuterAngle(Ogre::Degree(20));
+			light->setSpotlightFalloff(1.0);
+			//light->setCustomShadowCameraSetup(Ogre::ShadowCameraSetupPtr(new Ogre::FocusedShadowCameraSetup()));
+
+            light->setAttenuation(500, 0.5, 0, 0); // meter range.  the others our shader ignores
+
+            Ogre::SceneNode *node =
+               m_pSceneMgr->getRootSceneNode()->createChildSceneNode(name + "Node");
+            node->setPosition(m_player->getPosition());
+            node->setOrientation(m_player->getCamera()->getYawNode()->getOrientation() * m_player->getCamera()->getPitchNode()->getOrientation());
+            node->attachObject(light);
+		}
 		break;
 
 	case OIS::KC_V:
@@ -666,9 +718,9 @@ void GameState::update(double timeSinceLastFrame)
 			m_hydraxCamera->setOrientation(m_player->getCamera()->getYawNode()->getOrientation() * m_player->getCamera()->getPitchNode()->getOrientation());
 
 			m_hydrax->update(timeSinceLastFrame / 1024.0);
-			m_hydrax->setSunPosition(m_player->getPosition() + m_skyXController->getSunDirection() * m_skyX->getMeshManager()->getSkydomeRadius(m_hydraxCamera) * 0.5);
 
 			if(m_skyXInitialised){
+				m_hydrax->setSunPosition(m_player->getPosition() + m_skyXController->getSunDirection() * m_skyX->getMeshManager()->getSkydomeRadius(m_hydraxCamera) * 0.5);
 				printf("Time %.2f\n", m_skyXController->getTime().x);
 				// 21:30 = sunset
 			}

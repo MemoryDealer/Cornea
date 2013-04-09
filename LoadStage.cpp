@@ -95,6 +95,7 @@ void GameState::loadStage(void)
 			scene->translate(0, 200.0, 0);
 			scene->setInheritScale(true);
 			scene->scale(7.0, 7.0, 7.0);
+			//scene->scale(0.5, 0.5, 0.5);
 
 			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 		}

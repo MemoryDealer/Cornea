@@ -775,7 +775,19 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -I believe the reason I have to load the filler text first is because the font must be loaded at least once for any others to work. Not sure why.
 
 #3/24/13
+
 -Added Glasses class which simply switches a gaussian blur compositor on and off, it is held by the Player class.
+
+#3/30/13
+-Fixed a silly error with the hydrax update code in GameState trying to access SkyX without checking if it's initialised.
+-Tried to add SSAO compositor but it isn't working even with the listener set up properly. 
+
+#4/8/13
+-Testing some performance in release mode, the frame drops to below 60 when using several spotlights with shadow FSAA set to 4 and texture size 1024 (num=4). However, 
+	reduced FSAA to 0 and size to 256 and it seemed fine.
+-Also, making these changes seems to reduce the ugly edges of the shadows--it's the texture size.
+-Created more Light dynamic objects, got a PulseLight working, which uses a sine function to pulse the colour, which creates a fade effect.
+-I was setting the inner/outer range of the Light object spotlight with radians and not degrees, so this screwed up the shadows.
 
 #TODO  
 -TREASURE.

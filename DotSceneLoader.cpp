@@ -947,7 +947,9 @@ void DotSceneLoader::processData(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode*
 	default:
 		break;
 
-	case DynamicObject::TYPE_LIGHT:
+	case DynamicObject::TYPE_STATIC_LIGHT:
+	case DynamicObject::TYPE_PULSE_LIGHT:
+	case DynamicObject::TYPE_FLICKER_LIGHT:
 		this->processDynamicLight(XMLNode, pParent);
 		break;
 
@@ -990,11 +992,28 @@ void DotSceneLoader::processDynamicLight(rapidxml::xml_node<>* XMLNode, Ogre::Sc
 	data->type = this->parseNodeValue(XMLNode, "type");
 	data->range = this->parseNodeValue(XMLNode, "range");
 	data->shadows = this->parseNodeBoolValue(XMLNode, "shadows");
+	data->colour = this->parseNodeColourValue(XMLNode, "colour");
+	data->hideNode = this->parseNodeBoolValue(XMLNode, "hideObject");
 
 	// Spotlight
 	if(data->type == 0){
 		data->inner = this->parseNodeValue(XMLNode, "inner");
 		data->outer = this->parseNodeValue(XMLNode, "outer");
+	}
+
+	// Process variations of light (inefficient due to finding type again)
+	int type = DynamicObject::findType(pParent);
+	switch(type){
+	default:
+		break;
+
+	case DynamicObject::TYPE_PULSE_LIGHT:
+		data->buffer = this->parseNodeValue(XMLNode, "speed");
+		break;
+
+	case DynamicObject::TYPE_FLICKER_LIGHT:
+
+		break;
 	}
 
 	pParent->setUserAny(Ogre::Any(data));
@@ -1060,7 +1079,7 @@ void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNo
 	case TRIGGER_ACTION_CODE::ACTION_DISPLAY_TEXT:
 		data->trigger.str = this->parseNodeStrValue(XMLNode, "text");
 		data->trigger.x	= static_cast<int>(this->parseNodeValue(XMLNode, "textPos"));
-		data->colour = this->parseColour(this->parseNodeStrValue(XMLNode, "textColour"));
+		data->colour = this->parseNodeColourValue(XMLNode, "textColour");
 		break;
 	}
 
@@ -1296,6 +1315,17 @@ bool DotSceneLoader::parseNodeBoolValue(rapidxml::xml_node<>* XMLNode, const cha
 		return this->getAttribBool(pElement, VALUE);
 
 	return false;
+}
+
+//================================================//
+
+Ogre::ColourValue DotSceneLoader::parseNodeColourValue(rapidxml::xml_node<>* XMLNode, const char* name)
+{
+	rapidxml::xml_node<>* pElement = XMLNode->first_node(name);
+	if(pElement)
+		return Ogre::StringConverter::parseColourValue(this->getAttrib(pElement, VALUE), Ogre::ColourValue::White);
+
+	return Ogre::ColourValue::White;
 }
 
 //================================================//
