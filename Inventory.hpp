@@ -15,16 +15,33 @@ public:
 	Inventory(void);
 	~Inventory(void);
 
+	enum{
+		MAGIC_CUBES = 0,
+
+		END
+	};
+
 	void setDefaults(void);
 
 	// Getter functions
 	const unsigned	getWeapon(unsigned slot) const;
+	
 
 	// Setter functions
 	void			setWeapon(unsigned weapon, unsigned slot);
 
-private:
+	// Modifier functions
+	void addMagicCube(void);
 
+	const unsigned int getCount(int type);
+
+private:
+	void newXor(unsigned int index);
+
+	unsigned int m_xor[10];
+
+	// Collectible items
+	unsigned int m_magicCubes;
 
 	// Weapons
 	int		m_weapons[4];

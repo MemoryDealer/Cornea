@@ -119,6 +119,7 @@
     <ClInclude Include="Profile.hpp" />
     <ClInclude Include="Projectile.hpp" />
     <ClInclude Include="rapidxml.hpp" />
+    <ClInclude Include="RetrievableItems.hpp" />
     <ClInclude Include="Settings.hpp" />
     <ClInclude Include="SharedData.hpp" />
     <ClInclude Include="SkyX\AtmosphereManager.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Listeners.cpp" />
     <ClCompile Include="LoadStage.cpp" />
+    <ClCompile Include="MagicCube.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeleeWeapons.cpp" />
     <ClCompile Include="MenuState.cpp" />

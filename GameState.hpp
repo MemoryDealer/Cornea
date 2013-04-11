@@ -19,6 +19,7 @@
 #include "NPC.hpp"
 #include "SharedData.hpp"
 #include "Listeners.hpp"
+#include "Settings.hpp"
 
 //================================================//
 

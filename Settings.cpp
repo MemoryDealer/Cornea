@@ -13,7 +13,7 @@ Settings::Settings(void)
 	Ogre::ConfigFile cfg;
 	if(configFileExists){
 		cfg.loadDirect("config.ini");
-		
+		return;
 	}
 	
 	// Temp. settings
@@ -24,6 +24,8 @@ Settings::Settings(void)
 
 	graphics.sky = MEDIUM;
 	graphics.water = MEDIUM;
+
+	this->setDefaultControls();
 }
 
 //================================================//
@@ -55,6 +57,19 @@ void Settings::setPreset(int preset)
 
 		break;
 	}
+}
+
+//================================================//
+
+void Settings::setDefaultControls(void)
+{
+	// Movement
+	controls.keys[KEY::MOVE_FORWARD]	= OIS::KC_W;
+	controls.keys[KEY::MOVE_LEFT]		= OIS::KC_A;
+	controls.keys[KEY::MOVE_BACKWARD]	= OIS::KC_S;
+	controls.keys[KEY::MOVE_RIGHT]		= OIS::KC_D;
+
+	controls.keys[KEY::ACTION]			= OIS::KC_E;
 }
 
 //================================================//

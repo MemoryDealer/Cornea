@@ -4,10 +4,12 @@
 
 //================================================//
 
-Player::Player(Ogre::SceneManager* mgr)
+Player::Player(Ogre::SceneManager* mgr, Profile* profile)
 {
 	// Set the scene manager pointer
 	m_pSceneMgr = mgr;
+
+	m_pProfile = profile;
 
 	// Create the camera
 	m_pCamera = new Sparks::Camera(m_pSceneMgr, 90000);
@@ -48,10 +50,27 @@ void Player::action(EventManager* eventManager)
 			if((*itr)->getSceneNode() == rayhit->node){
 				if(rayhit->distance <= m_actionRange){
 					(*itr)->send(DynamicObject::ARG_ACTION);
+
+					if((*itr)->isRetrievable()){
+						(*itr)->retrieve();
+						this->processRetrieval((*itr));
+					}
 					break;
 				}
 			}
 		}
+	}
+}
+
+//================================================//
+
+void Player::processRetrieval(DynamicObject* object)
+{
+	printf("Typeid: %s\n", typeid(*object).name());
+
+	// Determine type of object
+	if(typeid(*object) == typeid(MagicCube)){
+		m_pProfile->getInventory().addMagicCube();
 	}
 }
 

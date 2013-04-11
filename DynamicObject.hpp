@@ -21,6 +21,8 @@ class Switch;
 /* A class for interactive/moving objects in the world */
 class DynamicObject{
 public:
+
+	// Data structures for dynamic objects
 	typedef struct{
 
 		struct{
@@ -88,6 +90,8 @@ public:
 		TYPE_PULSE_LIGHT,
 		TYPE_FLICKER_LIGHT,
 
+		TYPE_MAGIC_CUBE,
+
 		END
 	};
 
@@ -107,12 +111,15 @@ public:
 	virtual unsigned recv(void);
 	virtual unsigned recv(unsigned arg);
 
-	// Data
+	// Data functions
 	DYNAMIC_OBJECT_DATA* getData(void) const;
 	virtual void deleteData(void);
 
 	void setUserData(int n, void* data);
 	void freeUserData(void);
+
+	// Misc. functions
+	virtual void retrieve(void);
 
 	// Some virtual functions to be used by children
 	virtual void setupAnimation(void){}
@@ -126,6 +133,8 @@ public:
 	const bool isActive(void) const;
 	const unsigned getState(void) const;
 	Ogre::SceneNode* getSceneNode(void) const;
+	const bool isRetrievable(void) const;
+	const bool isRetrieved(void) const;
 
 	static int findType(Ogre::SceneNode* node);
 
@@ -150,7 +159,9 @@ protected:
 	Ogre::SceneManager* m_pSceneMgr;
 	Ogre::SceneNode*	m_pSceneNode;
 	btCollisionObject*  m_collisionObject;
-	Ogre::Vector3		m_position;
+
+	bool				m_retrievable;
+	bool				m_retrieved;
 
 	bool				m_needsUpdate;
 	Ogre::Real			m_updateRange;
@@ -178,6 +189,12 @@ inline const unsigned DynamicObject::getState(void) const
 
 inline Ogre::SceneNode* DynamicObject::getSceneNode(void) const
 { return m_pSceneNode; }
+
+inline const bool DynamicObject::isRetrievable(void) const
+{ return m_retrievable; }
+
+inline const bool DynamicObject::isRetrieved(void) const
+{ return m_retrieved; }
 
 inline void DynamicObject::activate(void)
 { m_state = STATE_ACTIVATED; }
@@ -264,6 +281,9 @@ protected:
 
 inline void Switch::setLinkedObject(DynamicObject* obj)
 { m_linkedObject = obj; m_linked = true; }
+
+//================================================//
+
 
 //================================================//
 

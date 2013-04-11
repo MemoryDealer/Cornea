@@ -60,6 +60,29 @@ private:
 
 //================================================//
 
+class FlickerLight: public Light
+{
+public:
+	FlickerLight(void);
+
+	void initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node);
+
+	void update(double timeSinceLastFrame);
+
+	enum{
+		TYPE_FLICKER_NORMAL = 0,
+		TYPE_FLICKER_SLOW,
+		TYPE_FLICKER_FAST
+	};
+
+private:
+	Ogre::Real		m_speed;
+	Ogre::Timer*	m_pTimer;
+	int				m_type;
+};
+
+//================================================//
+
 #endif
 
 //================================================//

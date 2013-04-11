@@ -128,5 +128,29 @@ void PulseLight::update(double timeSinceLastFrame)
 }
 
 //================================================//
+//================================================//
+
+FlickerLight::FlickerLight(void)
+{
+
+}
+
+//================================================//
+
+void FlickerLight::initLight(Ogre::SceneManager* mgr, Ogre::SceneNode* node)
+{
+	Light::initLight(mgr, node);
+
+	if(m_dataLoaded){
+
+	}
+}
+
+//================================================//
+
+void FlickerLight::update(double timeSinceLastFrame)
+{
+	// turn on and off
+}
 
 //================================================//

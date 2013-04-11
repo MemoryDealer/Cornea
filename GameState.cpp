@@ -250,12 +250,46 @@ void GameState::preloadMeshData(void)
 
 bool GameState::keyPressed(const OIS::KeyEvent& arg)
 {
+	Settings& settings = Settings::getSingleton();
+
 	if(m_state != STATE_ACTIVE){
 		return true;
 	}
 
+	// Test for GUI injection and return???
+
+	// Switch cases can't use run-time values since the compiler generates a jump table
+	// Custom controls
+	
+	// Movement
+	if(arg.key == settings.controls.keys[Settings::KEY::MOVE_FORWARD]){
+		if(!m_player->getCamera()->m_moveForwardsPressed){
+			m_player->getCamera()->m_moveForwardsPressed = true;
+		}
+	}
+	else if(arg.key == settings.controls.keys[Settings::KEY::MOVE_BACKWARD]){
+		if(!m_player->getCamera()->m_moveBackwardsPressed){
+			m_player->getCamera()->m_moveBackwardsPressed = true;
+		}
+	}
+	else if(arg.key == settings.controls.keys[Settings::KEY::MOVE_LEFT]){
+		if(!m_player->getCamera()->m_moveLeftPressed){
+			m_player->getCamera()->m_moveLeftPressed = true;
+		}
+	}
+	else if(arg.key == settings.controls.keys[Settings::KEY::MOVE_RIGHT]){
+		if(!m_player->getCamera()->m_moveRightPressed){
+			m_player->getCamera()->m_moveRightPressed = true;
+		}
+	}
+
+	// Actions
+	else if(arg.key == settings.controls.keys[Settings::KEY::ACTION]){
+		m_player->action(m_pEventManager);
+	}
+
 	switch(arg.key){
-	case OIS::KC_W:
+	/*case OIS::KC_W:
 		if(!m_player->getCamera()->m_moveForwardsPressed){
 			m_player->getCamera()->m_moveForwardsPressed = true;
 		}
@@ -277,6 +311,10 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		if(!m_player->getCamera()->m_moveRightPressed){
 			m_player->getCamera()->m_moveRightPressed = true;
 		}
+		break;*/
+
+	case OIS::KC_X:
+		printf("Magic Cube Count: %d\n", m_profile->getInventory().getCount(Inventory::MAGIC_CUBES));
 		break;
 
 	case OIS::KC_SPACE:
@@ -286,9 +324,9 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		break;
 
 	// Action key
-	case OIS::KC_E:
+	/*case OIS::KC_E:
 		m_player->action(m_pEventManager);
-		break;
+		break;*/
 
 	// Keys for switching boots
 	case OIS::KC_1:
@@ -536,12 +574,38 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 bool GameState::keyReleased(const OIS::KeyEvent& arg)
 {
+	Settings& settings = Settings::getSingleton();
+
 	if(m_state != STATE_ACTIVE){
 		return true;
 	}
 
+	// Custom controls
+
+	// Movement
+	if(arg.key == settings.controls.keys[Settings::KEY::MOVE_FORWARD]){
+		if(m_player->getCamera()->m_moveForwardsPressed){
+			m_player->getCamera()->m_moveForwardsPressed = false;
+		}
+	}
+	else if(arg.key == settings.controls.keys[Settings::KEY::MOVE_BACKWARD]){
+		if(m_player->getCamera()->m_moveBackwardsPressed){
+			m_player->getCamera()->m_moveBackwardsPressed = false;
+		}
+	}
+	else if(arg.key == settings.controls.keys[Settings::KEY::MOVE_LEFT]){
+		if(m_player->getCamera()->m_moveLeftPressed){
+			m_player->getCamera()->m_moveLeftPressed = false;
+		}
+	}
+	else if(arg.key == settings.controls.keys[Settings::KEY::MOVE_RIGHT]){
+		if(m_player->getCamera()->m_moveRightPressed){
+			m_player->getCamera()->m_moveRightPressed = false;
+		}
+	}
+
 	switch(arg.key){
-		case OIS::KC_W:
+		/*case OIS::KC_W:
 		if(m_player->getCamera()->m_moveForwardsPressed){
 			m_player->getCamera()->m_moveForwardsPressed = false;
 		}
@@ -563,7 +627,7 @@ bool GameState::keyReleased(const OIS::KeyEvent& arg)
 		if(m_player->getCamera()->m_moveRightPressed){
 			m_player->getCamera()->m_moveRightPressed = false;
 		}
-		break;
+		break;*/
 
 	case OIS::KC_SPACE:
 		if(m_player->getCamera()->m_spacePressed){
@@ -751,7 +815,7 @@ void GameState::update(double timeSinceLastFrame)
 			this->createLoadingGUI();
 
 			// Init player so we can use the camera
-			m_player = new Player(m_pSceneMgr);
+			m_player = new Player(m_pSceneMgr, m_profile);
 
 			// Init player items
 			m_player->initFlashlight();
@@ -830,7 +894,7 @@ void GameState::update(double timeSinceLastFrame)
 
 			this->createLoadingGUI();
 
-			m_player = new Player(m_pSceneMgr);
+			m_player = new Player(m_pSceneMgr, m_profile);
 			
 			// Init player items
 			m_player->initFlashlight();

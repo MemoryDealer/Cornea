@@ -24,15 +24,18 @@
 #include "Flashlight.hpp"
 #include "Glasses.hpp"
 
+#include "Profile.hpp"
+
 //================================================//
 
 class Player
 {
 public:
-	Player(Ogre::SceneManager* mgr);
+	Player(Ogre::SceneManager* mgr, Profile* profile);
 	~Player(void);
 
 	void action(EventManager* eventManager);
+	void processRetrieval(DynamicObject* object);
 
 	// Flashlight
 	void initFlashlight(void);
@@ -60,6 +63,8 @@ protected:
 
 	// Camera
 	Sparks::Camera*			m_pCamera;
+
+	Profile*				m_pProfile;
 
 	Flashlight*				m_pFlashlight;
 	Glasses*				m_pGlasses;

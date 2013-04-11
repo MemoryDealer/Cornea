@@ -6,10 +6,11 @@
 
 DynamicObject::DynamicObject(void)
 {
-	m_position = Ogre::Vector3::ZERO;
 	m_state = STATE_IDLE;
 	m_needsUpdate = true;
 	m_updateRange = 20000.0;
+
+	m_retrievable = m_retrieved = false;
 	
 	m_hasSound = false;
 
@@ -32,9 +33,6 @@ void DynamicObject::init(Ogre::SceneNode* node, btCollisionObject* colObj)
 {
 	m_pSceneNode = node;
 	m_collisionObject = colObj;
-
-	// Set position vector
-	m_position = m_pSceneNode->getPosition();
 }
 
 //================================================//
@@ -45,11 +43,6 @@ void DynamicObject::init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneN
 	m_physics = physics;
 	m_pSceneNode = node;
 	m_collisionObject = colObj;
-
-	// Set position vector
-	m_position = m_pSceneNode->getPosition();
-
-	// Init
 }
 
 //================================================//
@@ -165,6 +158,17 @@ void DynamicObject::freeUserData(void)
 
 //================================================//
 
+void DynamicObject::retrieve(void)
+{
+	// Mark object for removal and delete the scene node
+	m_retrieved = true;
+
+	m_physics->getWorld()->removeCollisionObject(m_collisionObject);
+	m_pSceneNode->detachAllObjects();
+}
+
+//================================================//
+
 int DynamicObject::findType(Ogre::SceneNode* node)
 {
 	const char* name = node->getName().c_str();
@@ -190,6 +194,9 @@ int DynamicObject::findType(Ogre::SceneNode* node)
 		return TYPE_PULSE_LIGHT;
 	if(strstr(name, "_FLight_"))
 		return TYPE_FLICKER_LIGHT;
+
+	if(strstr(name, "_MagicCube_"))
+		return TYPE_MAGIC_CUBE;
 
 	return -1;
 }

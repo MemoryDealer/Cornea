@@ -115,6 +115,12 @@
     <Filter Include="Source Files\Game\Listeners">
       <UniqueIdentifier>{d24f2c6c-b2e9-476e-9a1b-8b58dec2f853}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Items\Retrievable">
+      <UniqueIdentifier>{a48eaa5e-c114-473a-9e52-093d196ccbef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Items\Retrievable">
+      <UniqueIdentifier>{2b1f8919-55ba-4e01-8260-c9648003226e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp">
@@ -324,6 +330,9 @@
     <ClInclude Include="Light.hpp">
       <Filter>Header Files\Game\WorldObjects</Filter>
     </ClInclude>
+    <ClInclude Include="RetrievableItems.hpp">
+      <Filter>Header Files\Game\Items\Retrievable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -460,6 +469,9 @@
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Source Files\Game\WorldObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="MagicCube.cpp">
+      <Filter>Source Files\Game\Items\Retrievable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

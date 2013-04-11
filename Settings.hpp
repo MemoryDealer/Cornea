@@ -17,6 +17,9 @@ public:
 	~Settings(void);
 
 	void setPreset(int preset);
+	void setDefaultControls(void);
+
+	static const int KEYMAP_SIZE = 100;
 
 	// Graphics
 	struct graphics_t{
@@ -47,6 +50,22 @@ public:
 		} sound;
 	} audio;
 
+	// Controls
+	struct controls_t{
+		unsigned short keys[KEYMAP_SIZE];
+	} controls;
+
+	// Key binding enums
+	enum KEY{
+		ZERO = 0,
+		MOVE_FORWARD,
+		MOVE_LEFT,
+		MOVE_BACKWARD,
+		MOVE_RIGHT,
+		ACTION,
+	};
+
+	// Preset enums
 	enum{
 		LOW = 0,
 		MEDIUM,
@@ -55,7 +74,7 @@ public:
 	};
 
 private:
-
+	
 };
 
 //================================================//

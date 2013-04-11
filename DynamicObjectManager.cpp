@@ -90,6 +90,12 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.back()->initLight(m_pSceneMgr, node);
 
 			return true;
+
+		case DynamicObject::TYPE_MAGIC_CUBE:
+			m_objects.push_back(new MagicCube());
+			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
+
+			return true;
 		}
 		break;
 
@@ -244,9 +250,20 @@ void DynamicObjectManager::update(double timeSinceLastFrame)
 {
 	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
 		itr != m_objects.end();){
+
+		if((*itr)->isRetrievable()){
+			if((*itr)->isRetrieved()){
+				// Delete item from list
+				delete *itr;
+				itr = m_objects.erase(itr);
+				continue;
+			}
+		}
+
 		if((*itr)->needsUpdate()){
 			(*itr)->update(timeSinceLastFrame);
 		}
+
 		++itr;
 	}
 }

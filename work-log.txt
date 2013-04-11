@@ -789,6 +789,22 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -Created more Light dynamic objects, got a PulseLight working, which uses a sine function to pulse the colour, which creates a fade effect.
 -I was setting the inner/outer range of the Light object spotlight with radians and not degrees, so this screwed up the shadows.
 
+#4/10/13
+-Made a key binding functionality in the Settings class. It's just an array with enums to access each key. I don't think it needs to be more complicated by using
+	std::map, etc. It works well enough, just need to add the ability to save it to a file and change them with an options menu. 
+-So today I learned that if you want to get the typeid of a derived class you must dereference the pointer itself, i.e. typeid(*DynamicObjectPtr).
+-Added the ability to "retrieve" a dynamic object. It's simply a boolean in the DynamicObject class, which is checked before allowing the player to retrieve it. Once
+	it is retrieved, the scene node is destroyed, making it disappear, and it is removed from DynamicObjectManager's list (during its update loop, it checks a retrieved 
+	flag, if it's set, removes it). The player function action() calls Player::processRetrieval(), which finds the object's typeid and carries out the needed action, such as
+	adding to a counter in the inventory. 
+-Created a counter for the MagicCubes in the inventory. Also added an encryption system, to help prevent potential run-time memory hacking. Every important value in the
+	inventory has its own key. This key is saved in memory and used to encrypt and decrypt the value. Every time a value is accessed, its key is changed to a new random
+	value and the value is encrypted with the new key. This can be improved upon later, but I think it's a fairly decent and simple system.
+
+TODO:
+-Get a working key binding thing
+-Create an inventory and an object that can be picked up
+
 #TODO  
 -TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  

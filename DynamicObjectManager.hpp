@@ -7,6 +7,7 @@
 
 #include "stdafx.h"
 #include "DynamicObject.hpp"
+#include "RetrievableItems.hpp"
 #include "Doors.hpp"
 #include "Light.hpp"
 #include "Trigger.hpp"
