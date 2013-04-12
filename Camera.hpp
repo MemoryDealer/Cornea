@@ -43,7 +43,7 @@ public:
 	void init(Physics* physics);
 
 	void update(double timeSinceLastFrame);
-	void setPosition(Ogre::Vector3 pos);
+	
 	void moveFirstPerson(double timeSinceLastFrame);
 	void updateJump(double timeSinceLastFrame); // MOVE THIS AND OTHERS TO PRIVATE
 	void moveSpectator(double timeSinceLastFrame);	
@@ -58,6 +58,8 @@ public:
 	// Setter functions
 	void setMode(unsigned mode);
 	void setMaxVelocity(Ogre::Real maxVelocity);
+	void setPosition(Ogre::Vector3 pos);
+	void setOrientation(Ogre::Quaternion q);
 	
 	// Getter functions
 	Ogre::Camera*		getOgreCamera(void) const;

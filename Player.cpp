@@ -34,6 +34,18 @@ Player::~Player(void)
 
 //================================================//
 
+void Player::spawn(Ogre::SceneNode* node)
+{
+	this->setPosition(node->_getDerivedPosition());
+
+	// Rotate to face the direction of the cone's point
+	m_pCamera->getYawNode()->yaw(Ogre::Radian((Ogre::Math::PI / 2.0)));
+
+	node->detachAllObjects();
+}
+
+//================================================//
+
 void Player::action(EventManager* eventManager)
 {
 	Rayhit* rayhit = m_pCamera->getNegativeZRayhit();

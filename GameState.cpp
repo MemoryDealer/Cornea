@@ -794,10 +794,10 @@ void GameState::update(double timeSinceLastFrame)
 		m_pEventManager->update(timeSinceLastFrame);
 
 		// Update UI
-		updateUI();
+		this->updateUI();
 
 		// Update physics
-		updateBullet(timeSinceLastFrame);
+		this->updateBullet(timeSinceLastFrame);
 
 		// Update TextRenderer
 		TextRenderer::getSingletonPtr()->update(timeSinceLastFrame);
@@ -860,6 +860,10 @@ void GameState::update(double timeSinceLastFrame)
 			break;
 
 		case STEP_FINAL:
+			if(m_pSceneMgr->hasSceneNode("PlayerSpawn")){
+				m_player->spawn(m_pSceneMgr->getSceneNode("PlayerSpawn"));
+			}
+
 			// Final steps before game begins
 			m_player->setWeapon(m_profile->getInventory().getWeapon(0), m_pEventManager);
 			m_GUILoadingLayer->setVisible(false);

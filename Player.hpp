@@ -34,6 +34,7 @@ public:
 	Player(Ogre::SceneManager* mgr, Profile* profile);
 	~Player(void);
 
+	void spawn(Ogre::SceneNode* node);
 	void action(EventManager* eventManager);
 	void processRetrieval(DynamicObject* object);
 
@@ -52,6 +53,8 @@ public:
 
 	// Setter functions
 	void setWeapon(unsigned weapon, EventManager* pEventManager);
+	void setPosition(const Ogre::Vector3 pos);
+	void setOrientation(const Ogre::Quaternion q);
 
 	void update(double timeSinceLastFrame);
 
@@ -94,6 +97,12 @@ inline Flashlight* Player::getFlashlight(void) const
 
 inline Glasses* Player::getGlasses(void) const
 { return m_pGlasses; }
+
+inline void Player::setPosition(const Ogre::Vector3 pos)
+{ m_pCamera->setPosition(pos); }
+
+inline void Player::setOrientation(const Ogre::Quaternion q)
+{ m_pCamera->setOrientation(q); }
 
 //================================================//
 

@@ -231,6 +231,8 @@ void registerAllEntitiesAsColliders(SceneManager* sceneMgr, btCollisionWorld* co
     while(i.hasMoreElements()) {
         Entity* entity = static_cast<Entity*>(i.getNext());
 
+		printf("Processing %s\n", entity->getParentSceneNode()->getName().c_str());
+
 		Ogre::StringUtil strUtil;
 		if(strUtil.startsWith(entity->getParentSceneNode()->getName(), "$", false)){
 			switch(entity->getParentSceneNode()->getName()[1]){

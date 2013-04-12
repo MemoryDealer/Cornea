@@ -801,9 +801,11 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 	inventory has its own key. This key is saved in memory and used to encrypt and decrypt the value. Every time a value is accessed, its key is changed to a new random
 	value and the value is encrypted with the new key. This can be improved upon later, but I think it's a fairly decent and simple system.
 
-TODO:
--Get a working key binding thing
--Create an inventory and an object that can be picked up
+#4/11/13
+-I could reduce the amount of times I pass the scene manager pointer by using getCreator() on a scene node. 
+-Cleaned up misc. things.
+-Added the function Player::spawn() which places the player at the location of the "PlayerSpawn" scene node. This scene node should be represented in Blender with a 
+	cone, in which the point faces where the player will face. 
 
 #TODO  
 -TREASURE.

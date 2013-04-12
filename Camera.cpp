@@ -125,8 +125,6 @@ void Camera::createRigidBody(void)
 	m_btCamera->setDamping(0.4, 0.4);
 	m_btCamera->setAngularFactor(btVector3(0, 0, 0));
 
-	//m_btCamera->setCollisionFlags(m_btCamera->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
-
 	// this will prevent the camera from falling through elevators when they "take off"
 	m_btCamera->setActivationState(DISABLE_DEACTIVATION);
 
@@ -136,7 +134,6 @@ void Camera::createRigidBody(void)
 	m_btCamera->setGravity(m_defGravity);
 
 	// add the rigid body to the dynamics world
-	//Base::getSingletonPtr()->m_btWorld->addRigidBody(m_btCamera);
 	m_physics->setCameraBody(m_btCamera);
 }
 
@@ -206,6 +203,15 @@ void Camera::setPosition(Ogre::Vector3 pos)
 {
 	btTransform transform = m_btCamera->getWorldTransform();
 	transform.setOrigin(btVector3(pos.x, pos.y, pos.z));
+	m_btCamera->setWorldTransform(transform);
+}
+
+//================================================//
+
+void Camera::setOrientation(Ogre::Quaternion q)
+{
+	btTransform transform = m_btCamera->getWorldTransform();
+	transform.setRotation(btQuaternion(q.x, q.y, q.z, q.w));
 	m_btCamera->setWorldTransform(transform);
 }
 
@@ -495,11 +501,6 @@ void Camera::pitch(Ogre::Degree x)
 	Ogre::Radian amount(x * -m_rotateSpeed); // * Profile::sensitivity * Profile::inverted
 
 	m_pCameraPitchNode->pitch(amount);
-
-	//m_pCamera->pitch(amount);
-
-	//m_pCameraPitchNode->pitch(-amount);
-	//m_pCameraNode->setOrientation(m_pCamera->getOrientationForViewUpdate());
 }
 
 //================================================//
@@ -509,15 +510,6 @@ void Camera::yaw(Ogre::Degree y)
 	Ogre::Radian amount(y * -m_rotateSpeed);
 
 	m_pCameraYawNode->yaw(amount);
-
-	//m_pCamera->yaw(amount);
-	//m_pCameraNode->yaw(amount, Ogre::Node::TS_PARENT);
-
-	//m_pCameraYawNode->yaw(-amount);
-	//m_pCameraNode->setOrientation(m_pCamera->getOrientationForViewUpdate());
-
-	// try simple grid instead
-	// or move camera to one node
 }
 
 //================================================//
