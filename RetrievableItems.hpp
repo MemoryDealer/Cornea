@@ -14,6 +14,8 @@ class MagicCube : public DynamicObject
 public:
 	MagicCube(void);
 
+	void retrieve(void);
+
 	void update(double timeSinceLastFrame);
 
 private:

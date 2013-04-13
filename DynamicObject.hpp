@@ -11,6 +11,7 @@
 #include "Base.hpp"
 #include "Sparks.hpp"
 #include "Camera.hpp"
+#include "Sound.hpp"
 	
 //================================================//
 
@@ -167,8 +168,7 @@ protected:
 	Ogre::Real			m_updateRange;
 	unsigned			m_state;
 	
-	FMOD::Sound*		m_sound;
-	FMOD::Channel*		m_soundChannel;
+	Sound*				m_pSound;
 	bool				m_hasSound;
 
 	Physics*			m_physics;

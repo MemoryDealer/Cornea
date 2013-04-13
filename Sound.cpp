@@ -11,9 +11,21 @@ Sound::Sound(void)
 
 //================================================//
 
+Sound::Sound(unsigned type, Ogre::Vector3 pos)
+{
+	m_loaded = false;
+
+	this->init(type, pos);
+}
+
+//================================================//
+
 Sound::~Sound(void)
 {
-
+	if(m_loaded){
+		m_sound->release();
+		
+	}
 }
 
 //================================================//
@@ -37,6 +49,17 @@ void Sound::init(unsigned type, Ogre::Vector3 pos)
 		file = "D:/Sounds/magnum.mp3";
 		m_mode = FMOD_2D;
 		break;
+
+	case TYPE_RETRIEVE_MAGIC_CUBE:
+		file = "D:/Sounds/click.wav";
+		m_mode = FMOD_2D;
+		break;
+
+
+	case TYPE_MUSIC_MAIN_MENU:
+		file = "D:/Sounds/menu.mp3";
+		m_mode = FMOD_2D;
+		break;
 	}
 
 	FMOD_RESULT res = Base::getSingletonPtr()->m_soundSystem->createSound(file, m_mode, 0, &m_sound);
@@ -50,7 +73,12 @@ void Sound::init(unsigned type, Ogre::Vector3 pos)
 		m_channel->set3DAttributes(&fPos, &fVel);
 	}
 
-	m_loaded = true;
+	if(res == FMOD_OK)
+		m_loaded = true;
+	else
+#ifdef _DEBUG
+		printf("Failed to load sound %s\n", file);
+#endif
 }
 
 //================================================//
@@ -59,13 +87,6 @@ void Sound::play(Ogre::Vector3 pos)
 {
 	if(m_loaded)
 		Base::getSingletonPtr()->m_soundSystem->playSound(FMOD_CHANNEL_FREE, m_sound, false, &m_channel);
-}
-
-//================================================//
-
-void Sound::stop(void)
-{
-
 }
 
 //================================================//

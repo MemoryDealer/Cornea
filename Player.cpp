@@ -21,6 +21,9 @@ Player::Player(Ogre::SceneManager* mgr, Profile* profile)
 
 	// How close a player should be to trigger an action
 	m_actionRange = 45.0;
+
+	// Load sounds
+	m_pSoundRetrieve = new Sound(Sound::TYPE_RETRIEVE_MAGIC_CUBE);
 }
 
 //================================================//
@@ -30,6 +33,9 @@ Player::~Player(void)
 	if(m_pCamera != nullptr) delete m_pCamera;
 	if(m_pWeapon != nullptr) delete m_pWeapon;
 	if(m_pFlashlight != nullptr) delete m_pFlashlight;
+
+	// Free sounds
+	delete m_pSoundRetrieve;
 }
 
 //================================================//
@@ -83,6 +89,7 @@ void Player::processRetrieval(DynamicObject* object)
 	// Determine type of object
 	if(typeid(*object) == typeid(MagicCube)){
 		m_pProfile->getInventory().addMagicCube();
+		m_pSoundRetrieve->play();
 	}
 }
 

@@ -12,6 +12,13 @@ MagicCube::MagicCube(void)
 
 //================================================//
 
+void MagicCube::retrieve(void)
+{
+	DynamicObject::retrieve();
+}
+
+//================================================//
+
 void MagicCube::update(double timeSinceLastFrame)
 {
 

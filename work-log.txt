@@ -807,6 +807,12 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -Added the function Player::spawn() which places the player at the location of the "PlayerSpawn" scene node. This scene node should be represented in Blender with a 
 	cone, in which the point faces where the player will face. 
 
+#4/12/13
+-Added main menu music as a test. 
+-Added a sound when the magic cubes are picked up. At first, I had it in the DynamicObject itself, but it gets deleted and therefor the Sound object is deleted and
+	it never got played. So I put a Sound object in Player and the processRetrieval() function plays the sound. I may end up using a stack here if more sounds are needed
+	and just allocate sounds in that function and push them on the stack. 
+
 #TODO  
 -TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  
@@ -815,5 +821,4 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -Change the resource group loading...only load what's necessary for the current state. 
 -Ladder climbing--use ground trigger or forward ray. 
 -Fix weapon switching fire rate glitch. 
--"Glasses" feature.
 -For vectors that may become large, implement sorting and binary searching.  http://en.cppreference.com/w/cpp/algorithm/binary_search http://www.cplusplus.com/reference/algorithm/sort/

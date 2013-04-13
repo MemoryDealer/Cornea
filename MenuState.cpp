@@ -31,7 +31,8 @@ void MenuState::enter(void)
 	Base::getSingletonPtr()->m_pViewport->setCamera(m_pCamera);
 
 	// play the menu music
-	// ...
+	m_pMusic = new Sound(Sound::TYPE_MUSIC_MAIN_MENU);
+	//m_pMusic->play();
 
 	// now create the scene
 	createScene();
@@ -50,7 +51,7 @@ void MenuState::exit(void)
 	destroyGUI();
 
 	// release menu music
-	// ...
+	delete m_pMusic;
 
 	// destroy the camera and scene manager
 	m_pSceneMgr->destroyCamera(m_pCamera);
@@ -68,8 +69,8 @@ bool MenuState::pause(void)
 	// Destroy GUI items for now
 	destroyGUI();
 
-	// Pause music
-	m_musicChannel->setPaused(true);
+	// Stop the music when entering the game, so it starts over when going back to main menu
+	m_pMusic->stop();
 
 	return true;
 }
@@ -85,7 +86,7 @@ void MenuState::resume(void)
 	createGUI();
 
 	// Unpause music
-	m_musicChannel->setPaused(false);
+	m_pMusic->setPaused(false);
 
 	// set the camera again
 	Base::getSingletonPtr()->m_pViewport->setCamera(m_pCamera);

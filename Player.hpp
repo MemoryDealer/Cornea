@@ -25,6 +25,7 @@
 #include "Glasses.hpp"
 
 #include "Profile.hpp"
+#include "Sound.hpp"
 
 //================================================//
 
@@ -76,6 +77,8 @@ protected:
 	unsigned				m_nWeapon;
 	Ogre::Real				m_actionRange;
 
+	// Sounds
+	Sound*					m_pSoundRetrieve;
 };
 
 //================================================//

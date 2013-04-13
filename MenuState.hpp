@@ -8,6 +8,7 @@
 #include "AppState.hpp"
 #include "SharedData.hpp"
 #include "GUILayerMenuState.hpp"
+#include "Sound.hpp"
 
 //================================================//
 
@@ -55,10 +56,8 @@ private:
 	int							m_GUIEventId;
 	std::vector<GUILayer*>		m_GUILayers;
 
-
 	// FMOD
-	FMOD::Sound*				m_music;
-	FMOD::Channel*				m_musicChannel;
+	Sound*						m_pMusic;
 
 	// misc.
 	bool						m_bQuit;

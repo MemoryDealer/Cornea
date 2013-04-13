@@ -25,6 +25,10 @@ DynamicObject::DynamicObject(void)
 DynamicObject::~DynamicObject(void)
 {
 	printf("Base Destructor called on %s\n", m_pSceneNode->getName().c_str());
+
+	if(m_hasSound){
+		delete m_pSound;
+	}
 }
 
 //================================================//
@@ -49,17 +53,7 @@ void DynamicObject::init(Ogre::SceneManager* mgr, Physics* physics, Ogre::SceneN
 
 void DynamicObject::initSound(const char* file, bool loop)
 {
-	FMOD_RESULT result = Base::getSingletonPtr()->m_soundSystem->createSound(file, (loop == true) ? (FMOD_3D | FMOD_LOOP_NORMAL) : (FMOD_3D), 0, &m_sound);
-
-	FMOD_VECTOR pos;
-	pos.x = m_pSceneNode->getPosition().x;
-	pos.y = m_pSceneNode->getPosition().y;
-	pos.z = m_pSceneNode->getPosition().z;
-	FMOD_VECTOR vel;
-	memset(&vel, 0, sizeof(vel));
-	m_soundChannel->set3DAttributes(&pos, &vel);
-
-	m_hasSound = true;
+	
 }
 
 //================================================//
@@ -428,7 +422,7 @@ unsigned Switch::send(unsigned arg)
 		m_linkedObject->send(ARG_OVERRIDE); 
 
 		if(m_hasSound)
-			Base::getSingletonPtr()->m_soundSystem->playSound(FMOD_CHANNEL_FREE, m_sound, false, &m_soundChannel);
+			m_pSound->play();
 	}
 
 	return 0;
