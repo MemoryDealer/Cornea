@@ -289,32 +289,13 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 	}
 
 	switch(arg.key){
-	/*case OIS::KC_W:
-		if(!m_player->getCamera()->m_moveForwardsPressed){
-			m_player->getCamera()->m_moveForwardsPressed = true;
-		}
-		break;
-
-	case OIS::KC_S:
-		if(!m_player->getCamera()->m_moveBackwardsPressed){
-			m_player->getCamera()->m_moveBackwardsPressed = true;
-		}
-		break;
-
-	case OIS::KC_A:
-		if(!m_player->getCamera()->m_moveLeftPressed){
-			m_player->getCamera()->m_moveLeftPressed = true;
-		}
-		break;
-
-	case OIS::KC_D:
-		if(!m_player->getCamera()->m_moveRightPressed){
-			m_player->getCamera()->m_moveRightPressed = true;
-		}
-		break;*/
-
 	case OIS::KC_X:
 		printf("Magic Cube Count: %d\n", m_profile->getInventory().getCount(Inventory::MAGIC_CUBES));
+		break;
+
+	case OIS::KC_LSHIFT:
+	case OIS::KC_RSHIFT:
+		m_player->getCamera()->m_shiftPressed = true;
 		break;
 
 	case OIS::KC_SPACE:
@@ -605,29 +586,10 @@ bool GameState::keyReleased(const OIS::KeyEvent& arg)
 	}
 
 	switch(arg.key){
-		/*case OIS::KC_W:
-		if(m_player->getCamera()->m_moveForwardsPressed){
-			m_player->getCamera()->m_moveForwardsPressed = false;
-		}
+	case OIS::KC_LSHIFT:
+	case OIS::KC_RSHIFT:
+		m_player->getCamera()->m_shiftPressed = false;
 		break;
-
-	case OIS::KC_S:
-		if(m_player->getCamera()->m_moveBackwardsPressed){
-			m_player->getCamera()->m_moveBackwardsPressed = false;
-		}
-		break;
-
-	case OIS::KC_A:
-		if(m_player->getCamera()->m_moveLeftPressed){
-			m_player->getCamera()->m_moveLeftPressed = false;
-		}
-		break;
-
-	case OIS::KC_D:
-		if(m_player->getCamera()->m_moveRightPressed){
-			m_player->getCamera()->m_moveRightPressed = false;
-		}
-		break;*/
 
 	case OIS::KC_SPACE:
 		if(m_player->getCamera()->m_spacePressed){
@@ -760,6 +722,9 @@ void GameState::update(double timeSinceLastFrame)
 		break;
 
 	case STATE_ACTIVE:
+		// Update physics
+		this->updateBullet(timeSinceLastFrame);
+
 		// Update player
 		m_player->update(timeSinceLastFrame);
 
@@ -795,9 +760,6 @@ void GameState::update(double timeSinceLastFrame)
 
 		// Update UI
 		this->updateUI();
-
-		// Update physics
-		this->updateBullet(timeSinceLastFrame);
 
 		// Update TextRenderer
 		TextRenderer::getSingletonPtr()->update(timeSinceLastFrame);
@@ -982,7 +944,7 @@ void GameState::updateUI(void)
 			// Check if hit point is an NPC
 			if(strUtil.startsWith(name, "NPC_", false)){
 				std::vector<NPC*> NPCs = m_pEventManager->getNPCManager()->getNPCs();
-
+				
 				if(NPCs.size() > 0){
 					// Find the NPC's scene node
 					for(std::vector<NPC*>::iterator itr = NPCs.begin();
@@ -1007,6 +969,21 @@ void GameState::updateUI(void)
 					}
 				}
 			}
+			// Check for retrievable object
+			else{
+				DynamicObject* object = m_pEventManager->getDynamicObjectManager()->getObject(rayhit->node);
+				if(object != nullptr){
+					if(object->isRetrievable()){
+						m_GUIHudLayer->setOverlayContainerMaterialName(GUIGameState::GUIHudLayer::OVERLAY_RETICULE, 
+									m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_FRIENDLY));
+						npcFound = true;
+					}
+					else{
+						m_GUIHudLayer->setOverlayContainerMaterialName(GUIGameState::GUIHudLayer::OVERLAY_RETICULE, 
+									m_player->getWeapon()->getReticuleMaterialName(Weapon::RETICULE_DEFAULT));
+					}
+				}
+			}
 		}
 	}
 
@@ -1021,7 +998,7 @@ void GameState::updateUI(void)
 void GameState::updateBullet(double timeSinceLastFrame)
 {
 	m_physics->update(timeSinceLastFrame);
-
+	
 	// Update the camera's rigid body
 	if(m_player->getCamera()->getMode() == Sparks::Camera::MODE_FIRST_PERSON){
 		btRigidBody* body = m_player->getCamera()->getRigidBody();

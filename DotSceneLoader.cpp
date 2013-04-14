@@ -943,6 +943,8 @@ void DotSceneLoader::processLightAttenuation(rapidxml::xml_node<>* XMLNode, Ogre
 
 void DotSceneLoader::processData(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
+	printf("Processing data for %s\n", pParent->getName().c_str());
+
 	switch(DynamicObject::findType(pParent)){
 	default:
 		break;
@@ -958,7 +960,7 @@ void DotSceneLoader::processData(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode*
 		{
 			DynamicObjectData* data = this->getData(pParent);
 
-			data->offset = this->parseVector3(this->parseNodeStrValue(XMLNode, "offset"));
+			data->offset = Ogre::StringConverter::parseVector3(this->parseNodeStrValue(XMLNode, "offset"));
 
 			//data->rotationOffset = this->parseQuaternion(pElement);
 
@@ -1147,23 +1149,6 @@ Ogre::Vector3 DotSceneLoader::parseVector3(rapidxml::xml_node<>* XMLNode)
         Ogre::StringConverter::parseReal(XMLNode->first_attribute("y")->value()),
         Ogre::StringConverter::parseReal(XMLNode->first_attribute("z")->value())
     );
-}
-
-//================================================//
-
-Ogre::Vector3 DotSceneLoader::parseVector3(Ogre::String str)
-{
-	// Format: "1.0,0.0,0.0"
-
-	Ogre::StringUtil strUtil;
-	Ogre::StringVector tokens = strUtil.split(str, ",");
-
-	if(tokens.size() == 3){
-		return Ogre::Vector3(
-			Ogre::StringConverter::parseReal(tokens[0]),
-			Ogre::StringConverter::parseReal(tokens[1]),
-			Ogre::StringConverter::parseReal(tokens[2]));
-	}
 }
 
 //================================================//

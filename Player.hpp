@@ -14,18 +14,17 @@
 #include "Boots.hpp"
 #include "EventManager.hpp"
 #include "DynamicObject.hpp"
+#include "TextRenderer.hpp"
+#include "Flashlight.hpp"
+#include "Glasses.hpp"
+#include "Profile.hpp"
+#include "Sound.hpp"
 
 // Weapon/Item headers
 #include "Weapon.hpp"
 #include "MLP.hpp"
 #include "WarpGun.hpp"
 #include "MeleeWeapons.hpp"
-
-#include "Flashlight.hpp"
-#include "Glasses.hpp"
-
-#include "Profile.hpp"
-#include "Sound.hpp"
 
 //================================================//
 

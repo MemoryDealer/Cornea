@@ -29,6 +29,7 @@ public:
 	// Getter functions
 	std::vector<DynamicObject*>& getObjects(void);
 	DynamicObject* getObject(Ogre::String& name);
+	DynamicObject* getObject(Ogre::SceneNode* node);
 	
 	// Setter functions
 	void setNPCManager(NPCManager* mgr);

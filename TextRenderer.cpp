@@ -8,6 +8,10 @@ template<> TextRenderer* Ogre::Singleton<TextRenderer>::msSingleton = 0;
 
 //================================================//
 
+const std::string TextRenderer::DEFAULT_FONT = "StarWars";
+
+//================================================//
+
 TextRenderer::TextRenderer(void)
 {
 	m_pOverlayMgr = Ogre::OverlayManager::getSingletonPtr();
@@ -167,7 +171,7 @@ void TextRenderer::update(double timeSinceLastFrame)
 Text::Text(void)
 {
 	text = "Default Text";
-	font = "StarWars";
+	font = TextRenderer::DEFAULT_FONT;
 	size = "24";
 	timeout = 20000.0;
 	colour = Ogre::ColourValue::White;

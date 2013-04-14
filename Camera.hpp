@@ -10,6 +10,7 @@
 #include "Boots.hpp"
 #include "Sparks.hpp"
 #include "Physics.hpp"
+#include "TextRenderer.hpp"
 
 //================================================//
 
@@ -89,6 +90,7 @@ public:
 	bool	m_moveForwardsPressed, m_moveBackwardsPressed,
 			m_moveLeftPressed, m_moveRightPressed,
 			m_moveUpPressed, m_moveDownPressed,
+			m_shiftPressed,
 			m_spacePressed;
 
 private:
@@ -112,6 +114,7 @@ private:
 	Ogre::Vector3			m_translateVector;
 	Ogre::Vector3			m_velocityVector;
 	Ogre::Real				m_maxVelocity;
+	Ogre::Real				m_sprintVelocity;
 	Ogre::Real				m_maxSpecVelocity;
 	Ogre::Real				m_acceleration;
 	Ogre::Real				m_moveSpeed;
@@ -124,6 +127,7 @@ private:
 	Physics*				m_physics;
 	btRigidBody*			m_btCamera;
 	btVector3				m_defGravity;
+	btScalar				m_mass;
 
 	Ogre::Real				m_jmpConstant;
 	bool					m_jumping;

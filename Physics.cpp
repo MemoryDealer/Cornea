@@ -86,8 +86,25 @@ void Physics::removeCameraBody(void)
 
 void Physics::update(double timeSinceLastFrame)
 {
-	// Step the world
-	m_world->stepSimulation(timeSinceLastFrame * 0.015f, 60);
+	const float rate = 1.0f/240.0f;
+	float physicsTime = timeSinceLastFrame / 1000.0f; //timeSinceLastFrame * 0.015f;
+	int nMaxSteps = physicsTime/(rate)+1;
+	m_world->stepSimulation(physicsTime, nMaxSteps, rate);
+
+	//timeSinceLastFrame *= 0.015f;
+
+	//// Step the world
+	//const double timeStep = 1.0f/60.0f;
+	//static double accumulator = 0.0f;
+
+	//accumulator += timeSinceLastFrame;
+	//while(accumulator >= timeStep){
+	//	m_world->stepSimulation(timeStep);
+	//	accumulator -= timeStep;
+	//}
+
+	//m_world->stepSimulation(timeSinceLastFrame * 0.015f, 120);
+	//m_world->stepSimulation(1.f/60.f);
 
 	// Update debug drawer
 	m_debugDrawer->step();

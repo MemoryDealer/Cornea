@@ -246,6 +246,20 @@ DynamicObject* DynamicObjectManager::getObject(Ogre::String& name)
 
 //================================================//
 
+DynamicObject* DynamicObjectManager::getObject(Ogre::SceneNode* node)
+{
+	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
+		itr != m_objects.end();
+		++itr){
+		if((*itr)->getSceneNode() == node)
+			return *itr;
+	}
+
+	return nullptr;
+}
+
+//================================================//
+
 void DynamicObjectManager::update(double timeSinceLastFrame)
 {
 	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();

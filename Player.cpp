@@ -90,6 +90,15 @@ void Player::processRetrieval(DynamicObject* object)
 	if(typeid(*object) == typeid(MagicCube)){
 		m_pProfile->getInventory().addMagicCube();
 		m_pSoundRetrieve->play();
+		
+		// Add text
+		Text* text = new Text();
+		text->text = "Magic Cube Acquired";
+		text->font = "StarWars";
+		text->pos = TextRenderer::LOWER;
+		text->timeout = 2000;
+
+		TextRenderer::getSingletonPtr()->setText(text);
 	}
 }
 

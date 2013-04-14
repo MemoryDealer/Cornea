@@ -11,9 +11,21 @@ namespace Sparks
 
 Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 {
+	Ogre::ConfigFile file;
+	file.loadDirect("C:/cam.cfg");
+
+	/* Current optimal settings:
+	moveSpeed=350.0
+	maxVelocity=9.0
+	mass=180.0
+	grav=65.0
+	*/
+
 	m_mode = MODE_FIRST_PERSON;
-	m_moveSpeed = 5.0;
-	m_maxVelocity = 5.0;
+	m_moveSpeed = Ogre::StringConverter::parseReal(file.getSetting("moveSpeed", "cam"));
+	m_maxVelocity = Ogre::StringConverter::parseReal(file.getSetting("maxVelocity", "cam"));
+	m_sprintVelocity = Ogre::StringConverter::parseReal(file.getSetting("sprintVelocity", "cam"));
+	m_mass = Ogre::StringConverter::parseReal(file.getSetting("mass", "cam"));
 	m_specMoveSpeed = 70.0;
 	m_maxSpecVelocity = 10.0;
 	m_rotateSpeed = 0.06;
@@ -23,7 +35,7 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 	m_jumping = false;
 	m_jmpConstant = 500.0;
 	m_cameraHeight = 22.0;
-	m_defGravity.setValue(0.0, -9.82, 0.0);
+	m_defGravity.setValue(0.0, -(Ogre::StringConverter::parseReal(file.getSetting("grav", "cam"))), 0.0);
 
 	m_moveForwardsPressed = false;
 	m_moveBackwardsPressed = false;
@@ -31,6 +43,7 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 	m_moveRightPressed = false;
 	m_moveUpPressed = false;
 	m_moveDownPressed = false;
+	m_shiftPressed = false;
 	m_spacePressed = false;
 
 	// set the scene manager to point to the current one
@@ -54,7 +67,7 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 Camera::~Camera(void)
 {
 	if(m_mode == MODE_FIRST_PERSON)
-		removeRigidBody();
+		this->removeRigidBody();
 
 	// Remove scene nodes and camera object
 	m_pSceneMgr->destroySceneNode(m_pCameraNode);
@@ -77,7 +90,7 @@ void Camera::init(Physics* physics)
 	m_pCamera = m_pSceneMgr->createCamera("PlayerCam");
 	m_pCamera->setAutoAspectRatio(true);
 
-	m_pCamera->setNearClipDistance(1);
+	m_pCamera->setNearClipDistance(0.1);
 	m_pCamera->setFarClipDistance(m_farClipDistance);
 
 	m_pCameraRollNode->attachObject(m_pCamera);
@@ -86,7 +99,7 @@ void Camera::init(Physics* physics)
 	// set the initial position
 	m_pCameraNode->setPosition(0, 200, 0);
 
-	createRigidBody();
+	this->createRigidBody();
 
 	// Setup rayhits now to avoid nullptrs
 	m_negativeYRayhit = new Rayhit();
@@ -104,16 +117,16 @@ void Camera::createRigidBody(void)
 {
 	// Add the camera to the physics world
 	Ogre::Vector3 camPos = m_pCameraNode->getPosition();
-	btScalar mass = 12.0;
+	btScalar mass = m_mass;
 	btTransform transform;
 	transform.setIdentity();
 	transform.setOrigin(btVector3(camPos.x, camPos.y, camPos.z));
 
 	// set up rigid body
-	const Ogre::Real capsuleHeight = 30.0;
+	const Ogre::Real capsuleHeight = 4.5;
 	m_capsuleHeightOffset = capsuleHeight / 1.7;
 	btDefaultMotionState* motionState = new btDefaultMotionState(transform);
-	btCollisionShape* shape = new btCapsuleShape(7.0, capsuleHeight); // need changes
+	btCollisionShape* shape = new btCapsuleShape(0.9, capsuleHeight); // need changes
 	btVector3 localInertia;
 	shape->calculateLocalInertia(mass, localInertia);
 
@@ -122,16 +135,17 @@ void Camera::createRigidBody(void)
 
 	// optimize the body
 	m_btCamera->setFriction(1.0);
-	m_btCamera->setDamping(0.4, 0.4);
+	m_btCamera->setDamping(0.9, 0.9);
 	m_btCamera->setAngularFactor(btVector3(0, 0, 0));
 
 	// this will prevent the camera from falling through elevators when they "take off"
 	m_btCamera->setActivationState(DISABLE_DEACTIVATION);
 
-	m_btCamera->setHitFraction(0.0);
-	m_btCamera->setContactProcessingThreshold(0.0);
+	//m_btCamera->setHitFraction(0.0);
+	//m_btCamera->setContactProcessingThreshold(0.0);
 
-	m_btCamera->setGravity(m_defGravity);
+	//m_btCamera->setGravity(m_defGravity);
+	m_physics->getWorld()->setGravity(m_defGravity);
 
 	// add the rigid body to the dynamics world
 	m_physics->setCameraBody(m_btCamera);
@@ -159,7 +173,7 @@ void Camera::createAltRigidBody(void)
 
 	// optimize the body
 	m_btCamera->setFriction(1.0);
-	m_btCamera->setDamping(0.4, 0.4);
+	m_btCamera->setDamping(0.8, 0.8);
 	m_btCamera->setAngularFactor(btVector3(0, 0, 0));
 
 	m_btCamera->setHitFraction(0.0);
@@ -187,12 +201,12 @@ void Camera::update(double timeSinceLastFrame)
 {
 	switch(m_mode){
 	case MODE_FIRST_PERSON:
-		moveFirstPerson(timeSinceLastFrame);
+		this->moveFirstPerson(timeSinceLastFrame);
 		return;
 
 	case MODE_SPECTATOR:
 	default:
-		moveSpectator(timeSinceLastFrame);
+		this->moveSpectator(timeSinceLastFrame);
 		return;
 	}
 }
@@ -219,8 +233,32 @@ void Camera::setOrientation(Ogre::Quaternion q)
 
 void Camera::moveFirstPerson(double timeSinceLastFrame)
 {
-	//updateFooting(timeSinceLastFrame);
-	updateRays();
+	// Limit the pitch
+	Ogre::Real pitchAngle, pitchAngleSign;
+	pitchAngle = (2 * Ogre::Degree(Ogre::Math::ACos(m_pCameraPitchNode->getOrientation().w)).valueDegrees());
+	pitchAngleSign = m_pCameraPitchNode->getOrientation().x;
+
+	if(pitchAngle > 80.0f){
+		if(pitchAngleSign > 0){
+			m_pCameraPitchNode->setOrientation(Ogre::Quaternion(Ogre::Math::Sqrt(0.5f), Ogre::Math::Sqrt(0.5f) - 0.115f, 0, 0));
+		}
+		else{
+			m_pCameraPitchNode->setOrientation(Ogre::Quaternion(Ogre::Math::Sqrt(0.5f), -Ogre::Math::Sqrt(0.5f) + 0.115f, 0, 0));
+		}
+	}
+
+	this->updateRays();
+
+	// Limit max speed
+	btVector3 velocity = m_btCamera->getLinearVelocity();
+	velocity = m_btCamera->getLinearVelocity();
+	btScalar speed = velocity.length();
+	btScalar max = (m_shiftPressed) ? m_sprintVelocity : m_maxVelocity;
+	if(speed > max){
+		velocity *= max/speed;
+		m_btCamera->setLinearVelocity(velocity);
+		return; // necessary?
+	}
 
 	// See if player is colliding against a wall in mid-air
 	//  if so, stop the movement and let the player fall
@@ -266,29 +304,7 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 	m_translateVector.z /= forwards.y;
 
 	// Update the jump physics
-	updateJump(timeSinceLastFrame);
-
-	// Limit the pitch
-	Ogre::Real pitchAngle, pitchAngleSign;
-	pitchAngle = (2 * Ogre::Degree(Ogre::Math::ACos(m_pCameraPitchNode->getOrientation().w)).valueDegrees());
-	pitchAngleSign = m_pCameraPitchNode->getOrientation().x;
-
-	if(pitchAngle > 80.0f){
-		if(pitchAngleSign > 0){
-			m_pCameraPitchNode->setOrientation(Ogre::Quaternion(Ogre::Math::Sqrt(0.5f), Ogre::Math::Sqrt(0.5f) - 0.115f, 0, 0));
-		}
-		else{
-			m_pCameraPitchNode->setOrientation(Ogre::Quaternion(Ogre::Math::Sqrt(0.5f), -Ogre::Math::Sqrt(0.5f) + 0.115f, 0, 0));
-		}
-	}
-
-	// Limit the maximum velocity by magnitude
-	btVector3 velocity = m_btCamera->getLinearVelocity();
-	if(velocity.length() > m_maxVelocity){
-		// Set the magnitude while maintaing the translation data
-		m_translateVector.normalise();
-		m_translateVector *= (m_maxVelocity - 5.1); 
-	}
+	//this->updateJump(timeSinceLastFrame);
 
 	// Stop if the user is not moving
 	if(m_translateVector == Ogre::Vector3::ZERO){
@@ -299,7 +315,12 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 	btVector3 btTranslate(m_translateVector.x, 0.0, m_translateVector.z);
 	
 	m_btCamera->activate();
-	m_btCamera->applyCentralImpulse(btTranslate * timeSinceLastFrame);
+	m_btCamera->applyCentralImpulse(btTranslate);
+
+	/*static Text* text = new Text();
+	text->text = Ogre::StringConverter::toString(btTranslate.length());
+	text->pos = TextRenderer::UPPER;
+	TextRenderer::getSingletonPtr()->setText(text);*/
 }
 
 //================================================//

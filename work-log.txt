@@ -687,8 +687,7 @@ G: -8.80
 -Started adding objects to apartment scene, such as couch and bar stools. Had to remap the UV textures on the objects to get them to work
 	with diffuse lighting. It will be tricky to do this to objects with multiple textures, perhaps I can UV map the parts separately or split
 	the object into multiple objects. 
--Fixed a frame rate independence iss
-ue with camera movement. In the Camera::MoveFirstPerson() function I multiply the translation vector
+-Fixed a frame rate independence issue with camera movement. In the Camera::MoveFirstPerson() function I multiply the translation vector
 	by timeSinceLastFrame and before that, instead of returning when the linear velocity is over the max, I reset the magnitude by normalizing
 	the vector and multiplying it by the max velocity minus a const
 	ant of 5.1 (it could be a bit less), which I don't know why it had to be 5.1, I'd expect 0.1 to work. 
@@ -775,7 +774,6 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -I believe the reason I have to load the filler text first is because the font must be loaded at least once for any others to work. Not sure why.
 
 #3/24/13
-
 -Added Glasses class which simply switches a gaussian blur compositor on and off, it is held by the Player class.
 
 #3/30/13
@@ -812,6 +810,26 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -Added a sound when the magic cubes are picked up. At first, I had it in the DynamicObject itself, but it gets deleted and therefor the Sound object is deleted and
 	it never got played. So I put a Sound object in Player and the processRetrieval() function plays the sound. I may end up using a stack here if more sounds are needed
 	and just allocate sounds in that function and push them on the stack. 
+
+#4/13/13
+-Strangley, while doing some tests in release mode, it crashed when loading the Apartment.scene for a second time in one run. I traced it to when it was loading the 
+	rotating door (main entrance), and because it didn't have an offset value the data was unable to be retrieved. The DotSceneLoader had a function I made to parse a 
+	Vector3 with commas in the string, and it was splitting a string into tokens that didn't exist. Strange that it only crashed in release mode, though.
+-Been doing some optimizing of the camera's physics, so I made the camera class load the moveSpeed, maxVelocity, and mass from a simple config file for fast run-time 
+	testing. 
+-A moveSpeed of 2.0, maxVelocity of 4.0, and mass of 4.0 is a pretty solid camera setup for normal movement. Sprinting and stimming can increase the maxVelocity. This way,
+	the player can still climb ramps when the speed is changed. 
+-So when I was multiplying the camera movement vector by timeSinceLastFrame, it cancelled out the frame rate independence since the physics engine itself is updated
+	with timeSinceLastFrame every frame. 
+-I'm working through a number of different experiments to fix frame rate independence with the camera movement. 
+- http://www.ogre3d.org/forums/viewtopic.php?f=2&t=67583 Bullet timestep
+-Implemented an accumulator for the physics update like here: http://bulletphysics.org/Bullet/phpBB3/viewtopic.php?t=8802
+	Seems to have fixed it a little, still I don't think it's perfectly frame rate independent. 
+-Hour 12: Looked at this page http://bulletphysics.org/mediawiki-1.5.8/index.php/Scaling_The_World
+	So I removed any scaling of the entire scene and scaled the size of the camera capsule down as well. I fixed the timestep to divide the timeSinceLastFrame by 1000
+	to achieve the time in milliseconds properly (before I had it multiplying by 0.015f for some reason). This slowed down the simulation but the scaling made up for it,
+	along with changing the values for gravity and the camera movement. This is a major improvement in the smoothness of the camera movement. There is still frame stuttering
+	when the frame rate drops below 60, which I'm working on a solution for (note: http://www.bulletphysics.org/mediawiki-1.5.8/index.php/Code_Snippets). 
 
 #TODO  
 -TREASURE.

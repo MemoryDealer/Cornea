@@ -85,8 +85,8 @@ void MenuState::resume(void)
 	// Create GUI items again
 	createGUI();
 
-	// Unpause music
-	m_pMusic->setPaused(false);
+	// Start music
+	//m_pMusic->play();
 
 	// set the camera again
 	Base::getSingletonPtr()->m_pViewport->setCamera(m_pCamera);

@@ -75,8 +75,8 @@ void Sound::init(unsigned type, Ogre::Vector3 pos)
 
 	if(res == FMOD_OK)
 		m_loaded = true;
-	else
 #ifdef _DEBUG
+	else
 		printf("Failed to load sound %s\n", file);
 #endif
 }

@@ -20,6 +20,8 @@ public:
 	TextRenderer(void);
 	~TextRenderer(void);
 
+	static const std::string DEFAULT_FONT;
+
 	enum{
 		UPPER = 0,
 		LOWER,

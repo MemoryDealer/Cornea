@@ -112,7 +112,6 @@
         bool getAttribBool(rapidxml::xml_node<>* XMLNode, const Ogre::String &parameter, bool defaultValue = false);
  
         Ogre::Vector3 parseVector3(rapidxml::xml_node<>* XMLNode);
-		Ogre::Vector3 parseVector3(Ogre::String str);
         Ogre::Quaternion parseQuaternion(rapidxml::xml_node<>* XMLNode);
         Ogre::ColourValue parseColour(rapidxml::xml_node<>* XMLNode);
 		Ogre::ColourValue parseColour(Ogre::String str);
