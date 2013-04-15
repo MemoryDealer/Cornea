@@ -831,6 +831,13 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 	along with changing the values for gravity and the camera movement. This is a major improvement in the smoothness of the camera movement. There is still frame stuttering
 	when the frame rate drops below 60, which I'm working on a solution for (note: http://www.bulletphysics.org/mediawiki-1.5.8/index.php/Code_Snippets). 
 
+#4/14/12
+-More optimizations of the camera physics. Made the physics class update the camera instead of GameState. The Physics object holds a data structure with pointers to the 
+	needed info from the Camera class. 
+-Added a tick callback for Bullet, which now limits the player's maximum speed internally, which is supposed to be much more efficient. 
+-Also fixed the falling code to be more simple. It simply applies a downward force if there is a good distance from the player to the ground. This overrides the gravity
+	which for some reason is not enough to bring the player capsule down in a realistic time frame. 
+
 #TODO  
 -TREASURE.
 -Make raycast bullet range better--don't just stop the bullet after it reaches max range. Test if the object hit is out of range, and decrease damage or randomize hits etc.  

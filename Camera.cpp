@@ -60,6 +60,13 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 	m_pCameraYawNode = m_pCameraNode->createChildSceneNode(NODE_CAMERA_YAW);
 	m_pCameraPitchNode = m_pCameraYawNode->createChildSceneNode(NODE_CAMERA_PITCH);
 	m_pCameraRollNode = m_pCameraPitchNode->createChildSceneNode(NODE_CAMERA_ROLL);
+
+	m_physicsData = new Physics::CAMERA_DATA();
+
+	m_physicsData->heightOffset = &m_capsuleHeightOffset;
+	m_physicsData->maxVelocity = &m_maxVelocity;
+	m_physicsData->sprintVelocity = &m_sprintVelocity;
+	m_physicsData->shift = &m_shiftPressed;
 }
 
 //================================================//
@@ -78,6 +85,8 @@ Camera::~Camera(void)
 
 	delete m_negativeYRayhit;
 	delete m_negativeZRayhit;
+
+	delete m_physicsData;
 }
 
 //================================================//
@@ -123,7 +132,7 @@ void Camera::createRigidBody(void)
 	transform.setOrigin(btVector3(camPos.x, camPos.y, camPos.z));
 
 	// set up rigid body
-	const Ogre::Real capsuleHeight = 4.5;
+	const Ogre::Real capsuleHeight = 5.0;
 	m_capsuleHeightOffset = capsuleHeight / 1.7;
 	btDefaultMotionState* motionState = new btDefaultMotionState(transform);
 	btCollisionShape* shape = new btCapsuleShape(0.9, capsuleHeight); // need changes
@@ -148,7 +157,9 @@ void Camera::createRigidBody(void)
 	m_physics->getWorld()->setGravity(m_defGravity);
 
 	// add the rigid body to the dynamics world
-	m_physics->setCameraBody(m_btCamera);
+	//m_physics->setCameraBody(m_btCamera);
+	m_physicsData->body = m_btCamera;
+	m_physics->setCameraData(m_physicsData);
 }
 
 //================================================//
@@ -182,7 +193,7 @@ void Camera::createAltRigidBody(void)
 	m_btCamera->setGravity(m_defGravity);
 
 	// add the rigid body to the dynamics world
-	m_physics->setCameraBody(m_btCamera);
+	//m_physics->setCameraBody(m_btCamera);
 }
 
 //================================================//
@@ -249,17 +260,6 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 
 	this->updateRays();
 
-	// Limit max speed
-	btVector3 velocity = m_btCamera->getLinearVelocity();
-	velocity = m_btCamera->getLinearVelocity();
-	btScalar speed = velocity.length();
-	btScalar max = (m_shiftPressed) ? m_sprintVelocity : m_maxVelocity;
-	if(speed > max){
-		velocity *= max/speed;
-		m_btCamera->setLinearVelocity(velocity);
-		return; // necessary?
-	}
-
 	// See if player is colliding against a wall in mid-air
 	//  if so, stop the movement and let the player fall
 	// ...
@@ -280,13 +280,15 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 		m_translateVector.z = 0.0;
 	}
 	if(m_moveLeftPressed){
-		m_translateVector.x = -(m_moveSpeed * 0.90); // limit sideways movement to 90%
+		//m_translateVector.x = -(m_moveSpeed * 0.90); // limit sideways movement to 90%
+		m_translateVector.x = -m_moveSpeed;
 	}
 	else if(!m_moveRightPressed){
 		m_translateVector.x = 0.0;
 	}
 	if(m_moveRightPressed){
-		m_translateVector.x = (m_moveSpeed * 0.90);
+		//m_translateVector.x = (m_moveSpeed * 0.90);
+		m_translateVector.x = m_moveSpeed;
 	}
 	else if(!m_moveLeftPressed){
 		m_translateVector.x = 0.0;
@@ -302,9 +304,10 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 
 	m_translateVector.x /= forwards.y;
 	m_translateVector.z /= forwards.y;
+	m_translateVector.y = 0.0;
 
 	// Update the jump physics
-	//this->updateJump(timeSinceLastFrame);
+	this->updateJump(timeSinceLastFrame);
 
 	// Stop if the user is not moving
 	if(m_translateVector == Ogre::Vector3::ZERO){
@@ -312,21 +315,29 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 	}
 
 	// Update the camera by applying an impulse to the Bullet rigid body
-	btVector3 btTranslate(m_translateVector.x, 0.0, m_translateVector.z);
+	btVector3 btTranslate(m_translateVector.x, m_translateVector.y, m_translateVector.z);
 	
 	m_btCamera->activate();
 	m_btCamera->applyCentralImpulse(btTranslate);
-
-	/*static Text* text = new Text();
-	text->text = Ogre::StringConverter::toString(btTranslate.length());
-	text->pos = TextRenderer::UPPER;
-	TextRenderer::getSingletonPtr()->setText(text);*/
 }
 
 //================================================//
 
 void Camera::updateJump(double timeSinceLastFrame)
 {
+	printf("%.2f\n", m_btCamera->getLinearVelocity().getY());
+	// Process falling
+	if(m_negativeYRayhit->distance > 7.0){
+		// Test to see if the player is actually falling, otherwise the player will be stuck if moving along the edge of a ramp, 
+		// due to the sides of the capsule still hanging on the ledge. 
+		if(m_btCamera->getLinearVelocity().getY() < -1.0){
+			//m_translateVector *= 0.9;
+			m_translateVector.y = -(m_moveSpeed * 6.0);
+		}
+	}
+
+	return;
+
 	static bool allowAir = false;
 	static Ogre::Real jmpHeight = 0.0;
 
@@ -400,14 +411,14 @@ void Camera::updateJump(double timeSinceLastFrame)
 		m_btCamera->applyCentralImpulse(jmp * timeSinceLastFrame / 10.0); // it perplexes me on why this must be frame-rate independent when the engine's time step already is
 	}
 	// Test if the player is falling and not jumping, to allow for some movement
-	else if(m_negativeYRayhit->distance > 2.5){
-		btVector3 move(m_translateVector.x * 0.04, 0.0, m_translateVector.z * 0.04);
+	else if(m_negativeYRayhit->distance > 0.1){
+		btVector3 move(m_translateVector.x * 0.01, -0.1, m_translateVector.z * 0.01);
 
 		if(m_btCamera->getGravity() != m_defGravity)
 				m_btCamera->setGravity(m_defGravity);
 
 		m_btCamera->activate();
-		m_btCamera->applyCentralImpulse(move * timeSinceLastFrame / 10.0); // ^ Same as above call
+		m_btCamera->applyCentralImpulse(move / 10.0); // ^ Same as above call
 	}
 }
 
@@ -573,8 +584,7 @@ void Camera::updateRays(void)
 	// Update rayhits
 
 	// Negative Y
-	this->getRayhit(Ogre::Vector3(m_pCameraNode->getPosition().x, -5000.0, m_pCameraNode->getPosition().z), m_negativeYRayhit);
-	m_negativeYRayhit->distance = (m_negativeYRayhit->distance - m_cameraHeight - m_capsuleHeightOffset);
+	this->getRayhit(Ogre::Vector3(m_pCameraNode->getPosition().x, -10000.0, m_pCameraNode->getPosition().z), m_negativeYRayhit);
 
 	// Negative Z															Varies
 	this->getRayhit((m_pCameraNode->getPosition() + (this->getDirection() * 10000.0)), m_negativeZRayhit);

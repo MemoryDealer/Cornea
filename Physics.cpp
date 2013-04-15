@@ -4,9 +4,18 @@
 
 //================================================//
 
+// Tick callback 
+static void tickCallback(btDynamicsWorld* world, btScalar timeStep)
+{
+	Physics* physics = static_cast<Physics*>(world->getWorldUserInfo());
+	physics->processTickCallback(timeStep);
+}
+
+//================================================//
+
 Physics::Physics(void)
 {
-	m_cameraBody = nullptr;
+	m_cameraActive = false;
 }
 
 //================================================//
@@ -20,7 +29,7 @@ Physics::~Physics(void)
 
 void Physics::init(void)
 {
-	const int sweep = 1000;
+	const int sweep = 10000;
 	m_broadphase = new btAxisSweep3(btVector3(-sweep, -sweep, -sweep), btVector3(sweep, sweep, sweep));
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
 	m_collisionDispatcher = new btCollisionDispatcher(m_collisionConfiguration);
@@ -29,6 +38,9 @@ void Physics::init(void)
 	m_world = new btDiscreteDynamicsWorld(m_collisionDispatcher, m_broadphase, m_solver, m_collisionConfiguration);
 	m_collisionWorld = new btCollisionWorld(m_collisionDispatcher, m_broadphase, m_collisionConfiguration);
 	m_objectCount = 0;
+
+	// Init tick callback
+	m_world->setInternalTickCallback(tickCallback, static_cast<void*>(this), false);
 }
 
 //================================================//
@@ -68,18 +80,19 @@ void Physics::registerAllEntitiesInScene(Ogre::SceneManager* mgr)
 
 //================================================//
 
-void Physics::setCameraBody(btRigidBody* body)
+void Physics::setCameraData(CAMERA_DATA* data)
 {
-	m_cameraBody = body;
-	m_world->addRigidBody(m_cameraBody);
-	
+	m_pCameraData = data;
+	m_world->addRigidBody(m_pCameraData->body);
+	m_cameraActive = true;
 }
 
 //================================================//
 
 void Physics::removeCameraBody(void)
 {
-	m_world->removeRigidBody(m_cameraBody);
+	m_world->removeRigidBody(m_pCameraData->body);
+	m_cameraActive = false;
 }
 
 //================================================//
@@ -87,24 +100,32 @@ void Physics::removeCameraBody(void)
 void Physics::update(double timeSinceLastFrame)
 {
 	const float rate = 1.0f/240.0f;
-	float physicsTime = timeSinceLastFrame / 1000.0f; //timeSinceLastFrame * 0.015f;
+	float physicsTime = timeSinceLastFrame / 1000.0f;
 	int nMaxSteps = physicsTime/(rate)+1;
 	m_world->stepSimulation(physicsTime, nMaxSteps, rate);
 
-	//timeSinceLastFrame *= 0.015f;
+	// Step the world
+	/*const double timeStep = 1.0f/60.0f;
+	static double accumulator = 0.0f;
 
-	//// Step the world
-	//const double timeStep = 1.0f/60.0f;
-	//static double accumulator = 0.0f;
+	accumulator += timeSinceLastFrame;
+	while(accumulator >= timeStep){
+		m_world->stepSimulation(timeStep);
+		accumulator -= timeStep;
+	}*/
 
-	//accumulator += timeSinceLastFrame;
-	//while(accumulator >= timeStep){
-	//	m_world->stepSimulation(timeStep);
-	//	accumulator -= timeStep;
-	//}
+	if(m_cameraActive){
+		btTransform transform;
+		Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(m_pCameraData->body->getUserPointer());
+		m_pCameraData->body->getMotionState()->getWorldTransform(transform);
 
-	//m_world->stepSimulation(timeSinceLastFrame * 0.015f, 120);
-	//m_world->stepSimulation(1.f/60.f);
+		btVector3 pos = transform.getOrigin(); //m_pCameraData->body->getCenterOfMassPosition();
+		node->setPosition(
+			Ogre::Vector3((float)pos[0], (float)pos[1] + *(m_pCameraData->heightOffset), (float)pos[2]));
+
+		btQuaternion orientation = transform.getRotation();
+		node->setOrientation(Ogre::Quaternion(orientation.w(), orientation.x(), orientation.y(), orientation.z()));
+	}
 
 	// Update debug drawer
 	m_debugDrawer->step();
@@ -124,6 +145,21 @@ void Physics::update(double timeSinceLastFrame)
 
 		btQuaternion orientation = body->getOrientation();
 		node->setOrientation(Ogre::Quaternion(orientation.w(), orientation.x(), orientation.y(), orientation.z()));
+	}
+}
+
+//================================================//
+
+void Physics::processTickCallback(btScalar timeStep)
+{
+	if(m_cameraActive){
+		btVector3 velocity = m_pCameraData->body->getLinearVelocity();
+		btScalar speed = velocity.length();
+		btScalar max = *(m_pCameraData->shift) ? *(m_pCameraData->sprintVelocity) : *(m_pCameraData->maxVelocity);
+		if(speed > max){
+			velocity *= max/speed;
+			m_pCameraData->body->setLinearVelocity(velocity);
+		}
 	}
 }
 

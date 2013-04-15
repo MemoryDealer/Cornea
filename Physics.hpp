@@ -16,6 +16,14 @@ public:
 	Physics(void);
 	~Physics(void);
 
+	typedef struct{
+		btRigidBody*	body;
+		Ogre::Real*		heightOffset;
+		Ogre::Real*		maxVelocity;
+		Ogre::Real*		sprintVelocity;
+		bool*			shift;
+	} CAMERA_DATA;
+
 	void init(void);
 	void free(void);
 
@@ -23,7 +31,7 @@ public:
 
 	// Collision
 	void registerAllEntitiesInScene(Ogre::SceneManager* mgr);
-	void setCameraBody(btRigidBody* body);
+	void setCameraData(CAMERA_DATA* data);
 	void removeCameraBody(void);
 
 	void flipDebugDrawer(void){ m_debugDrawer->setDebugMode(!m_debugDrawer->getDebugMode()); }
@@ -32,6 +40,7 @@ public:
 	btDiscreteDynamicsWorld* getWorld(void) const;
 
 	void update(double timeSinceLastFrame);
+	void processTickCallback(btScalar timeStep);
 
 private:
 	btDiscreteDynamicsWorld*				m_world;
@@ -44,7 +53,8 @@ private:
 	std::vector<btRigidBody*>				m_objects;
 	int										m_objectCount;
 
-	btRigidBody*							m_cameraBody;
+	CAMERA_DATA*							m_pCameraData;
+	bool									m_cameraActive;
 
 	BtOgre::DebugDrawer*					m_debugDrawer;
 };

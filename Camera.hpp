@@ -128,6 +128,7 @@ private:
 	btRigidBody*			m_btCamera;
 	btVector3				m_defGravity;
 	btScalar				m_mass;
+	Physics::CAMERA_DATA*	m_physicsData;
 
 	Ogre::Real				m_jmpConstant;
 	bool					m_jumping;

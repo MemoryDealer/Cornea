@@ -417,11 +417,7 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 
 	case OIS::KC_O:
 		{
-			static bool ssao = false;
-
-			ssao = !ssao;
-
-			m_pCompositor->setEnabled(COMPOSITOR_SSAO, ssao);
+			
 		}
 		break;
 
@@ -1001,14 +997,7 @@ void GameState::updateBullet(double timeSinceLastFrame)
 	
 	// Update the camera's rigid body
 	if(m_player->getCamera()->getMode() == Sparks::Camera::MODE_FIRST_PERSON){
-		btRigidBody* body = m_player->getCamera()->getRigidBody();
-
-		btVector3 pos = body->getCenterOfMassPosition();
-		m_player->getCamera()->getSceneNode()->setPosition(
-			Ogre::Vector3((float)pos[0], (float)pos[1] + m_player->getCamera()->getCapsuleHeightOffset(), (float)pos[2]));
-
-		btQuaternion orientation = body->getOrientation();
-		m_player->getCamera()->getSceneNode()->setOrientation(Ogre::Quaternion(orientation.w(), orientation.x(), orientation.y(), orientation.z()));
+		
 	}
 }
 
