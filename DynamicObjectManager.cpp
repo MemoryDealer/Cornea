@@ -16,7 +16,7 @@ DynamicObjectManager::DynamicObjectManager(Ogre::SceneManager* mgr, Sparks::Came
 
 DynamicObjectManager::~DynamicObjectManager(void)
 {
-	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
+	for(DynamicObjectListIterator itr = m_objects.begin();
 		itr != m_objects.end();){
 		// Delete dynamic object data stored on the heap
 		(*itr)->deleteData();
@@ -41,7 +41,6 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 		case DynamicObject::TYPE_MOVING_OBJECT:
 			m_objects.push_back(new MovingObject());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
-
 			m_objects.back()->setupAnimation();
 
 			return true;
@@ -49,7 +48,6 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 		case DynamicObject::TYPE_MOVING_KINEMATIC_OBJECT:
 			m_objects.push_back(new MovingKinematicObject());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
-
 			m_objects.back()->setupAnimation();
 
 			return true;
@@ -58,7 +56,6 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.push_back(new Elevator());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
-
 			m_objects.back()->setupAnimation();
 
 			return true;
@@ -67,7 +64,6 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.push_back(new RotatingDoor());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
-
 			
 			return true;
 
@@ -75,7 +71,6 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 			m_objects.push_back(new SlidingDoor());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
 			m_objects.back()->setState(DynamicObject::STATE_IDLE);
-
 			
 			return true;
 
@@ -239,7 +234,7 @@ void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
 
 void DynamicObjectManager::registerTriggerChains(void)
 {
-	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
+	for(DynamicObjectListIterator itr = m_objects.begin();
 		itr != m_objects.end();
 		++itr){
 		// Determine if this object is derived from Trigger
@@ -247,7 +242,13 @@ void DynamicObjectManager::registerTriggerChains(void)
 		if(trigger){
 			DynamicObjectData* data = trigger->getData();
 			if(data->trigger.hasNext){
-				trigger->setNextTrigger(static_cast<Trigger*>(this->getObject(data->trigger.next)));
+				DynamicObject* next = this->getObject(data->trigger.next);
+				if(next != nullptr){
+					trigger->setNextTrigger(static_cast<Trigger*>(next));
+				}
+				else{
+					data->trigger.hasNext = false;
+				}
 			}
 		}
 	}
@@ -259,7 +260,7 @@ DynamicObject* DynamicObjectManager::getObject(Ogre::String& name)
 {
 	Ogre::StringUtil strUtil;
 
-	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
+	for(DynamicObjectListIterator itr = m_objects.begin();
 		itr != m_objects.end();
 		++itr){
 		Ogre::String str = static_cast<Ogre::String>((*itr)->getSceneNode()->getName());
@@ -276,7 +277,7 @@ DynamicObject* DynamicObjectManager::getObject(Ogre::String& name)
 
 DynamicObject* DynamicObjectManager::getObject(Ogre::SceneNode* node)
 {
-	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
+	for(DynamicObjectListIterator itr = m_objects.begin();
 		itr != m_objects.end();
 		++itr){
 		if((*itr)->getSceneNode() == node)
@@ -290,7 +291,7 @@ DynamicObject* DynamicObjectManager::getObject(Ogre::SceneNode* node)
 
 void DynamicObjectManager::update(double timeSinceLastFrame)
 {
-	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
+	for(DynamicObjectListIterator itr = m_objects.begin();
 		itr != m_objects.end();){
 
 		if((*itr)->isRetrievable()){

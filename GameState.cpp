@@ -6,7 +6,6 @@
 
 GameState::GameState(void)
 {
-	//m_GUIEventId = new int(0);
 	m_bQuit = false;
 	m_GUIEventId = 0;
 	m_skyXInitialised = false;
@@ -37,9 +36,7 @@ void GameState::enter(void)
 
 	m_pCompositor = new Sparks::Compositor(m_pSceneMgr, Base::getSingletonPtr()->m_pViewport);
 
-	//Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
-	//m_pCompositor->setEnabled(COMPOSITOR_RADIAL_BLUR, true);
-	//m_pCompositor->setEnabled(COMPOSITOR_MOTION_BLUR, true);
+	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
 
 	// Allow update loop to load the game
 	m_state = STATE_LOADING_FIRST_ENTRY;
@@ -104,7 +101,7 @@ void GameState::createSceneManager(void)
 	switch(m_profile->getStage()){
 	case Profile::STAGE::DEV:
 	default:
-		m_pSceneMgr = Base::getSingletonPtr()->m_pRoot->createSceneManager(Ogre::ST_GENERIC, SCENE_MGR_NAME);
+		m_pSceneMgr = Base::getSingletonPtr()->m_pRoot->createSceneManager(Ogre::ST_INTERIOR, SCENE_MGR_NAME);
 	}
 }
 
@@ -466,12 +463,7 @@ bool GameState::keyPressed(const OIS::KeyEvent& arg)
 		break;
 
 	case OIS::KC_F9:
-		/*if(Profile::getSingletonPtr()->load("TestProfile")){
-			printf("Profile loaded!\n");
-		}
-		else{
-			printf("Invalid profile data.\n");
-		}*/
+		
 		break;
 
 	case OIS::KC_UP:
@@ -592,68 +584,6 @@ bool GameState::keyReleased(const OIS::KeyEvent& arg)
 			m_player->getCamera()->m_spacePressed = false;
 		}
 		break;
-
-	//// NOTE: Below are only debugging keys, delete later
-	//case OIS::KC_3:
-	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-	//		Boots::getSingletonPtr()->setXMultiplier(Boots::getSingletonPtr()->getXMultiplier() - 0.1);
-	//		Boots::getSingletonPtr()->setZMultiplier(Boots::getSingletonPtr()->getZMultiplier() - 0.1);
-	//	}
-	//	break;
-
-	//case OIS::KC_4:
-	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-	//		Boots::getSingletonPtr()->setXMultiplier(Boots::getSingletonPtr()->getXMultiplier() + 0.1);
-	//		Boots::getSingletonPtr()->setZMultiplier(Boots::getSingletonPtr()->getZMultiplier() + 0.1);
-	//	}
-	//	break;
-
-	//case OIS::KC_5:
-	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-	//		Boots::getSingletonPtr()->setYMultiplier(Boots::getSingletonPtr()->getYMultiplier() - 10.0);
-	//	}
-	//	break;
-
-	//case OIS::KC_6:
-	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-	//		Boots::getSingletonPtr()->setYMultiplier(Boots::getSingletonPtr()->getYMultiplier() + 10.0);
-	//	}
-	//	break;
-
-	//case OIS::KC_7:
-	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-	//		Boots::getSingletonPtr()->setXAirMultiplier(Boots::getSingletonPtr()->getXAirMultiplier() - 0.005);
-	//		Boots::getSingletonPtr()->setZAirMultiplier(Boots::getSingletonPtr()->getZAirMultiplier() - 0.005);
-	//	}
-	//	break;
-
-	//case OIS::KC_8:
-	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-	//		Boots::getSingletonPtr()->setXAirMultiplier(Boots::getSingletonPtr()->getXAirMultiplier() + 0.005);
-	//		Boots::getSingletonPtr()->setZAirMultiplier(Boots::getSingletonPtr()->getZAirMultiplier() + 0.005);
-	//	}
-	//	break;
-
-	//case OIS::KC_9:
-	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-	//		btVector3 gravity = Boots::getSingletonPtr()->getGravity();
-
-	//		gravity.setY(gravity.getY() - 0.1);
-	//		Boots::getSingletonPtr()->setGravity(gravity);
-	//	}
-	//	break;
-
-	//case OIS::KC_0:
-	//	if(Boots::getSingletonPtr()->getEquippedType() == Boots::BOOTS_TYPE_DEBUG){
-	//		btVector3 gravity = Boots::getSingletonPtr()->getGravity();
-
-	//		gravity.setY(gravity.getY() + 0.1);
-	//		Boots::getSingletonPtr()->setGravity(gravity);
-	//	}
-	//	break;
-
-	//default:
-	//	break;
 	}
 
 	Base::getSingletonPtr()->keyReleased(arg);
@@ -774,9 +704,7 @@ void GameState::update(double timeSinceLastFrame)
 
 			// Init player so we can use the camera
 			m_player = new Player(m_pSceneMgr, m_profile);
-
-			// Init player items
-			m_player->initFlashlight();
+			m_player->init();
 			m_player->initGlasses(m_pCompositor);
 			break;
 
@@ -857,9 +785,7 @@ void GameState::update(double timeSinceLastFrame)
 			this->createLoadingGUI();
 
 			m_player = new Player(m_pSceneMgr, m_profile);
-			
-			// Init player items
-			m_player->initFlashlight();
+			m_player->init();
 			m_player->initGlasses(m_pCompositor);
 
 			m_GUILoadingLayer->setProgressBarPosition(GUIGameState::GUILoadingLayer::PROGRESSBAR_STATUS, 0);
@@ -912,17 +838,6 @@ void GameState::update(double timeSinceLastFrame)
 
 		break; // STATE_LOADING_NEXT_STAGE
 	}
-
-	
-
-	// Display boot info (DEBUG)
-	//char buf[1024];
-	//sprintf(buf, "XZ: %.2f // Y:%.2f // A: %.2f // G: %.2f // Offset: <%.2f, %.2f, %.2f>",
-	//	Boots::getSingletonPtr()->getXMultiplier(), Boots::getSingletonPtr()->getYMultiplier(),
-	//	Boots::getSingletonPtr()->getXAirMultiplier(), Boots::getSingletonPtr()->getGravity().getY(),
-	//	m_player->getWeapon()->getOffset().x, m_player->getWeapon()->getOffset().y, m_player->getWeapon()->getOffset().z);
-	//MyGUI::UString str((const char*)buf);
-	//m_button->setCaption(str);
 }
 
 //================================================//

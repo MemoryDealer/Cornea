@@ -11,6 +11,7 @@
 #include "Sparks.hpp"
 #include "Physics.hpp"
 #include "TextRenderer.hpp"
+#include "Settings.hpp"
 
 //================================================//
 
@@ -38,16 +39,10 @@ namespace Sparks
 class Camera
 {
 public:
-	Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance);
+	Camera(Ogre::SceneManager* mgr);
 	~Camera(void);
 
 	void init(Physics* physics);
-
-	void update(double timeSinceLastFrame);
-	
-	void moveFirstPerson(double timeSinceLastFrame);
-	void updateJump(double timeSinceLastFrame); // MOVE THIS AND OTHERS TO PRIVATE
-	void moveSpectator(double timeSinceLastFrame);	
 
 	void pitch(Ogre::Degree x);
 	void yaw(Ogre::Degree y);
@@ -55,7 +50,6 @@ public:
 
 	void getRayhit(Ogre::Vector3& to, Rayhit* rayhit);
 	void getRayhit(Ogre::Vector3& from, Ogre::Vector3& to, Rayhit* rayhit);
-	void updateRays(void);
 
 	// Setter functions
 	void setMode(unsigned mode);
@@ -79,6 +73,8 @@ public:
 	Rayhit*				getNegativeYRayhit(void) const; 
 	Rayhit*				getNegativeZRayhit(void) const;
 
+	void update(double timeSinceLastFrame);	
+
 	// --- //
 
 	// modes
@@ -98,6 +94,11 @@ private:
 	void createRigidBody(void);
 	void createAltRigidBody(void);
 	void removeRigidBody(void);
+
+	void moveFirstPerson(double timeSinceLastFrame);
+	void updateJump(double timeSinceLastFrame); 
+	void moveSpectator(double timeSinceLastFrame);
+	void updateRays(void);
 
 	// --- //
 

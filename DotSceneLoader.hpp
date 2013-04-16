@@ -15,6 +15,8 @@
 #include "rapidxml.hpp"
 
 #include "DynamicObject.hpp"
+#include "DynamicObjectManager.hpp"
+#include "Physics.hpp"
 #include "NPC.hpp"
 #include "Trigger.hpp"
 

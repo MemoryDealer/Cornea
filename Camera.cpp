@@ -9,8 +9,10 @@ namespace Sparks
 
 //================================================//
 
-Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
+Camera::Camera(Ogre::SceneManager* mgr)
 {
+	m_pSceneMgr = mgr;
+
 	Ogre::ConfigFile file;
 	file.loadDirect("C:/cam.cfg");
 
@@ -48,27 +50,16 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 	m_shiftPressed = false;
 	m_spacePressed = false;
 
-	// set the scene manager to point to the current one
-	m_pSceneMgr = mgr;
-
-	m_farClipDistance = farClipDistance;
+	m_farClipDistance = Settings::getSingletonPtr()->graphics.farClip;
 
 	m_negativeYRayhit = nullptr;
 	m_negativeZRayhit = nullptr;
 
-	//init();
 	// nodes
 	m_pCameraNode = m_pSceneMgr->getRootSceneNode()->createChildSceneNode(NODE_CAMERA);
 	m_pCameraYawNode = m_pCameraNode->createChildSceneNode(NODE_CAMERA_YAW);
 	m_pCameraPitchNode = m_pCameraYawNode->createChildSceneNode(NODE_CAMERA_PITCH);
 	m_pCameraRollNode = m_pCameraPitchNode->createChildSceneNode(NODE_CAMERA_ROLL);
-
-	m_physicsData = new Physics::CAMERA_DATA();
-
-	m_physicsData->heightOffset = &m_capsuleHeightOffset;
-	m_physicsData->maxVelocity = &m_maxVelocity;
-	m_physicsData->sprintVelocity = &m_sprintVelocity;
-	m_physicsData->shift = &m_shiftPressed;
 }
 
 //================================================//
@@ -97,6 +88,7 @@ void Camera::init(Physics* physics)
 {
 	m_physics = physics;
 
+	// Ogre::Camera object
 	m_pSceneMgr->destroyCamera("PlayerCam");
 	m_pCamera = m_pSceneMgr->createCamera("PlayerCam");
 	m_pCamera->setAutoAspectRatio(true);
@@ -105,11 +97,16 @@ void Camera::init(Physics* physics)
 	m_pCamera->setFarClipDistance(m_farClipDistance);
 
 	m_pCameraRollNode->attachObject(m_pCamera);
-	//m_pCameraNode->attachObject(m_pCamera);
 
-	// set the initial position
-	m_pCameraNode->setPosition(0, 200, 0);
+	// Setup data needed for physics callback
+	m_physicsData = new Physics::CAMERA_DATA();
 
+	m_physicsData->heightOffset = &m_capsuleHeightOffset;
+	m_physicsData->maxVelocity = &m_maxVelocity;
+	m_physicsData->sprintVelocity = &m_sprintVelocity;
+	m_physicsData->shift = &m_shiftPressed;
+
+	// Create physics body
 	this->createRigidBody();
 
 	// Setup rayhits now to avoid nullptrs
@@ -328,96 +325,11 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 void Camera::updateJump(double timeSinceLastFrame)
 {
 	// Process falling
-	//printf("Y: %.2f\n", m_negativeYRayhit->distance);
 	if(m_negativeYRayhit->distance > m_maxYOffset){
 		if(m_btCamera->getLinearVelocity().length() > (m_maxVelocity / 2.0))
-			m_translateVector *= 0.001;
-
-		return;
-		// Test to see if the player is actually falling, otherwise the player will be stuck if moving along the edge of a ramp, 
-		// due to the sides of the capsule still hanging on the ledge. 
-		//if(m_btCamera->getLinearVelocity().getY() < -1.0){
-		//	//m_translateVector *= 0.9;
-		//	m_translateVector *= 0.0;
-		//	m_translateVector.y = -(m_moveSpeed * 6.0);
-		//}
-		//else if(m_btCamera->getLinearVelocity().length() > m_maxVelocity){
-		//	printf("***Blocking %.2f\n", m_btCamera->getLinearVelocity().length());
-		//	m_translateVector *= 0.0;
-		//	m_translateVector.y = -(m_moveSpeed * 6.0); // make 6.0 const
-		//}
-
-		// Expanding raycasting outside of capsule to avoid hitting self
-		const Ogre::Real offset = m_capsuleRadius + 0.4; 
-
-		// Cast four rays down around the radius of the capsule
-		Rayhit ray;
-		const Ogre::Real down = -10000.0;
-		Ogre::Vector3 from = m_pCameraNode->getPosition();
-		Ogre::Vector3 to = m_pCameraNode->getPosition();
-		to.y = down;
-
-		// Right edge
-		from.x += offset;
-		to.x += offset;
-		this->getRayhit(from, to, &ray);
-		if(ray.hasHit){
-			printf("%.2f\tRIGHT\n", ray.distance);
-			if(ray.distance < m_maxYOffset)
-				return;
-		}
-
-		// Top edge
-		from = m_pCameraNode->getPosition();
-		to = m_pCameraNode->getPosition();
-		from.z -= offset;
-		to.z -= offset;
-		to.y = down;
-		this->getRayhit(from, to, &ray);
-		if(ray.hasHit){
-			printf("%.2f\tTOP\n", ray.distance);
-			if(ray.distance < m_maxYOffset){
-				
-				return;
-			}
-		}
-
-		// Left edge
-		from = m_pCameraNode->getPosition();
-		to = m_pCameraNode->getPosition();
-		from.x -= offset;
-		to.x -= offset;
-		to.y = down;
-		this->getRayhit(from, to, &ray);
-		if(ray.hasHit){
-			printf("%.2f\tLEFT\n", ray.distance);
-			if(ray.distance < m_maxYOffset){
-				
-				return;
-			}
-		}
-
-		// Lower edge
-		from = m_pCameraNode->getPosition();
-		to = m_pCameraNode->getPosition();
-		from.z += offset;
-		to.z += offset;
-		to.y = down;
-		this->getRayhit(from, to, &ray);
-		if(ray.hasHit){
-			printf("%.2f\tLOWER\n", ray.distance);
-			if(ray.distance < m_maxYOffset){
-				
-				return;
-			}
-		}
-
-		printf("STOPPING!\n");
-		
-		//m_translateVector.y = -(m_moveSpeed * 6.0);
-		return;
+			m_translateVector *= 0.005;
 	}
-
+	
 	return;
 
 	static bool allowAir = false;

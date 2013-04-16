@@ -11,19 +11,12 @@ Player::Player(Ogre::SceneManager* mgr, Profile* profile)
 
 	m_pProfile = profile;
 
-	// Create the camera
-	m_pCamera = new Sparks::Camera(m_pSceneMgr, 90000);
-	m_pCamera->setMode(Sparks::Camera::MODE_FIRST_PERSON);
-
 	// Set weapon to NULL for now
 	m_nWeapon = Weapon::NONE;
 	m_pWeapon = nullptr;
 
 	// How close a player should be to trigger an action
-	m_actionRange = 45.0;
-
-	// Load sounds
-	m_pSoundRetrieve = new Sound(Sound::TYPE_RETRIEVE_MAGIC_CUBE);
+	m_actionRange = 10.0;
 }
 
 //================================================//
@@ -36,6 +29,25 @@ Player::~Player(void)
 
 	// Free sounds
 	delete m_pSoundRetrieve;
+}
+
+//================================================//
+
+bool Player::init(void)
+{
+	bool ret = true;
+
+	// Create the camera
+	m_pCamera = new Sparks::Camera(m_pSceneMgr);
+	m_pCamera->setMode(Sparks::Camera::MODE_FIRST_PERSON);
+	
+	// Load sounds
+	m_pSoundRetrieve = new Sound(Sound::TYPE_RETRIEVE_MAGIC_CUBE);
+
+	// Flashlight
+	this->initFlashlight();
+
+	return ret;
 }
 
 //================================================//
@@ -60,9 +72,9 @@ void Player::action(EventManager* eventManager)
 		printf("Object hit %s\nDistance: %.2f\n", rayhit->node->getName().c_str(), rayhit->distance);
 
 		// Iterate through dynamic objects
-		std::vector<DynamicObject*> objects = eventManager->getDynamicObjectManager()->getObjects();
+		DynamicObjectList objects = eventManager->getDynamicObjectManager()->getObjects();
 
-		for(std::vector<DynamicObject*>::iterator itr = objects.begin();
+		for(DynamicObjectListIterator itr = objects.begin();
 			itr != objects.end();
 			++itr){
 			if((*itr)->getSceneNode() == rayhit->node){
@@ -107,7 +119,6 @@ void Player::processRetrieval(DynamicObject* object)
 void Player::initFlashlight(void)
 {
 	m_pFlashlight = new Flashlight(m_pSceneMgr, m_pCamera->getRollNode());
-	//m_pFlashlight = new Flashlight(m_pSceneMgr, m_pCamera->getSceneNode());
 }
 
 //================================================//

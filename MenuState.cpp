@@ -35,10 +35,10 @@ void MenuState::enter(void)
 	//m_pMusic->play();
 
 	// now create the scene
-	createScene();
+	this->createScene();
 
 	// and the GUI
-	createGUI();
+	this->createGUI();
 }
 
 //================================================//
@@ -48,7 +48,7 @@ void MenuState::exit(void)
 	Base::getSingletonPtr()->m_pLog->logMessage("[S] Leaving MenuState...");
 
 	// destroy the GUI
-	destroyGUI();
+	this->destroyGUI();
 
 	// release menu music
 	delete m_pMusic;
@@ -67,7 +67,7 @@ bool MenuState::pause(void)
 	Base::getSingletonPtr()->m_pLog->logMessage("[S] Pausing MenuState...");
 
 	// Destroy GUI items for now
-	destroyGUI();
+	this->destroyGUI();
 
 	// Stop the music when entering the game, so it starts over when going back to main menu
 	m_pMusic->stop();
@@ -83,7 +83,7 @@ void MenuState::resume(void)
 	m_bQuit = false;
 
 	// Create GUI items again
-	createGUI();
+	this->createGUI();
 
 	// Start music
 	//m_pMusic->play();

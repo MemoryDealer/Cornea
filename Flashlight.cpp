@@ -19,7 +19,6 @@ Flashlight::Flashlight(Ogre::SceneManager* mgr, Ogre::SceneNode* parent)
 	m_pLight->setSpecularColour(0.8, 0.8, 0.8);
 	m_pLight->setCastShadows(Settings::getSingletonPtr()->graphics.shadows.enabled);
 	m_pLight->setSpotlightInnerAngle(m_innerAngle);
-	//m_pLight->setSpotlightOuterAngle(m_innerAngle + Ogre::Degree(1));
 	m_pLight->setSpotlightOuterAngle(m_outerAngle);
 	m_pLight->setSpotlightFalloff(5.0);
 	m_pLight->setAttenuation(m_attenuationRange, 0.5, 0, 0);

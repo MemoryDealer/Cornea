@@ -34,6 +34,7 @@ public:
 
 		int sky;
 		int water;
+		Ogre::Real farClip;
 	} graphics;
 
 	// Audio

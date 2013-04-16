@@ -16,6 +16,11 @@
 
 //================================================//
 
+typedef std::list<DynamicObject*> DynamicObjectList;
+typedef DynamicObjectList::iterator DynamicObjectListIterator;
+
+//================================================//
+
 class DynamicObjectManager
 {
 public:
@@ -28,7 +33,7 @@ public:
 	void registerTriggerChains(void);
 
 	// Getter functions
-	std::vector<DynamicObject*>& getObjects(void);
+	DynamicObjectList& getObjects(void);
 	DynamicObject* getObject(Ogre::String& name);
 	DynamicObject* getObject(Ogre::SceneNode* node);
 	
@@ -36,10 +41,6 @@ public:
 	void setNPCManager(NPCManager* mgr);
 
 	void update(double timeSinceLastFrame);
-
-	std::vector<Ogre::String>	firstTierObjects;
-	std::vector<Ogre::String>	secondTierObjects;
-	std::vector<Ogre::String>	thirdTierObjects;
 	
 private:
 	Ogre::SceneManager*			m_pSceneMgr;
@@ -48,14 +49,14 @@ private:
 
 	NPCManager*					m_pNPCManager;
 
-	std::vector<DynamicObject*> m_objects;
+	DynamicObjectList		    m_objects;
 
 	Physics*					m_physics;
 };
 
 //================================================//
 
-inline std::vector<DynamicObject*>& DynamicObjectManager::getObjects(void)
+inline DynamicObjectList& DynamicObjectManager::getObjects(void)
 { return m_objects; }
 
 inline void DynamicObjectManager::setNPCManager(NPCManager* mgr)

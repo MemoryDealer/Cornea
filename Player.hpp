@@ -34,13 +34,12 @@ public:
 	Player(Ogre::SceneManager* mgr, Profile* profile);
 	~Player(void);
 
+	bool init(void);
 	void spawn(Ogre::SceneNode* node);
 	void action(EventManager* eventManager);
 	void processRetrieval(DynamicObject* object);
 
-	// Flashlight
 	void initFlashlight(void);
-
 	void initGlasses(Sparks::Compositor* compositor);
 
 	// Getter functions

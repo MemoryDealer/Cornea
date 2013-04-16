@@ -25,6 +25,8 @@ Settings::Settings(void)
 	graphics.sky = MEDIUM;
 	graphics.water = MEDIUM;
 
+	graphics.farClip = 150000.0;
+
 	this->setDefaultControls();
 }
 
