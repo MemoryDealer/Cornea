@@ -994,11 +994,6 @@ void GameState::updateUI(void)
 void GameState::updateBullet(double timeSinceLastFrame)
 {
 	m_physics->update(timeSinceLastFrame);
-	
-	// Update the camera's rigid body
-	if(m_player->getCamera()->getMode() == Sparks::Camera::MODE_FIRST_PERSON){
-		
-	}
 }
 
 //================================================//

@@ -834,9 +834,32 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 #4/14/12
 -More optimizations of the camera physics. Made the physics class update the camera instead of GameState. The Physics object holds a data structure with pointers to the 
 	needed info from the Camera class. 
--Added a tick callback for Bullet, which now limits the player's maximum speed internally, which is supposed to be much more efficient. 
+-Added a tick callback for Bullet, which now limits the player's maximum speed internally per sub-step, which is supposed to be much more efficient. 
 -Also fixed the falling code to be more simple. It simply applies a downward force if there is a good distance from the player to the ground. This overrides the gravity
 	which for some reason is not enough to bring the player capsule down in a realistic time frame. 
+
+#4/15/12
+-Made DynamicObject::getData() virtual and overrode it in Trigger to prevent m_pSceneNode and such from being invalid pointers for some reason. Some polymorphic inheritance
+	stuff I don't fully understand. 
+-Never mind that ^. It's because m_pSceneNode was redeclared in Trigger for some reason, so the the DynamicObject parent had it's own scene node which was null and Trigger
+	had it's own which needed to be accessed in the Trigger context. So I deleted the second m_pSceneNode and everything is fine. 
+-If you have a derived class of a derived class and wish to see if the lowest child is derived from the middle child class, you can use dynamic_cast<MiddleChild*>, it 
+	will return nullptr if it is not derived from that type. 
+-Needed to allow multiple triggers on one scene node, so I invented this elegant solution: Treat a Trigger like a node in a linked list, give it a next pointer, which is 
+	null by default. In DynamicObjectData.trigger it can be specified if the trigger has another trigger. After all dynamic objects are loaded, the function 
+	DynamicObjectManager::registerTriggerChains() is called which looks through each dynamic object and tests if it's a trigger and if it has a trigger chain. It then
+	sets the next pointer by calling Trigger::setNextTrigger(). Every trigger is tested, so a chain could become very long if needed. 
+-I've officially changed the applyCentralImpulse() to applyCentralForce() in the camera moveFirstPerson() function. Using an impulse was the cause of moving slower with
+	a lower framerate. I've discovered the player can fly in the air if you strafe off a ledge, which I'm working on. 
+-My food-intake is low and my hygeine weak. However, my knowledge of Bullet Physics grows ever deeper. 
+-By configuring the correct amount of gravity, mass, and force applied during applyCentralForce(), I have perfected the character controller. This, combined with the proper
+	physics timestep in the Physics class has created a totally framerate-independent rigid body with minimal temporal aliasing. 
+	Also, a rather beautifully simple solution to preventing the camera from flying has been added. There is a yOffset in the camera class, which can be determined at
+	run-time, and the distance from the player to the ground is compared against this offset each frame. If the player is above the offset, the player's speed is then
+	tested against half the maximum speed (this could vary). If the speed is greater than half the maximum speed, the total movement vector is divided by 1000. Thus, this 
+	simulates trying to walk on air, in a way. The reason for testing against half the speed is to prevent the capsule from becoming stuck on a small crevice, such as
+	between the lowest end of a ramp and the floor. 
+-All that's left for the main character controller is a crouching and proper jumping behaviour.  
 
 #TODO  
 -TREASURE.

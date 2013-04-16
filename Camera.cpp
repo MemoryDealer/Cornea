@@ -15,10 +15,10 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 	file.loadDirect("C:/cam.cfg");
 
 	/* Current optimal settings:
-	moveSpeed=350.0
+	moveSpeed=60650.0
 	maxVelocity=9.0
-	mass=180.0
-	grav=65.0
+	mass=340.0
+	grav=89.92
 	*/
 
 	m_mode = MODE_FIRST_PERSON;
@@ -35,6 +35,8 @@ Camera::Camera(Ogre::SceneManager* mgr, Ogre::Real farClipDistance)
 	m_jumping = false;
 	m_jmpConstant = 500.0;
 	m_cameraHeight = 22.0;
+	m_capsuleRadius = 0.9;
+	m_maxYOffset = 6.5;
 	m_defGravity.setValue(0.0, -(Ogre::StringConverter::parseReal(file.getSetting("grav", "cam"))), 0.0);
 
 	m_moveForwardsPressed = false;
@@ -135,7 +137,7 @@ void Camera::createRigidBody(void)
 	const Ogre::Real capsuleHeight = 5.0;
 	m_capsuleHeightOffset = capsuleHeight / 1.7;
 	btDefaultMotionState* motionState = new btDefaultMotionState(transform);
-	btCollisionShape* shape = new btCapsuleShape(0.9, capsuleHeight); // need changes
+	btCollisionShape* shape = new btCapsuleShape(m_capsuleRadius, capsuleHeight); // need changes
 	btVector3 localInertia;
 	shape->calculateLocalInertia(mass, localInertia);
 
@@ -150,8 +152,8 @@ void Camera::createRigidBody(void)
 	// this will prevent the camera from falling through elevators when they "take off"
 	m_btCamera->setActivationState(DISABLE_DEACTIVATION);
 
-	//m_btCamera->setHitFraction(0.0);
-	//m_btCamera->setContactProcessingThreshold(0.0);
+	m_btCamera->setHitFraction(0.0);
+	m_btCamera->setContactProcessingThreshold(0.0);
 
 	//m_btCamera->setGravity(m_defGravity);
 	m_physics->getWorld()->setGravity(m_defGravity);
@@ -306,34 +308,114 @@ void Camera::moveFirstPerson(double timeSinceLastFrame)
 	m_translateVector.z /= forwards.y;
 	m_translateVector.y = 0.0;
 
-	// Update the jump physics
-	this->updateJump(timeSinceLastFrame);
-
 	// Stop if the user is not moving
 	if(m_translateVector == Ogre::Vector3::ZERO){
 		return;
 	}
 
+	// Update the jump physics
+	this->updateJump(timeSinceLastFrame);
+
 	// Update the camera by applying an impulse to the Bullet rigid body
 	btVector3 btTranslate(m_translateVector.x, m_translateVector.y, m_translateVector.z);
 	
 	m_btCamera->activate();
-	m_btCamera->applyCentralImpulse(btTranslate);
+	m_btCamera->applyCentralForce(btTranslate);
 }
 
 //================================================//
 
 void Camera::updateJump(double timeSinceLastFrame)
 {
-	printf("%.2f\n", m_btCamera->getLinearVelocity().getY());
 	// Process falling
-	if(m_negativeYRayhit->distance > 7.0){
+	//printf("Y: %.2f\n", m_negativeYRayhit->distance);
+	if(m_negativeYRayhit->distance > m_maxYOffset){
+		if(m_btCamera->getLinearVelocity().length() > (m_maxVelocity / 2.0))
+			m_translateVector *= 0.001;
+
+		return;
 		// Test to see if the player is actually falling, otherwise the player will be stuck if moving along the edge of a ramp, 
 		// due to the sides of the capsule still hanging on the ledge. 
-		if(m_btCamera->getLinearVelocity().getY() < -1.0){
-			//m_translateVector *= 0.9;
-			m_translateVector.y = -(m_moveSpeed * 6.0);
+		//if(m_btCamera->getLinearVelocity().getY() < -1.0){
+		//	//m_translateVector *= 0.9;
+		//	m_translateVector *= 0.0;
+		//	m_translateVector.y = -(m_moveSpeed * 6.0);
+		//}
+		//else if(m_btCamera->getLinearVelocity().length() > m_maxVelocity){
+		//	printf("***Blocking %.2f\n", m_btCamera->getLinearVelocity().length());
+		//	m_translateVector *= 0.0;
+		//	m_translateVector.y = -(m_moveSpeed * 6.0); // make 6.0 const
+		//}
+
+		// Expanding raycasting outside of capsule to avoid hitting self
+		const Ogre::Real offset = m_capsuleRadius + 0.4; 
+
+		// Cast four rays down around the radius of the capsule
+		Rayhit ray;
+		const Ogre::Real down = -10000.0;
+		Ogre::Vector3 from = m_pCameraNode->getPosition();
+		Ogre::Vector3 to = m_pCameraNode->getPosition();
+		to.y = down;
+
+		// Right edge
+		from.x += offset;
+		to.x += offset;
+		this->getRayhit(from, to, &ray);
+		if(ray.hasHit){
+			printf("%.2f\tRIGHT\n", ray.distance);
+			if(ray.distance < m_maxYOffset)
+				return;
 		}
+
+		// Top edge
+		from = m_pCameraNode->getPosition();
+		to = m_pCameraNode->getPosition();
+		from.z -= offset;
+		to.z -= offset;
+		to.y = down;
+		this->getRayhit(from, to, &ray);
+		if(ray.hasHit){
+			printf("%.2f\tTOP\n", ray.distance);
+			if(ray.distance < m_maxYOffset){
+				
+				return;
+			}
+		}
+
+		// Left edge
+		from = m_pCameraNode->getPosition();
+		to = m_pCameraNode->getPosition();
+		from.x -= offset;
+		to.x -= offset;
+		to.y = down;
+		this->getRayhit(from, to, &ray);
+		if(ray.hasHit){
+			printf("%.2f\tLEFT\n", ray.distance);
+			if(ray.distance < m_maxYOffset){
+				
+				return;
+			}
+		}
+
+		// Lower edge
+		from = m_pCameraNode->getPosition();
+		to = m_pCameraNode->getPosition();
+		from.z += offset;
+		to.z += offset;
+		to.y = down;
+		this->getRayhit(from, to, &ray);
+		if(ray.hasHit){
+			printf("%.2f\tLOWER\n", ray.distance);
+			if(ray.distance < m_maxYOffset){
+				
+				return;
+			}
+		}
+
+		printf("STOPPING!\n");
+		
+		//m_translateVector.y = -(m_moveSpeed * 6.0);
+		return;
 	}
 
 	return;
@@ -556,6 +638,32 @@ void Camera::roll(Ogre::Degree z)
 void Camera::getRayhit(Ogre::Vector3& to, Rayhit* rayhit)
 {
 	btVector3 btFrom(m_pCameraNode->getPosition().x, m_pCameraNode->getPosition().y, m_pCameraNode->getPosition().z);
+	btVector3 btTo(to.x, to.y, to.z);
+
+	btCollisionWorld::ClosestRayResultCallback res(btFrom, btTo);
+
+	m_physics->getWorld()->rayTest(btFrom, btTo, res);
+
+	if(res.hasHit()){
+		// Get scene node
+		rayhit->node = static_cast<Ogre::SceneNode*>(res.m_collisionObject->getUserPointer());
+
+		// Calculate distance
+		rayhit->hitPoint = Sparks::bulletToOgreVector3(res.m_hitPointWorld);
+		rayhit->distance = m_pCameraNode->getPosition().distance(rayhit->hitPoint);
+
+		rayhit->hasHit = true;
+	}
+	else{
+		rayhit->hasHit = false;
+	}
+}
+
+//================================================//
+
+void Camera::getRayhit(Ogre::Vector3& from, Ogre::Vector3& to, Rayhit* rayhit)
+{
+	btVector3 btFrom(from.x, from.y, from.z);
 	btVector3 btTo(to.x, to.y, to.z);
 
 	btCollisionWorld::ClosestRayResultCallback res(btFrom, btTo);

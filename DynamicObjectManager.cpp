@@ -152,10 +152,19 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 					case Trigger::TRIGGER_LOOK_AT:
 						m_objects.push_back(new TriggerLookAt());
 						break;
+
+					case Trigger::TRIGGER_CHAIN_NODE:
+						m_objects.push_back(new TriggerChainNode());
+						break;
 					}
 
 					m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
 					this->registerTriggerAction(data);
+
+					// Remove collision for chain nodes here
+					if(data->trigger.type == Trigger::TRIGGER_CHAIN_NODE){
+						m_physics->getWorld()->removeCollisionObject(obj);
+					}
 
 					return true;
 				} // trigger.enabled
@@ -194,7 +203,8 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 	// I have no way of retrieving the Bullet collision object from the scene nodes when going through that iterator, so all dynamic
 	// objects will need to be collision objects as well. Exceptions can be made, of course.
 
-	// Then remove all extra garbage from the BtOgre function
+	// Do this after all triggers are registered
+	this->registerTriggerChains();
 }
 
 //================================================//
@@ -222,6 +232,24 @@ void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
 		m_objects.back()->setUserData(0, (void*)(new int(data->trigger.x)));
 		m_objects.back()->setUserData(1, (void*)(new Ogre::ColourValue(data->colour)));
 		break;
+	}
+}
+
+//================================================//
+
+void DynamicObjectManager::registerTriggerChains(void)
+{
+	for(std::vector<DynamicObject*>::iterator itr = m_objects.begin();
+		itr != m_objects.end();
+		++itr){
+		// Determine if this object is derived from Trigger
+		Trigger* trigger = dynamic_cast<Trigger*>(*itr);
+		if(trigger){
+			DynamicObjectData* data = trigger->getData();
+			if(data->trigger.hasNext){
+				trigger->setNextTrigger(static_cast<Trigger*>(this->getObject(data->trigger.next)));
+			}
+		}
 	}
 }
 

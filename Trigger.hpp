@@ -24,6 +24,8 @@ public:
 		TRIGGER_WALK_OVER = 0,
 		TRIGGER_LOOK_AT,
 
+		TRIGGER_CHAIN_NODE,
+
 		END
 	};
 
@@ -38,15 +40,16 @@ public:
 	void setLinkedObject(DynamicObject* object);
 	void setLinkedObject(void* object);
 	void setTimeout(Ogre::Real timeout);
+	void setNextTrigger(Trigger* next);
 
 	void update(double timeSinceLastFrame);
 
 protected:
-	Ogre::SceneManager*		m_pSceneMgr;
-	Ogre::SceneNode*		m_pSceneNode;
 	Ogre::Timer*			m_pTimeout;
 
 	Sparks::Camera*			m_pCamera;
+
+	Trigger*				m_pNext;		// for multiple trigger chains
 
 	bool					m_loop;			// keep triggering after triggered once
 	bool					m_triggered;	// has it been triggered?
@@ -69,6 +72,23 @@ inline void Trigger::setLinkedObject(void* object)
 
 inline void Trigger::setTimeout(Ogre::Real timeout)
 { m_timeout = timeout; }
+
+inline void Trigger::setNextTrigger(Trigger* next)
+{ m_pNext = next; }
+
+//================================================//
+//================================================//
+
+class TriggerChainNode : public Trigger
+{
+public:
+	TriggerChainNode(void);
+
+	void update(double timeSinceLastFrame);
+
+protected:
+
+};
 
 //================================================//
 //================================================//

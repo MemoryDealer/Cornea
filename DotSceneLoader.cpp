@@ -943,8 +943,6 @@ void DotSceneLoader::processLightAttenuation(rapidxml::xml_node<>* XMLNode, Ogre
 
 void DotSceneLoader::processData(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
-	printf("Processing data for %s\n", pParent->getName().c_str());
-
 	switch(DynamicObject::findType(pParent)){
 	default:
 		break;
@@ -1062,6 +1060,12 @@ void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNo
 	data->trigger.loop			= this->parseNodeBoolValue(XMLNode, "triggerLoop");
 	data->trigger.timeout		= this->parseNodeValue(XMLNode, "triggerTimeout");
 	data->trigger.range			= this->parseNodeValue(XMLNode, "triggerRange");
+	data->trigger.hasNext		= this->parseNodeBoolValue(XMLNode, "hasNext");
+	data->trigger.invisible		= this->parseNodeBoolValue(XMLNode, "invisible");
+
+	if(data->trigger.hasNext){
+		data->trigger.next = this->parseNodeStrValue(XMLNode, "nextTrigger");
+	}
 
 	// Parse additional data if needed
 	switch(data->trigger.actionCode){
@@ -1086,6 +1090,8 @@ void DotSceneLoader::processTrigger(rapidxml::xml_node<>* XMLNode, Ogre::SceneNo
 	}
 
 	pParent->setUserAny(Ogre::Any(data));
+
+	printf("Trigger added: %s\n", pParent->getName().c_str());
 }
 
 //================================================//

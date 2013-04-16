@@ -16,6 +16,7 @@
 //================================================//
 
 class Switch;
+class Trigger;
 
 //================================================//
 
@@ -44,7 +45,9 @@ public:
 			Ogre::Real		timeout;
 			Ogre::String	str;
 			int				x;
-
+			bool			hasNext;
+			Ogre::String	next;
+			bool			invisible;
 			Ogre::Real		range;
 		} trigger;
 
@@ -113,7 +116,7 @@ public:
 	virtual unsigned recv(unsigned arg);
 
 	// Data functions
-	DYNAMIC_OBJECT_DATA* getData(void) const;
+	virtual DYNAMIC_OBJECT_DATA* getData(void) const;
 	virtual void deleteData(void);
 
 	void setUserData(int n, void* data);
@@ -129,6 +132,7 @@ public:
 	virtual void setLinkedObject(void* obj){}
 	virtual void setTimeout(Ogre::Real timeout){}
 	virtual void attachSwitch(Switch* _switch){}
+	virtual void setNextTrigger(Trigger* next){}
 
 	// Getter functions
 	const bool isActive(void) const;

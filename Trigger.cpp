@@ -11,6 +11,8 @@ Trigger::Trigger(void)
 	m_triggered = false;
 	m_timeout = 10000;
 
+	m_pNext = nullptr;
+
 	m_pTimeout = new Ogre::Timer();
 }
 
@@ -29,6 +31,8 @@ void Trigger::initTrigger(Ogre::SceneManager* mgr, Ogre::SceneNode* node, Sparks
 	m_pSceneNode = node;
 	m_pCamera = camera;
 
+	DynamicObject::init(mgr, nullptr, node, nullptr);
+
 	const Ogre::Any& any = m_pSceneNode->getUserAny();
 	if(!any.isEmpty()){
 		DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
@@ -38,9 +42,13 @@ void Trigger::initTrigger(Ogre::SceneManager* mgr, Ogre::SceneNode* node, Sparks
 		m_loop			= data->trigger.loop;
 		m_timeout		= data->trigger.timeout;
 		m_range			= data->trigger.range;
-	}
 
-	printf("Trigger %s initialised!\n", node->getName().c_str());
+		if(data->trigger.type == TRIGGER_CHAIN_NODE){
+			m_pSceneNode->setVisible(false); // These should always be invisible
+		}
+
+		printf("Trigger %s initialised!\n", node->getName().c_str());
+	}
 }
 
 //================================================//
@@ -91,6 +99,11 @@ void Trigger::trigger(void)
 	if(m_loop){
 		m_pTimeout->reset();
 	}
+
+	// Activate trigger chain
+	if(m_pNext != nullptr){
+		m_pNext->trigger();
+	}
 }
 
 //================================================//
@@ -127,7 +140,24 @@ void Trigger::update(double timeSinceLastFrame)
 //================================================//
 //================================================//
 
-TriggerWalkOver::TriggerWalkOver(void) : Trigger()
+TriggerChainNode::TriggerChainNode(void) 
+	: Trigger()
+{
+
+}
+
+//================================================//
+
+void TriggerChainNode::update(double timeSinceLastFrame)
+{
+	Trigger::update(timeSinceLastFrame);
+}
+
+//================================================//
+//================================================//
+
+TriggerWalkOver::TriggerWalkOver(void) 
+	: Trigger()
 {
 
 }
@@ -158,7 +188,8 @@ void TriggerWalkOver::update(double timeSinceLastFrame)
 //================================================//
 //================================================//
 
-TriggerLookAt::TriggerLookAt(void) : Trigger()
+TriggerLookAt::TriggerLookAt(void) 
+	: Trigger()
 {
 
 }

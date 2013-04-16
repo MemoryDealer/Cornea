@@ -54,6 +54,7 @@ public:
 	void roll(Ogre::Degree z);
 
 	void getRayhit(Ogre::Vector3& to, Rayhit* rayhit);
+	void getRayhit(Ogre::Vector3& from, Ogre::Vector3& to, Rayhit* rayhit);
 	void updateRays(void);
 
 	// Setter functions
@@ -123,6 +124,8 @@ private:
 	unsigned				m_mode;
 	Ogre::Real				m_cameraHeight;
 	Ogre::Real				m_capsuleHeightOffset;
+	Ogre::Real				m_capsuleRadius;
+	Ogre::Real				m_maxYOffset;
 
 	Physics*				m_physics;
 	btRigidBody*			m_btCamera;

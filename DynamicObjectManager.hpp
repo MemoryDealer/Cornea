@@ -25,6 +25,7 @@ public:
 	bool addObject(Ogre::SceneNode* node, btCollisionObject* obj, int tier);
 	void registerAllObjectsInScene(void);
 	void registerTriggerAction(DynamicObject::DYNAMIC_OBJECT_DATA* data);
+	void registerTriggerChains(void);
 
 	// Getter functions
 	std::vector<DynamicObject*>& getObjects(void);

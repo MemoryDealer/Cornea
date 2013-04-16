@@ -99,7 +99,7 @@ void Physics::removeCameraBody(void)
 
 void Physics::update(double timeSinceLastFrame)
 {
-	const float rate = 1.0f/240.0f;
+	const float rate = 1.0f/240.0f;		// More efficient, suggested by Bullet creator Erwin
 	float physicsTime = timeSinceLastFrame / 1000.0f;
 	int nMaxSteps = physicsTime/(rate)+1;
 	m_world->stepSimulation(physicsTime, nMaxSteps, rate);
@@ -114,6 +114,7 @@ void Physics::update(double timeSinceLastFrame)
 		accumulator -= timeStep;
 	}*/
 
+	// Update camera rigid body
 	if(m_cameraActive){
 		btTransform transform;
 		Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(m_pCameraData->body->getUserPointer());
@@ -129,9 +130,6 @@ void Physics::update(double timeSinceLastFrame)
 
 	// Update debug drawer
 	m_debugDrawer->step();
-
-	// Update player camera rigid body
-
 
 	// Update other rigid bodies
 	btRigidBody* body;
@@ -152,6 +150,7 @@ void Physics::update(double timeSinceLastFrame)
 
 void Physics::processTickCallback(btScalar timeStep)
 {
+	// Limit the maximum speed of the player
 	if(m_cameraActive){
 		btVector3 velocity = m_pCameraData->body->getLinearVelocity();
 		btScalar speed = velocity.length();
