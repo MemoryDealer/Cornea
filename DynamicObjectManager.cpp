@@ -28,13 +28,13 @@ DynamicObjectManager::~DynamicObjectManager(void)
 
 //================================================//
 
-bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* obj, int tier)
+bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* obj, int type, int tier)
 {
 	const Ogre::Any& any = node->getUserAny();
 
 	switch(tier){
 	case 1:
-		switch(DynamicObject::findType(node)){
+		switch(type){
 		default:
 			return false;
 
@@ -95,31 +95,18 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 		break;
 
 	case 2:
-		switch(DynamicObject::findType(node)){
+		switch(type){
 		default:
 			return false;
 
 		case DynamicObject::TYPE_SWITCH:
 			m_objects.push_back(new Switch());
 			m_objects.back()->init(m_pSceneMgr, m_physics, node, obj);
-
-			// Find the dynamic object it should be linked to
-			if(!any.isEmpty()){
-				if(any.getType() == typeid(Ogre::String)){
-					Ogre::String name = Ogre::any_cast<Ogre::String>(any); // get the string
-
-					// Acquire the link pointer
-					DynamicObject* link = this->getObject(name);
-					if(link != nullptr){
-						m_objects.back()->setLinkedObject(link);
-						link->attachSwitch(static_cast<Switch*>(m_objects.back()));
-					}
-				}
-			}
+			
 			return true;
 		
 		case DynamicObject::TYPE_NPC:
-			m_pNPCManager->addNPC(node, obj);
+			//m_pNPCManager->addNPC(node, obj);
 			return true;
 		}
 		break;
@@ -127,43 +114,39 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 	// Triggers
 	case 3:
 		{
-			if(!any.isEmpty()){
-				// A trigger must have DynamicObjectData*
-				if(any.getType() != typeid(DynamicObjectData*))
-					return false;
-
-				DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
-
-				if(data->trigger.enabled){
-					switch(data->trigger.type){
-					default:
-
+			if(type == DynamicObject::TYPE_TRIGGER){
+				if(!any.isEmpty()){
+					// A trigger must have DynamicObjectData*
+					if(any.getType() != typeid(DynamicObjectData*))
 						return false;
 
-					case Trigger::TRIGGER_WALK_OVER:
-						m_objects.push_back(new TriggerWalkOver());
-						break;
+					DynamicObjectData* data = Ogre::any_cast<DynamicObjectData*>(any);
 
-					case Trigger::TRIGGER_LOOK_AT:
-						m_objects.push_back(new TriggerLookAt());
-						break;
+					if(data->trigger.enabled){
+						switch(data->trigger.type){
+						default:
 
-					case Trigger::TRIGGER_CHAIN_NODE:
-						m_objects.push_back(new TriggerChainNode());
-						break;
-					}
+							return false;
 
-					m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
-					this->registerTriggerAction(data);
+						case Trigger::TRIGGER_WALK_OVER:
+							m_objects.push_back(new TriggerWalkOver());
+							break;
 
-					// Remove collision for chain nodes here
-					if(data->trigger.type == Trigger::TRIGGER_CHAIN_NODE){
-						m_physics->getWorld()->removeCollisionObject(obj);
-					}
+						case Trigger::TRIGGER_LOOK_AT:
+							m_objects.push_back(new TriggerLookAt());
+							break;
 
-					return true;
-				} // trigger.enabled
-			}
+						case Trigger::TRIGGER_CHAIN_NODE:
+							m_objects.push_back(new TriggerChainNode());
+							break;
+						}
+
+						m_objects.back()->initTrigger(m_pSceneMgr, node, m_pCamera);
+						
+						return true;
+					} // trigger.enabled
+				}
+			} // TYPE_TRIGGER
 		}
 		break;
 		
@@ -178,7 +161,7 @@ bool DynamicObjectManager::addObject(Ogre::SceneNode* node, btCollisionObject* o
 
 void DynamicObjectManager::registerAllObjectsInScene(void)
 {
-	int tier = 1;
+	int tier = 2;
 	const int MAX_TIER = 3;
 
 	// Iterate through collision world objects and add them to the manager based on tier
@@ -186,12 +169,14 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 		btCollisionObjectArray& objects = m_physics->getWorld()->getCollisionObjectArray();
 		int size = objects.size();
 		for(int i=(size - 1); i>=0; --i){
-
-			if(addObject(static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer()), objects.at(i), tier)){
-				printf("Added object: %s\n", static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer())->getName().c_str());
-			}
-			else{
-				printf("Skipped object: %s\n", static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer())->getName().c_str());
+			Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer());
+			if(node != nullptr){
+				if(addObject(node, objects.at(i), DynamicObject::findType(node), tier)){
+					printf("Added object: %s\n", static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer())->getName().c_str());
+				}
+				else{
+					printf("Skipped object: %s\n", static_cast<Ogre::SceneNode*>(objects.at(i)->getUserPointer())->getName().c_str());
+				}
 			}
 		}
 	}
@@ -204,7 +189,62 @@ void DynamicObjectManager::registerAllObjectsInScene(void)
 
 //================================================//
 
-void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
+void DynamicObjectManager::registerUpperTierObjects(void)
+{
+	DynamicObjectData* data = nullptr;
+	DynamicObject* object = nullptr;
+
+	// Iterate through all dynamic objects and determine if it needs to be registered
+	for(DynamicObjectListIterator itr = m_objects.begin();
+		itr != m_objects.end();
+		++itr){
+
+		// Trigger
+		if(strstr(typeid(**itr).name(), "Trigger")){
+			object = *itr;
+			data = object->getData();
+			if(data != nullptr){
+				this->registerTriggerAction(object, data);
+				printf("Trigger registered: %s\n", object->getSceneNode()->getName().c_str());
+				// Test for chain node
+				if(data->trigger.hasNext){
+					Trigger* trigger = dynamic_cast<Trigger*>(object);
+					if(trigger){
+						DynamicObject* next = this->getObject(data->trigger.next);
+						if(next != nullptr)
+							trigger->setNextTrigger(static_cast<Trigger*>(next));
+						else
+							data->trigger.hasNext = false;
+					}
+				}
+			}
+		}
+
+		// Switch
+		else if(typeid(**itr) == typeid(Switch)){
+			const Ogre::Any& any = (*itr)->getSceneNode()->getUserAny();
+			if(!any.isEmpty()){
+				if(any.getType() == typeid(Ogre::String)){
+					Ogre::String name = Ogre::any_cast<Ogre::String>(any);
+
+					// Link found for switch, now set it up
+					DynamicObject* link = this->getObject(name);
+					if(link != nullptr){
+						(*itr)->setLinkedObject(link);
+						link->attachSwitch(static_cast<Switch*>(*itr));
+					}
+				}
+			}
+		}
+
+	}
+
+	//this->registerTriggerChains();
+}
+
+//================================================//
+
+void DynamicObjectManager::registerTriggerAction(DynamicObject* object, DynamicObjectData* data)
 {
 	// Since this class has access to almost everything, register this data here
 
@@ -213,19 +253,19 @@ void DynamicObjectManager::registerTriggerAction(DynamicObjectData* data)
 		break;
 
 	case TRIGGER_ACTION_CODE::ACTION_NPC_ENABLE:
-		m_objects.back()->setLinkedObject(m_pNPCManager->getNPC(data->trigger.str));
+		object->setLinkedObject(m_pNPCManager->getNPC(data->trigger.str));
 		break;
 
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_ACTIVATE:
 	case TRIGGER_ACTION_CODE::ACTION_DYNAMIC_OBJECT_DEACTIVATE:
-		m_objects.back()->setLinkedObject(this->getObject(data->trigger.str));
+		object->setLinkedObject(this->getObject(data->trigger.str));
 		break;
 
 	case TRIGGER_ACTION_CODE::ACTION_DISPLAY_TEXT:
-		m_objects.back()->setLinkedObject((void*)data->trigger.str.c_str());
-		m_objects.back()->setTimeout(data->trigger.timeout);	
-		m_objects.back()->setUserData(0, (void*)(new int(data->trigger.x)));
-		m_objects.back()->setUserData(1, (void*)(new Ogre::ColourValue(data->colour)));
+		object->setLinkedObject((void*)data->trigger.str.c_str());
+		object->setTimeout(data->trigger.timeout);	
+		object->setUserData(0, (void*)(new int(data->trigger.x)));
+		object->setUserData(1, (void*)(new Ogre::ColourValue(data->colour)));
 		break;
 	}
 }

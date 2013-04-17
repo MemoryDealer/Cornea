@@ -56,7 +56,7 @@
     public:
         Ogre::TerrainGlobalOptions *mTerrainGlobalOptions;
  
-        DotSceneLoader();
+        DotSceneLoader(DynamicObjectManager* pDynamicObjectManager, Physics* pPhysics);
         virtual ~DotSceneLoader();
  
         void parseDotScene(const Ogre::String &SceneName, const Ogre::String &groupName, Ogre::SceneManager *yourSceneMgr, Ogre::SceneNode *pAttachNode = NULL, const Ogre::String &sPrependNode = "");
@@ -130,6 +130,9 @@
         Ogre::TerrainGroup* mTerrainGroup;
         Ogre::Vector3 mTerrainPosition;
         Ogre::Vector3 mLightDirection;
+
+		DynamicObjectManager*	m_pDynamicObjectManager;
+		Physics*				m_pPhysics;
     };
 
 //================================================//

@@ -61,12 +61,6 @@
     <Filter Include="Source Files\Bullet">
       <UniqueIdentifier>{81bd96e9-0d21-40e3-b36e-3e300df3ecbf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Game\Effects">
-      <UniqueIdentifier>{d189ca56-33f4-494a-8d88-4bfce8a1c13d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Game\Effects">
-      <UniqueIdentifier>{92a5d2ec-6ca3-4534-a9b0-c24cce8b75cb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Game\Sound">
       <UniqueIdentifier>{9355473e-f2c6-4ab7-bd1f-e13aa0413b72}</UniqueIdentifier>
     </Filter>
@@ -222,9 +216,6 @@
     <ClInclude Include="MLP.hpp">
       <Filter>Header Files\Game\Weapons</Filter>
     </ClInclude>
-    <ClInclude Include="EventManager.hpp">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="NPC.hpp">
       <Filter>Header Files\Game\NPC</Filter>
     </ClInclude>
@@ -251,12 +242,6 @@
     </ClInclude>
     <ClInclude Include="NPCManager.hpp">
       <Filter>Header Files\Game\NPC</Filter>
-    </ClInclude>
-    <ClInclude Include="Effect.hpp">
-      <Filter>Header Files\Game\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="EffectManager.hpp">
-      <Filter>Header Files\Game\Effects</Filter>
     </ClInclude>
     <ClInclude Include="WeaponEffects.hpp">
       <Filter>Header Files\Game\Weapons</Filter>
@@ -333,6 +318,9 @@
     <ClInclude Include="RetrievableItems.hpp">
       <Filter>Header Files\Game\Items\Retrievable</Filter>
     </ClInclude>
+    <ClInclude Include="EventManager.hpp">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">
@@ -394,12 +382,6 @@
     </ClCompile>
     <ClCompile Include="NPCManager.cpp">
       <Filter>Source Files\Game\NPC</Filter>
-    </ClCompile>
-    <ClCompile Include="Effect.cpp">
-      <Filter>Source Files\Game\Effects</Filter>
-    </ClCompile>
-    <ClCompile Include="EffectManager.cpp">
-      <Filter>Source Files\Game\Effects</Filter>
     </ClCompile>
     <ClCompile Include="WeaponEffects.cpp">
       <Filter>Source Files\Game\Weapons</Filter>

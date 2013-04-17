@@ -192,7 +192,38 @@ int DynamicObject::findType(Ogre::SceneNode* node)
 	if(strstr(name, "_MagicCube_"))
 		return TYPE_MAGIC_CUBE;
 
+	if(strstr(name, "Trigger"))
+		return TYPE_TRIGGER;
+
 	return -1;
+}
+
+//================================================//
+
+unsigned int DynamicObject::getTier(int type)
+{
+	switch(type){
+	default:
+		return 0;
+
+	// Tier 1 means it doesn't depend on another DynamicObject
+	case TYPE_MOVING_OBJECT:
+	case TYPE_MOVING_KINEMATIC_OBJECT:
+	case TYPE_ELEVATOR:
+	case TYPE_ROTATING_DOOR:
+	case TYPE_SLIDING_DOOR:
+	case TYPE_STATIC_LIGHT:
+	case TYPE_PULSE_LIGHT:
+	case TYPE_FLICKER_LIGHT:
+	case TYPE_MAGIC_CUBE:
+		return 1;
+
+	case TYPE_SWITCH:
+		return 2;
+
+	case TYPE_TRIGGER:
+		return 3;
+	}
 }
 
 //================================================//

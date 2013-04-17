@@ -96,6 +96,8 @@ public:
 
 		TYPE_MAGIC_CUBE,
 
+		TYPE_TRIGGER,
+
 		END
 	};
 
@@ -142,6 +144,7 @@ public:
 	const bool isRetrieved(void) const;
 
 	static int findType(Ogre::SceneNode* node);
+	static unsigned int getTier(int type);
 
 	// Setter functions
 	void setState(const unsigned state){ m_state = state; }

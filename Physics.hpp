@@ -29,8 +29,13 @@ public:
 
 	void initDebugDrawer(Ogre::SceneNode* root);
 
+	btCollisionObject* registerEntityMesh(Ogre::Entity* entity, btCollisionWorld* colWorld);
+	btCollisionObject* registerEntityAABB(Ogre::Entity* entity, btCollisionWorld* colWorld);
+	btCollisionObject* registerEntityCylinder(Ogre::Entity* entity, btCollisionWorld* colWorld);
+
 	// Collision
 	void registerAllEntitiesInScene(Ogre::SceneManager* mgr);
+	btCollisionObject* registerSceneNode(Ogre::SceneNode* node);
 	void setCameraData(CAMERA_DATA* data);
 	void removeCameraBody(void);
 

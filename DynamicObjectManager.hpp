@@ -27,9 +27,10 @@ public:
 	DynamicObjectManager(Ogre::SceneManager* mgr, Sparks::Camera* camera);
 	~DynamicObjectManager(void);
 
-	bool addObject(Ogre::SceneNode* node, btCollisionObject* obj, int tier);
+	bool addObject(Ogre::SceneNode* node, btCollisionObject* obj, int type, int tier);
 	void registerAllObjectsInScene(void);
-	void registerTriggerAction(DynamicObject::DYNAMIC_OBJECT_DATA* data);
+	void registerUpperTierObjects(void);
+	void registerTriggerAction(DynamicObject* object, DynamicObjectData* data);
 	void registerTriggerChains(void);
 
 	// Getter functions

@@ -728,13 +728,14 @@ void GameState::update(double timeSinceLastFrame)
 			this->createScene();
 			break;
 
-		case STEP_SETUP_COLLISION_WORLD:
+		case STEP_SETUP_COLLISION_WORLD: // change the name of this enum
 			// Weird gray screen here after moving this code from createScene()
 			// Add entities to the collision world
-			m_physics->registerAllEntitiesInScene(m_pSceneMgr);
+			//m_physics->registerAllEntitiesInScene(m_pSceneMgr);
+			m_pEventManager->getDynamicObjectManager()->registerUpperTierObjects();
 
 			// Add dynamic objects
-			m_pEventManager->getDynamicObjectManager()->registerAllObjectsInScene();
+			//m_pEventManager->getDynamicObjectManager()->registerAllObjectsInScene();
 
 			// Debug drawer for Bullet
 			m_physics->initDebugDrawer(m_pSceneMgr->getRootSceneNode());
@@ -811,9 +812,7 @@ void GameState::update(double timeSinceLastFrame)
 			break;
 
 		case STEP_SETUP_COLLISION_WORLD:
-			m_physics->registerAllEntitiesInScene(m_pSceneMgr);
-
-			m_pEventManager->getDynamicObjectManager()->registerAllObjectsInScene();
+			m_pEventManager->getDynamicObjectManager()->registerUpperTierObjects();
 
 			m_physics->initDebugDrawer(m_pSceneMgr->getRootSceneNode());
 			break;

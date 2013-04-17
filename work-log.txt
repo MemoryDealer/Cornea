@@ -867,6 +867,14 @@ Also applied the shader code changes to ambient.cg and ambient.program so the am
 -One thing that concerns me is the efficiency of loading dynamic objects. First, the .scene file is parsed and the DynamicObjectData structure is allocated dynamically
 	and set to the any pointer of each scene node. This could be optimized by loading the objects into the DynamicObjectManager during this process. This however creates
 	a problem as the btCollisionObject is needed for the DynamicObject and the physics...wait.
+-Whilst adding the ability to add collision objects to the physics world inside the DotSceneLoader, it kept crashing when trying to get the world bounding box 
+	in the Physics::registerEntityAABB() function. Apparently this is due to the node/entity not being "update" internally, which is why it must work after the DotSceneLoader
+	has completed. This can be fixed by forcing it to derive the AABB like so: getWorldBoundingBox(true); http://www.ogre3d.org/forums/viewtopic.php?f=4&t=56884
+-I added the DynamicObjectManager pointer and the Physics pointer to the DotSceneLoader, so now in DotSceneLoader::processData(), the collision objects are added, and
+	then the dynamic objects. This reduces what used to be three steps into one. It also allows for a DynamicObject to not be a collision object. Previously, the entire
+	scene had to be iterated through to add collision objects and then those collision objects iterated through for the dynamic objects. I think this new system is much
+	faster and more efficient. 
+-Removed EffectManager as it was useless and I will just make effects a DynamicObject.
 
 #TODO  
 -TREASURE.

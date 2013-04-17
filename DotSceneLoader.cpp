@@ -13,9 +13,11 @@
  
 //================================================//
 
-DotSceneLoader::DotSceneLoader() : mSceneMgr(0), mTerrainGroup(0) 
+DotSceneLoader::DotSceneLoader(DynamicObjectManager* pDynamicObjectManager, Physics* pPhysics) : mSceneMgr(0), mTerrainGroup(0) 
 {
     mTerrainGlobalOptions = OGRE_NEW Ogre::TerrainGlobalOptions();
+	m_pDynamicObjectManager = pDynamicObjectManager;
+	m_pPhysics = pPhysics;
 }
  
 //================================================//
@@ -943,7 +945,9 @@ void DotSceneLoader::processLightAttenuation(rapidxml::xml_node<>* XMLNode, Ogre
 
 void DotSceneLoader::processData(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode* pParent)
 {
-	switch(DynamicObject::findType(pParent)){
+	int type = DynamicObject::findType(pParent);
+
+	switch(type){
 	default:
 		break;
 
@@ -981,6 +985,20 @@ void DotSceneLoader::processData(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode*
 	// Trigger
 	if(this->parseNodeBoolValue(XMLNode, "trigger"))
 		this->processTrigger(XMLNode, pParent);
+
+	// --- //
+
+	// Register physics object first if present
+	btCollisionObject* obj = nullptr;
+	if(Ogre::StringUtil::startsWith(pParent->getName(), "$", false)){
+		obj = m_pPhysics->registerSceneNode(pParent);
+	}
+
+	// Add DynamicObject
+	int tier = DynamicObject::getTier(type);
+	if(tier != 0){
+		m_pDynamicObjectManager->addObject(pParent, obj, type, tier);
+	}
 }
 
 //================================================//

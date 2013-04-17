@@ -7,7 +7,6 @@
 
 #include "DynamicObjectManager.hpp"
 #include "NPCManager.hpp"
-#include "EffectManager.hpp"
 #include "Weapon.hpp"
 #include "Camera.hpp"
 
@@ -35,7 +34,6 @@ protected:
 	DynamicObjectManager*	m_pDynamicObjectManager;
 	ProjectileManager*		m_pProjectileManager;
 	NPCManager*				m_pNPCManager;
-	EffectManager*			m_pEffectManager;
 
 	Sparks::Camera*			m_pCamera;
 };

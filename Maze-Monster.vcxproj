@@ -95,8 +95,6 @@
     <ClInclude Include="Doors.hpp" />
     <ClInclude Include="DotSceneLoader.hpp" />
     <ClInclude Include="DynamicObjectManager.hpp" />
-    <ClInclude Include="Effect.hpp" />
-    <ClInclude Include="EffectManager.hpp" />
     <ClInclude Include="EventManager.hpp" />
     <ClInclude Include="Flashlight.hpp" />
     <ClInclude Include="GameState.hpp" />
@@ -164,8 +162,6 @@
     <ClCompile Include="DotSceneLoader.cpp" />
     <ClCompile Include="DynamicObject.cpp" />
     <ClCompile Include="DynamicObjectManager.cpp" />
-    <ClCompile Include="Effect.cpp" />
-    <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="Flashlight.cpp" />
     <ClCompile Include="GameState.cpp" />

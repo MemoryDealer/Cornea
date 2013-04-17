@@ -9,7 +9,7 @@ void GameState::loadStage(void)
 	Settings& settings = Settings::getSingleton();
 
 	// Init DotSceneLoader
-	DotSceneLoader* loader = new DotSceneLoader();
+	DotSceneLoader* loader = new DotSceneLoader(m_pEventManager->getDynamicObjectManager(), m_physics);
 	Ogre::SceneNode* scene = m_pSceneMgr->getRootSceneNode()->createChildSceneNode("MainScene");
 
 	// Reset hydrax/skyx
@@ -89,11 +89,13 @@ void GameState::loadStage(void)
 			city->setSpotlightFalloff(5.0);
 			city->setDirection(Ogre::Vector3(-1.0, 0.0, 0.0));*/
 
-			loader->parseDotScene("Apartment.scene", "General", m_pSceneMgr, scene);
-
 			// Scale scene node and all child nodes
 			scene->translate(0, 200.0, 0);
 			scene->setInheritScale(true);
+
+			loader->parseDotScene("Apartment.scene", "General", m_pSceneMgr, scene);
+
+			
 
 			m_pSceneMgr->setAmbientLight(Ogre::ColourValue(0.005, 0.005, 0.005));
 		}
